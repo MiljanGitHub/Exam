@@ -1,0 +1,34 @@
+
+
+Method   								|  			String		|		StringBuilder
+
+concat(String s)									Yes						No
+indexOf('a') yes no
+indexOf("al") yes
+indexOf('a', 4) yes  no
+indexOf("al", 5)	yes  	 yes								
+String/StringBuilder substring(int beginIndexInclusively) yes  	 yes	
+String/StringBuilder substring(int beginIndexInclusively, int endIndexExclusively) yes  	 yes	
+charAt(index) yes  	 yes
+startsWith(String prefix) yes  	 no
+endsWith(String suffix) yes  	 no
+replace('a', 'A') yes no
+replace("a", "A")  yes no
+replace('a', "A") //DOES NOT COMPILE
+replace("A",'a' ) //DOES NOT COMPILE
+StringBuilder replace(int startInclusiveIndex, int endExclusiveIndex, "sty")  no yes //endExclusiveIndex can be greater then length of string within StringBuilder
+replace(int startInclusiveIndex, int endExclusiveIndex, String newString) no yes
+trim()  yes  	 no
+strip() yes  	 no
+stripLeading() yes  	 no
+stripTrailing()  yes  	 no
+StringBuilder insert(int offset, String str) no yes
+StringBuilder delete(beginIndexInclusively, int endIndexExclusively) no yes
+StringBuilder deleteCharAt(index) no yes
+
+
+
+
+Uraditi return type
+
+

@@ -1,0 +1,365 @@
+TODO: 
+1. Practice creating JARs from cmd and using jar command
+2. Practice using java command with -cp command from cmd
+3. Practice compiling and running multiple .java files in different packages.
+
+File can be compiled/executed with or without public keyword
+
+public class Animal {
+    String a;
+    public static void main(String[] args) {
+        System.out.println("This is my first Java Prograssssm");
+
+        class Test2 {} //Compiler generates ---> Animal$1Test2.class
+
+        class Test {}  //Compiler generates ---> Animal$1Test.class
+    }
+
+    class Test {} //Compiler generates ---> Animal$Test.class
+	
+	//error: class Animal is already defined in package unnamed package
+       // class Animal{
+
+	class Animal{
+	}
+
+}
+
+To compile Java code, the file must have the extension .java. The name of the file must match the name of the class  
+
+Each file can contain only one public class. and/or more non public classes
+
+
+--------------------------------------
+
+main() allowed: 
+String[] args
+String args[]
+String... args;
+
+
+--------------------------------------
+
+
+Passing Parameters to a Java Program
+
+"for multi string"
+
+javac Zoo.class
+java Zoo "San Diego" Zoo //3 strings passed; launching singlefile source-code programs; This means if your program has
+two .java files, you still need to use javac. By contrast, you cannot use
+this new feature for a single-file program with two classes in it. In fact,
+you can’t refer to any .class files that didn’t come with the JDK
+
+import java.util.*;
+public class Animal {
+    String a;
+    public static void main(String[] args) {
+        System.out.println("This is my first Java Prograssssm");	
+		if (args.length >= 1) {
+			Date d;	
+			HelperClass hp; //IS IN THE SAME PACKAGE as Animal.java and with 'java Animal.java' it won't compile;
+			 System.out.println(args[0]);
+		}
+    }}
+
+However, we can do this:
+
+import org.apache.commons.lang3.RandomUtils;
+public class ReferenceNonJDKClass {
+    public static void main(String[] args) {
+        System.out.println(RandomUtils.nextInt());
+    }
+}
+
+1. javac -classpath C:\Users\Miljan.Puletic\Downloads\commons-lang3-3.12.0.jar ReferenceNonJDKClass.java
+2. java -cp C:\Users\Miljan.Puletic\Downloads\commons-lang3-3.12.0.jar ReferenceNonJDKClass.java
+
+Specifies the path javac uses to look up classes. Overrides the default or the CLASSPATH environment variable if it is set. Directories are separated by colons.
+
+Primer 2:
+
+U packagea dir imamo:
+
+public class Echoer {
+   private String req = null;
+   private String res = null;
+   public void setReq(String r) {
+      req = new String(r);
+      char[] a = r.toCharArray();
+      int n = a.length;
+      for (int i=0; i<n/2; i++) {
+         char t = a[i];
+         a[i] = a[n-1-i];
+         a[n-i-1] = t;
+      }
+      res = new String(a);
+   }
+   public String getRes() {
+      return res;
+   }
+}
+
+U 1Ch dir imamo:
+
+public class EchoerTest { //EchoerTest referencira Echoer koji je u direktorijumu ispod tj u Echoer
+   public static void main(String[] a) {
+      Echoer e = new Echoer();
+      e.setReq("Hello world!");
+      System.out.println(e.getRes());
+   }
+}
+
+Iz Ch1 dir uradimo:
+
+1. javac packagea\Echoer.java
+2. javac -classpath C:\Users\Miljan.Puletic\Desktop\1Ch\packagea EchoerTest.java
+3. java -classpath ".;C:\Users\Miljan.Puletic\Desktop\1Ch\packagea" EchoerTest
+
+Modifikovani primer 2:
+
+Nalazimo se u root(workspace direkctorijumu)  tj u 1Ch, imamo dva foldera packagea i packageb:
+
+U packagea Nalazi se Echore.java kao u Primer2
+
+U packageb nalazi se EchoerTest kao u Primer2
+
+Iz Ch1:
+
+1. javac packagea\Echoer.java
+2. javac -classpath C:\Users\Miljan.Puletic\Desktop\1Ch\packagea packageb/EchoerTest.java //Location of classes needed to compile the program
+3. java -classpath ".\packageb;C:\Users\Miljan.Puletic\Desktop\1Ch\packagea" EchoerTest
+
+
+http://www.herongyang.com/Java-Tools/javac-Option-Classpath-Specifying-Class-Path.html
+https://www.cs.jhu.edu/~gkaptch1/sum19/cs226sum19/resources/JavaCommandLineNotes.html
+--------------------------------------
+
+Starting in Java 11, you can run a program without compiling it first, well, without typing the javac command that is.
+
+usual way: javac ClassName.java
+		   java ClassName
+		   
+- objasnjenje za 'usual way': Kompajliranje source-code-a pocinje sa javac komandom i .JAVA fajlovima dok je za izvrsavanje kompajliranih fajlova potrebna java komanda sa imenom klase bez extenzije.
+
+java 11: java Animal.java testssparam //with oneliner there are no .class files being generated
+
+package singleFile;
+import java.util.*;
+public class Learning {
+private ArrayList list;
+public static void main(String[] args) {
+System.out.println("This works!");
+}
+}
+
+java Learning.java 
+OR
+java singleFile/Learning.java //from  directory above
+
+//
+
+
+javac packagea/ClassA.java packageb/ClassB.java //multifiles compilation
+
+za kompajliranje vise .java klasa/fajlova u direktorijumu
+
+javac packagea/*.java packageb/*.java //ovo ne ide po dubini u drugim pod-direktorijumima, vec samo hvata .java fajlove na nivou packagea i packageb
+
+javac Program1.java Program2.java Program3.java
+
+javac Swing*.java // all source files whose filenames start with Swing
+
+javac -cp lib1.jar;lib2.jar;lib3.jar MyProgram.java
+
+
+--------------------------------------
+
+Compiling/executing a class without main method:
+
+error: can't find main(String[]) method in class: NoMainMethodClass
+
+--------------------------------------
+
+No import statement
+
+public class ImportExample {
+public static void main(String[] args) {
+Random r = new Random();
+System.out.println(r.nextInt(10)); // print a number 0-9
+}
+}
+
+-This error could mean you made a typo in the name of the class.
+-The other cause of this eror is omitting a needed import statement
+
+-The import statement tells the compiler which package to
+look in to find a class.
+
+-The rule for package names is that they are mostly letters or numbers
+separated by periods (.). Technically, you’re allowed a couple of other
+characters between the periods (.).
+
+invalid characters for package name: !@#%^&*()-+=/\}{][]'"><? 1234567890 //even if we are combing these with valid characters   
+valid characters for package name: $
+
+*(in)valid package names need to be tested further
+
+Rules:
+
+import java.util.*; - Imports all CLASSES in from the same util package
+
+Example; redundant imports
+1: import java.lang.System; - redundant
+2: import java.lang.*;  - redundant
+3: import java.util.Random;  - redundant
+4: import java.util.*;
+
+importing a class that is in the same package as the class importing it.
+
+First way:
+
+import java.nio.file.*;
+
+Second way:
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class InputImports {
+public void read(Files files) {
+Paths.get("name");
+}
+}
+
+importing a class that is NOT in the same package as the class importing it and it is not public:
+
+import p1.Object;
+class Main{
+
+public static void main(String[] args) {
+	p1.Object xx = null;
+}}
+
+package p1;
+ class Object{}
+
+javac Main.java //------>  error: Object is not public in p1; cannot be accessed from outside package
+
+import java.nio.*; NO GOOD; * works on CLASSES in a package not on 'package on package' ----> 'nio.files.*;'
+import java.nio.*.*;    NO GOOD;
+import java.nio.file.Paths.*; // NO GOOD - you cannot import methods  only class names
+
+--------------------------------------
+
+Naming Conflicts
+
+import java.util.*;
+import java.sql.*;
+public class Conflicts {
+    Date date; //both class java.sql.Date in java.sql and class java.util.Date in java.util match
+}
+
+
+import java.util.Date;
+import java.sql.Date;
+public class Conflicts {
+    Date date; //both class java.sql.Date in java.sql and class java.util.Date in java.util match
+}
+
+import java.util.Date; //precedence
+import java.sql.*;
+public class Conflicts {
+    Date date; //ok
+}
+
+import java.util.Date;
+public class Conflicts {
+Date date;  //ok
+java.sql.Date sqlDate;
+}
+
+//no imports
+public class Conflicts {
+java.util.Date date;  //ok
+java.sql.Date sqlDate;  //ok
+}
+
+import java.util.Arrays;
+public class Arrays { //DOES NOT COMPILE same class Name in import and of the file
+    public static void main(String[] args) {
+	
+	}
+}
+--------------------------------------
+
+.java fajlovi mogu da se kompajliraju tj pretvore u .class fajlove samo iz najvise jednog top direktorijuma iznad ukoliko koristiom direktorijume/paket u klasa koje pozivamo. Primer klase:
+
+package packageb;
+import packagea.ClassA; //kada radimo javac packagea/ClassA.java podrazumeva se da smo u 1Ch (root) direktorijumu i da smo izvrsili kompajliranje ClassA.java sa javac packagea/ClassA.java;
+				//jer da nismo u 1Ch direktorijumu tj da smo u samom packageb dir i pozovemo javac ClassB.java na ovoj liniji bi se zalio jer sa te lokacije pocinje
+				//da trazi packageb.packagea.ClassA.class izkompajlirani fajl. Zato svaki fajl u svom direktorijumu mora da ima 'package ime-trenutnog-foldera',
+				//a kompajliranje da se vrsi iz root-a odnosno top level direktorijuma 
+public class ClassB {
+public static void main(String[] args) {
+ClassA a;
+System.out.println("Got it");
+}
+}
+
+Primeri: 
+
+By default, the compiler puts each class file in the same directory as its source file. You can specify a separate destination directory with -d 
+
+javac -d C:\Users\Miljan.Puletic\Desktop\cls packagea/ClassA.java //moramo da se nalazimo u direktorijumu iznad 'packagea/ClassA.java' i onda sa javac -d Putanja/do/direktorijuma se generise struktura paketa i .class fajlova 
+javac -d C:\Users\Miljan.Puletic\Desktop\cls packageb/ClassB.java //same as above comment
+java -cp C:\Users\Miljan.Puletic\Desktop\cls packageb.ClassB //-cp komanda govori gde je taj novi root level direktorijum kako kada smo pokretali iz 1Ch direktorijuma, zatim se mora dodati putanja preko paketa do .class fajlova
+OR 
+java -classpath classes packageb.ClassB 
+OR 
+java --class-path classes packageb.ClassB
+
+Using javac and -classpath http://www.herongyang.com/Java-Tools/javac-Option-Classpath-Specifying-Class-Path.html
+
+--------------------------------------
+
+JARs:
+
+jar -cvf myNewFile.jar .
+jar --create --verbose --file myNewFile.jar .
+
+jar -cvf myNewFile.jar -C dir . -----> C Directory containing files to be used to create the JAR
+
+
+you can also specify the location of the other files explicitly using a classpath. This technique is useful when the class files are located elsewhere or in
+special JAR files. A Java archive (JAR) file is like a zip file of mainly Java class files.
+On Windows, you type the following:
+java -cp ".;C:\temp\someOtherLocation;c:\temp\myJar.jar" myPackage.MyClass
+The period (.) indicates you want to include the current directory in
+the classpath. The rest of the command says to look for loose class files
+(or packages) in someOtherLocation and within myJar.jar. Windows
+uses semicolons (;) to separate parts of the classpath;
+
+
+java -cp "C:\temp\directoryWithJars\*" myPackage.MyClass
+This command will add all the JARs to the classpath that are in directoryWithJars. It won’t include any JARs in the classpath that are in a subdirectory of directoryWithJars.
+
+--------------------------------------
+
+import java.util.*;
+package structure; // DOES NOT COMPILE
+String name; // DOES NOT COMPILE
+public class Meerkat { }
+
+Think of the acronym PIC (picture): package, import, and class
+--------------------------------------
+
+MultiClassNonPublic.java containes these 2 classes:
+class Pera{}
+
+class Djura{}
+
+javac MultiClassNonPublic.java goes fine generating two class files Pera.class and Djura.class
+
+--------------------------------------
+

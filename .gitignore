@@ -119,7 +119,7 @@ Desktop.ini
 ######################
 # Others
 ######################
-*.class
+#*.class
 *.*~
 *~
 .merge_file*

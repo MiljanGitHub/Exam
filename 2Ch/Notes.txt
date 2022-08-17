@@ -1,0 +1,296 @@
+TODO:
+
+1. Practice more valid and invalid primitive type formats for numbers (0x123abc, 0x123E15, ETC) and casting.
+2. Eligiblity of objects for garbage collections; which reference points to which object on heap.
+3. Apply all rules for var in examples in code.
+5. Initialization of variables.
+
+
+
+How many instance initializers do you see?
+1: public class Bird {
+2: public static void main(String[] args) {
+3: { System.out.println("Feathers"); }
+4: }
+5: { System.out.println("Snowy"); }
+6: }
+
+There are four code blocks in this example: a class definition, a
+method declaration, an inner block, and an instance initializer
+
+When you’re counting instance initializers, keep in mind that they
+cannot exist inside of a method. Line 5 is an instance initializer, with
+its braces outside a method. 
+
+instance init
+
+------------------------------------------------
+Following Order of Initialization
+
+**Fields and instance initializer blocks are run in the order in which
+they appear in the file.
+
+**The constructor runs after all fields and instance initializer blocks
+have run.
+
+public class TestClass {
+	static int xd = 2;
+	
+	static Test t = new Test();
+	
+	public TestClass() {
+		{System.out.println("r");}
+		System.out.println("af");
+	}
+	{System.out.println("b");}
+	
+	public final static  void main(String[] args) {	
+		new TestClass();
+	}
+	{System.out.println("c");}
+	
+	static class Test{
+		
+		public Test() {
+			System.out.println("@asd");
+		}
+	}
+}
+
+Output:
+@asd
+b
+c
+r
+af
+
+
+
+
+
+------------------------------------------------
+Java has eight built-in data types, referred to as the Java primitive  (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-Underscores)
+types. 
+
+Keyword 		Type 						Example							Min									Max
+boolean 	true or false 					true		
+byte 		8-bit integral value 			123								-127								128
+char 		16-bit Unicode value (unsigned) 'a'								0									128
+short 		16-bit integral value 			123								-32768								32767
+int 		32-bit integral value 			123								- 2 147 483 648						2 147 483 647
+long 		64-bit integral value 			123L							Some crazy long value				9_223_372_036_854_775_807				
+float 		32-bit floating-point value 	123.45f																3.04E38
+double		64-bit floating-point value 	123.456																xxxE308
+
+***//Underscores are allowed as separators between digits that denote the integer OR long OR short.
+
+char only allows 0 and positive (max pozitivna vrednost je ista kao i kod short-a)
+char mammal = (short)83; //ok
+
+short reptile = 65535; // DOES NOT COMPILE ---> max positive value for short 32767, while neg is -32768
+char fish = (short)-1; // DOES NOT COMPILE ---> char cannot accept negatives, but casting is ok '(short)-1'
+double d = Double.MAX_VALUE+1;  // DOES COMPILE => returns Double.MAX_VALUE
+byte -127 to 128
+
+double d = .2; DOES COMPILE
+double ff = .02f; DOES COMPILE
+
+double notAtStart = _1000.00; // DOES NOT COMPILE
+double notAtEnd = 1000.00_; // DOES NOT COMPILE
+double notByDecimal = 1000_.00; // DOES NOT COMPILE
+double annoyingButLegal = 1_00_0.0_0; // Ugly, but compiles
+double reallyUgly = 1__________2; // Also compiles
+
+
+Pravilo za kastovanje 'iz manjeg u vec uvek moze' obrnuto ne moze
+int ffff = (byte)(-32768-1);  //-1  
+byte ffff = (int)(-32768-1); // DOES NOT COMPILE
+
+
+Literals - A literal is the source code representation of a value of a primitive type
+
+Integer Literals:
+
+- DecimalIntegerLiteral
+//standard literals
+
+- HexIntegerLiteral (0 - 9; starts with 0x Or 0X; letter A,B,C,D,E,F)
+int one = 0X123; // DOES COMPILE
+int two = 0xABC;  // DOES COMPILE
+int two = 0xa_Bc;  // DOES COMPILE
+int two = 0xabc; // DOES COMPILE
+int two = 0xab_c;  // DOES COMPILE
+int twoS = 0XabcdH;  // DOES NOT COMPILE
+int two = 0xa0_c; // DOES COMPILE
+int x2 = -0X6BF8;   // DOES COMPILE
+
+*Appending exponent (to ones that do compile) is allowed: E05
+
+- OctalIntegerLiteral
+
+int x1 = 0765; //Octal constant
+int x2 = 0987; //Invalid as it contains 8 and 9
+int x2 = 087; //Invalid as it contains 8 and 9
+Cannot add exponent E05
+
+- BinaryIntegerLiteral
+
+int anInt1 = 0b10100001010001011010000101000101;
+int anInt2 = 0b101;
+int anInt3 = 0B101; 
+Cannot add exponent E05
+
+
+------------------------------------------------
+https://www.javatpoint.com/identifiers-in-java
+Identifiers in Java are symbolic names used for identification. They can be a class name, variable name, method name, package name, constant name, and more. 
+However, In Java, There are some reserved words that can not be used as an identifier.
+An identifier is the name of a variable, method, class, interface, or package:
+
+Java reserved keywords are predefined words, which are reserved for any functionality or meaning. We can not use these keywords as our identifier names, such as class name or method name. 
+These keywords are used by the syntax of Java for some functionality. If we use a reserved word as our variable name, it will throw an error.
+
+-Identifiers must begin with a letter, a $ symbol, or a _ symbol
+-Identifiers can include numbers but not start with them.
+-Since Java 9, a single underscore _ is not allowed as an identifier.
+-You cannot use the same name as a Java reserved word. 
+
+The following examples are legal:
+long okidentifier;
+float $OK2Identifier;
+boolean _alsoOK1d3ntifi3r;
+boolean _alsoOK1d3ntifi3r_;
+char __SStillOkbutKnotsonice$;
+
+
+These examples are not legal:
+int 3DPointClass; // identifiers cannot begin with a number
+byte hollywood@vine;  // @ is not a letter, digit, $ or _
+String *$coffee; // * is not a letter, digit, $ or _
+double public; // public is a reserved word
+short _; // a single underscore is not allowed
+double €12fff = 12;
+
+
+------------------------------------------------
+
+Declaring Multiple Variables
+
+
+void paintFence() {
+int i1 = 33, i2, i3 = 0, i4=i3; //  The initialization of i3 only applies to i3. It doesn’t have anything to do with i1 or i2 despite being in the same statement.
+}
+
+int num, String value; // DOES NOT COMPILE
+
+double d1, double d2; // If you want to declare multiple variables in the same statement, they must share the same type declaration and not repeat it. double d1, d2; would have been legal.
+
+------------------------------------------------
+
+Creating Local Variables
+
+Remember, the compiler is only concerned if you try to use uninitialized local variables; it doesn’t mind the ones you never use.
+
+On the exam, be wary of any local variable that is declared
+but not initialized in a single line. This is a common place on the
+exam that could result in a “Does not compile” answer. You are not required to initialize the
+variable on the same line where it is defined, but be sure to check to make
+sure it’s initialized before it’s used on the exam.
+
+public void findAnswer(boolean check) {}
+public void checkAnswer() {
+boolean value;
+findAnswer(value); // DOES NOT COMPILE; this goes both for PRIMITIVES and REFERENCE TYPES; Method findAnswer(boolean check) expects that 'check' is initialized!!!
+}
+
+------------------------------------------------
+
+var - local variable type inference
+
+ local variable ---> You can only use this feature for local variables. 
+
+public class VarKeyword {
+var tricky = "Hello"; // DOES NOT COMPILE
+}
+
+Local variable type inference works with local variables and not instance variables.
+Now that you understand the local variable part, it is time to go on to
+what type inference means. 'type inference means' ---> The compiler looks at the code on the line of the declaration and uses it to infer the type.
+
+7: public void breakingDeclaration() {
+8: var silly
+9: = 1; //VALID
+10: }
+
+-Remember that for local variable type inference, the compiler looks only at the line with the declaration. 
+-The initial value used to determine the type needs to be part of the same statement
+
+var silly; //invalid
+
+var a = 2, b = 3  //invalid Java does not allow var in multiple variable declarations.
+var x = null; //not allowed null for var
+
+13: var n = "myData"; 
+14: n = null;
+//Moramo reci kompajleru kojeg je tipa var mora biti u jednoj liniji, i ako je reference-type onda moze da se assigne-uje null;
+ali ovo je ipak dozvoljeno
+var o = (String)null;
+15: var m = 4;
+16: m = null; // DOES NOT COMPILE
+//ali ako je primitive onda ne moze assignovanje na null;
+
+public int addition(var a, var b) { // DOES NOT COMPILE
+return a + b; //In this example, a and b are method parameters. These are not local variables.
+}
+
+Var var = new Var(); //legal
+public void var() {
+var var = "var";   //legal
+}
+
+Cannot crete field, enum, class interface named 'var' (annotation can be named 'var'); 'Var' is okay
+
+
+class var{} //javac var.java //var' is a restricted local variable type and cannot be used for type declarations
+
+While var is not a reserved word and allowed to be used as an identifier, it is considered a reserved type name. A reserved type name means it cannot be used
+to define a type, such as a class, interface, or enum
+
+-A var is used as a local variable in a constructor, method, or
+initializer block.
+
+public Conflicts(var c){ // DOES NOT COMPILE
+   var f = "@";
+}
+
+var x = {12,13} //DOES NOT COMPILE (array initializer needs an explicit target-type)
+
+- A var is always initialized on the same line (or statement) where it is declared.
+
+- The value of a var can change, but the type cannot
+
+- A var cannot be initialized with a null value without a type.
+
+- A var is not permitted in a multiple-variable declaration.
+
+- A var is a reserved type name BUT NOT A RESERVED WORD, meaning it can be used as an identifier (method name, variable name) except as a class, interface, or enum name.
+
+- A var is know at compile time and type of var cannot be changed during runtime but its value can.
+
+List chimpanzees = new ArrayList<Integer>();
+for(var ham : chimpanzees) //var type is Object;  Object o = chimpanzees.get(0);
+
+------------------------------------------------
+
+
+https://www.educative.io/courses/java-interview-handbook/NEX9nXBGzBp
+
+
+------------------------------------------------
+
+
+
+
+
+Calling System.gc() has no efect on eligibility for GC
+
