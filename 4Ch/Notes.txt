@@ -190,7 +190,7 @@ Example11:
 		int k = 17;
 		switch (k) {
 		case 1, 7, 8 -> 2;  // DOES NOT COMPILES; Cannot use switch expression structure without a variable where to assigne returned value
-		default: System.out.println("default");
+		default: System.out.println("default"); //and must use -> to return value, an int
 		};
 		
 Example12:
@@ -206,7 +206,7 @@ Example12:
              }
 Example13:
 
-	var tailFeathers = 3;
+ var tailFeathers = 3;
  final var one = 1;
  switch (tailFeathers) {
           case one: System.out.print(3 + " "); //DOES COMPILE; It is allowed for final var to be in case since it is final and compiler figures it out that is Integer
@@ -319,7 +319,7 @@ Example1:
                 case BIRD -> 1;
                 case FISH -> 2;
                 case MAMMAL -> 3;
-                default -> 4; //IS ALLOWED; DOES COMPILE
+                default -> 4; //IS ALLOWED/OPTIONAL; DOES COMPILE
                 };
             System.out.print(type);
              } }
