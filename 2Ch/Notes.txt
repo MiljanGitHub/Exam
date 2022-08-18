@@ -64,7 +64,52 @@ c
 r
 af
 
+package paket1;
 
+public class Panda {
+	
+	int pandax = 1;
+	
+	{System.out.println("upper initializer block in Panda");}
+	
+	public Panda() {
+		System.out.println("panda constructor");
+	}
+	public static void main(String[] args) {
+		
+	}
+	{System.out.println("lower initializer block in Panda");}
+}
+
+
+package paket1;
+
+public class Duck {
+
+	int duckx = 1;
+	Panda p = new Panda();
+	
+	{System.out.println("upper initializer block in Duck");}
+	
+	public Duck() {
+		System.out.println("Duck constructor");
+	}
+	
+	public static void main(String[] args) {
+		new Duck();
+	}
+	
+	{System.out.println("lower initializer block in Duck");}
+}
+
+If we run from Duck's main method:
+
+upper initializer block in Panda
+lower initializer block in Panda
+panda constructor
+upper initializer block in Duck
+lower initializer block in Duck
+Duck constructor
 
 
 
