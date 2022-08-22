@@ -1,3 +1,11 @@
+TODO:
+
+1. Practice indent(), stripeIndent(), working with textBlocks
+2. Arrays.compare(arr1, arr2): Arrays.mismatch(arr1, arr2)
+
+--More practice with string blocks substrings playing with methods from string and string builder. Learn arrays comparing by hearth!!!
+
+
 Creating and Manipulating Strings
 
 CharSequence interface is a general way of representing several classes, including String and StringBuilder.
@@ -202,6 +210,7 @@ Example6:
         concat += " world"; //new String on the heap
         System.out.println(singleString == oneLine); //true
         System.out.println(singleString == concat); //false
+		System.out.println(oneLine == concat); //false
 
 Example7:
 
@@ -222,7 +231,7 @@ Example8:
         System.out.println(first == second.intern()); //true; intern() returns reference from Pool if exists, if not it creates new reference on Pool and returns it.
         System.out.println(first == third); //false; we have a String constructor. This means we no longer have a compile-time constant, and third does not point to a reference in the string pool.
         System.out.println(first == third.intern()); //true
-		System.out.println(first == third.intern());   //true
+		System.out.println(second == third.intern());   //true
 
 Example9:
 
@@ -316,8 +325,69 @@ Line 16 has one essential whitespace characters
 
 String block = """doe"""; // DOES NOT COMPILE
 
---------------------------------------
 
+String text = """
+			  a
+			   b
+			  c""";
+
+System.out.println(text); //6
+
+Why 6 is printed? Because text is equivalent with text = "a\n b\nc"; //Implicitly, \n is added on line where 'a' and 'b' are. This is the same string as: "a\n b\nc"
+
+String block = """
+          a
+           b
+          c""";
+		  
+System.out.println(block.length()); //6 OK //Implicitly, \n is added on line where 'a' and 'b' are. This is the same string as: "a\n b\nc"
+System.out.println(block.indent(1).length()); //10
+
+We ask Java to add a single blank space to each of the three lines in block.
+However, the output says we added 4 characters rather than 3 since the length went from 6 to 10. 
+This mysterious additional character is thanks to the line termination normalization. 
+Since the text block doesn’t have a line break at the end, indent() adds one!		  
+
+
+String test= """
+          a\n
+           b\n
+          c\n""";
+
+We will have six rows, as follow:
+Row1: whitespace + a+\n =>>> 3 char total.  \n is added manually, so text block doesn't add another \n
+Row2: whitespace +\n  =>>> 2  char total.  whitespace is added because of indent() and \n is added implicitly by the Java/text block
+Row3: whitespace + whitespace + b + \n   =>>> 4 char total.  \n is added manually, so text block doesn't add another \n
+Row4: whitespace + \n  =>>> 2 char total.  whitespace is added because of indent() and \n is added implicitly by the Java/text block
+Row5: whitespace + c + \n  =>>> 3  char total. Since string is ending with \n indent() doesn't add it
+Row6: empty =>>> 0  char total.
+
+
+		var concat = " a\n"
+				 +   "  b\n"
+				 +   " c";
+
+System.out.println(concat.stripeIndent().length()); //6 OK; Remove all leading incidental white space
+
+String concat = """
+				   \na
+				   b
+				    c"""; 
+					
+					
+
+System.out.println(concat.stripeIndent().length()); //Calling stripeIndent makes no effect on text block
+
+NEEDS TO BE MORE TESTED AND PRACTICED!!!!!!!
+
+
+Trebalo bi tabelu napraviti 3x2, 3 reda su: text-block, concatenated string, regular string.
+kolone su: indent, stripeIndent, 
+
+
+
+
+--------------------------------------
 Arrays
 
 int[] arr = new int[3] //int[] is required
@@ -347,8 +417,6 @@ int ids[], types; //DOES COMPILE
 ids = new int[2];
 types = 2;
 
-
-int ids[], types; //DOES COMPILE
 int ids, types[]; //DOES COMPILE
 
 Java has provided a method that prints an array nicely: 
