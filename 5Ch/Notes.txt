@@ -1,721 +1,427 @@
-TODO:
 
-1. Practice indent(), stripeIndent(), working with textBlocks
-2. Arrays.compare(arr1, arr2) [Nauci kad compare daje pozitivnu, a kad negativnu vrednost]; Arrays.mismatch(arr1, arr2);
-3. Draw Venove dijagrame za metode u String klasi i StringBuilder
-3. Learn Date and Time API
+Access Modifiers - An access modifier determines what classes a method can be accessed from
 
---More practice with string blocks substrings playing with methods from string and string builder. Learn arrays comparing by hearth!!!
+private  - The private modifier means the method can be called only from within the same class.
 
+Package Access - With package access, the method can be called only from a class in
+the same package. This one is tricky because there is no keyword. You simply omit the
+access modifier. Package access is sometimes referred to as package-private or default
+access (even within this book!).
 
-Creating and Manipulating Strings
+protected - The protected modifier means the method can be called only from a class in the same package or a subclass.
 
-CharSequence interface is a general way of representing several classes, including String and StringBuilder.
+public - The public modifier means the method can be called from anywhere.
 
-4: String s = "1"; // s currently holds "1"
-5: s += "2"; // s currently holds "12"
-6: s += 3; // s currently holds "123"
-7: System.out.println(s); // 123
-On line 5, we are “adding” two strings, which means we concatenate
-them. Line 6 tries to trick you by adding a number, but it’s just like we
-wrote s = s + 3
-
-String s1 = "1";
-String s2 = s1.concat("2");
-s2.concat("3");
-System.out.println(s2);
-
-
-indexOf()
-The method indexOf() looks at the characters in the string and finds
-the first index that matches the desired value. indexOf can work with
-an individual character or a whole String as input
+TABLE 5.1 Parts of a method declaration in Figure 5.1
+Element 					Value in nap() example 				Required?
+Access modifier 				public 								No
+Optional specifier 				final 								No
+Return type 					void 								Yes
+Method name 					nap 								Yes
+Parameter list 				(int minutes) 							Yes, but can be empty parentheses
+Method signature 			metodName(int minutes) 					Yes
+Exception list 				throws InterruptedException 			No
+Method body 				{										Yes, except for abstract methods
+							// take a nap
+							}    
 
 
-indexOf()
-The following code shows how to use indexOf():
-String string = "animals";
-System.out.println(string.indexOf('a')); // 0
-System.out.println(string.indexOf("al")); // 4
-System.out.println(string.indexOf('a', 4)); // 4
-System.out.println(string.indexOf("al", 5)); // -1
-
-substring()
-String string = "animals";
-String substring(int beginIndexInclusively) //to the end
-String substring(int beginIndexInclusively, int endIndexExclusively)
-System.out.println(string.substring(3)); //mals
-System.out.println(string.substring(string.indexOf('m'))); //mals
-System.out.println(string.substring(3, 4)); // m
-System.out.println(string.substring(3, 7)); //mals
-
-System.out.println(string.substring(3, 3)); // empty string
-System.out.println(string.substring(3, 2)); // throws exception
-System.out.println(string.substring(3, 8)); // throws exception
-
-startsWith() and endsWith()
-
-boolean startsWith(String prefix)
-boolean endsWith(String suffix)
-System.out.println("abc".startsWith("a")); // true
-System.out.println("abc".startsWith("A")); // false
-System.out.println("abc".endsWith("c")); // true
-System.out.println("abc".endsWith("a")); // false
-"asdas".startsWith(null); //Exception
+Optional specifieres
 
 
-replace()
+Optional specifiers for methods Modifier 						Description 
+static 															Indicates the method is a member of the shared class object
 
-String replace(char oldChar, char newChar)
-String replace(CharSequence target, CharSequence replacement
-System.out.println("abcabc".replace('a', 'A')); // AbcAbc
-System.out.println("abcabc".replace("a", "A")); // AbcAbc
-System.out.println("abcabc".replace('a', "A")); // DOES NOT COMPILE
-System.out.println("abcabc".replace("A",'a' )); // DOES NOT COMPILE
+abstract 														Used in an abstract class or interface when the method body is excluded
 
-trim(), strip(), stripLeading(), and stripTrailing()
+final 															Specifies that the method may not be overridden in a subclass
 
-System.out.println("abc".strip()); // abc
-System.out.println("\t a b c\n".strip()); // a b c
-String text = " abc\t ";
-System.out.println(text.trim().length()); // 3
-System.out.println(text.strip().length()); // 3
-System.out.println(text.stripLeading().length()); // 5
-System.out.println(text.stripTrailing().length());// 4
+default 														Used in an interface to provide a default implementation of a method for classes that implement the interface
 
-\t is a single character. 
+synchronized 													Used with multithreaded code 
 
---------------------------------------
+native 															Used when interacting with code written in another language, such as C++
 
-Using the StringBuilder Class
-
-StringBuilder changes its own state and returns a reference to itself.
-
-
-charAt(), indexOf(), length(), and substring()
-These four methods work exactly the same as in the String class.Being called on StringBuilder, they all return new String
-
-StringBuilder sb = new StringBuilder("abcdef");
-sb.delete(1, 3); // sb = adef
-sb.deleteCharAt(5); // throws an exception
-
-System.out.println(s1 == s2); //returns false, because one object is in the Heap, and another is in the String Constant Pool, and as there already exists the object in the pool, with the same value, existing object will be returned by `intern()`.
-
-These 4 methods for StringBuilder are different: append() insert() replace() delete() and deleteCharAt() reverse()
-
-append()
-StringBuilder sb = new StringBuilder().append(1).append('c');
-sb.append("-").append(true);
-System.out.println(sb);
-
-
-insert()
-StringBuilder insert(int offset, String str)
-StringBuilder sb = new StringBuilder("animals");
-sb.insert(7, "-"); // sb = animals
-
-delete() and deleteCharAt()
-StringBuilder sb = new StringBuilder("abcdef");
-sb.delete(1, 3); // sb = adef
-sb.deleteCharAt(5); // throws an exception
-
-replace()
-The replace() method works differently for StringBuilder than it did for String.
-StringBuilder replace(int startInclusiveIndex, int endExclusiveIndex, String newString)
-
-The following code shows how to use this method:
-StringBuilder builder = new StringBuilder("pigeon dirty");
-builder.replace(3, 6, "sty");
-System.out.println(builder); // pigsty dirty
-First, Java deletes the characters starting with index 3 and ending
-right before index 6. This gives us pig dirty. Then Java inserts to the
-value "sty" in that position.
-In this example, the number of characters removed and inserted is the
-same. However, there is no reason that it has to be. What do you think
-this does?
-StringBuilder builder = new StringBuilder("pigeon dirty");
-builder.replace(3, 100, "");
-System.out.println(builder);
-
-It actually prints "pig". Remember the method is first doing a logical
-delete. The replace() method allows specifying a second parameter
-that is past the end of the StringBuilder. That means only the first
-three characters remain.
+strictfp 														Used for making floating-point calculations portable 
 
 
 
+Return Type
+
+The next item in a method declaration is the return type. It must appear after any access
+modifiers or optional specifiers and before the method name. The return type might be an
+actual Java type such as String or int. If there is no return type, the void keyword is used
+
+Method Signature
+
+A method signature, composed of the method name and parameter list, is what Java uses
+to uniquely determine exactly which method you are attempting to call. It’s important to note that the names of the parameters in the method signature are not
+used as part of a method signature.
+
+public class Trip {
+ public void visitZoo(String name, int waitTime) {}
+ public void visitZoo(String attraction, int rainFall) {} // DOES NOT COMPILE -  these two methods have the same signature and cannot be declared within the same class.
+}
 
 
---------------------------------------
+Effectively Final Variables
 
-The intern() ***IMPORTANT
+An effectively final local variable is one that is not modified after it is assigned.
 
-When we create a String object using the new() operator, it always creates a new object in heap memory. 
-On the other hand, if we create an object using String literal syntax e.g. “Baeldung”, 
-it may return an existing object from the String pool, if it already exists. 
-Otherwise, it will create a new String object and put in the string pool for future re-use.
+This means
+that the value of a variable doesn’t change after it is set, regardless of whether it is explicitly
+marked as final. If you aren’t sure whether a local variable is effectively final, just add the
+final keyword. If the code still compiles, the variable is effectively final.
 
-The string pool contains literal values and constants that appear in
-your program. For example, "name" is a literal and therefore goes into
-the string pool. myObject.toString() is a string but not a literal, so it
-does not go into the string pool.
+11: public String zooFriends() {
+12: String name = "Harry the Hippo";
+13: var size = 10;
+14: boolean wet;
+15: if(size > 100) size++;
+16: name.substring(0);
+17: wet = true;
+18: return name;
+19: }
 
 
-We can manually intern a String in the Java String Pool by calling the intern() method on the object we want to intern.
-Manually interning the String will store its reference in the pool, and the JVM will return this reference when needed.
+Instance Variable Modifiers
 
-Example1:
+Like methods, instance variables can use access modifiers, such as private, package, protected,
+and public.
 
-		String constantString = "interned Baeldung";
-        String newString = new String("interned Baeldung");
-        System.out.println(constantString == newString); //false
-        String internedString = newString.intern();
-        System.out.println(constantString == internedString); // true
 
-Example2:
+final - Specifies that the instance variable must be initialized with each instance of the class exactly once. If an instance variable is
+		marked final, then it must be assigned a value when it is declared or when the object is instantiated. The compiler does not apply a default value to final variables
 		
-		String s1 = "a";
-        String s2 = s1.intern();
-        System.out.println(s1 == s2); //true
-		
-Example3:		
-		
-		String str = new String("Welcome to JavaTpoint"); //Heap reference
-        String str1 = new String("Welcome to JavaTpoint"); //Heap reference
-        String x = str1.intern(); //Have a look on the Pool and see if there is a string which is equal (using equals(Object) from String class) with the object upon which the intern() is called. 
-								 //If it does exist, return that reference from the Pool, if it doesn't exist, added it to pool and return a reference;
-        System.out.println(str == x); // prints false; comparing references from Heap-a and Pool-a
-        System.out.println(str1 == x); // prints false; comparing references from Heap-a and Pool-a
-        System.out.println("Welcome to JavaTpoint" == x); //true; comparing same references from Pool-a
-
-Example4:
-
-		String s15 = new StringBuilder().append("rat").append("pat").toString();
-        String s16 = "rat" + "pat";
-        System.out.println(s15 == s16); //false
-        System.out.println(s15.intern() == s16); //true
-
-Example5:
-
-		String rat = "rat";
-        String s15 = new StringBuilder().append("rat").append("pat").toString(); //On heap
-        System.out.println(s15 == (rat+"pat")); //false; (rat+"pat") --> this a new reference on Heap
-        String s16 = "rat" + "pat"; //returned from Pool if it exists;  if it doesn't exist, added it to Pool and return a reference;
-        System.out.println(s15 == s16); //false;  comparing references from Heap-a and Pool-a
-        System.out.println(s15.intern() == s16); //true
-		
-Example6:		
-		
-		String singleString = "hello world";
-        String oneLine = "hello " + "world";  //Strings concatenated from constant expressions are computed at compile time and then treated as if they were literals.
-        String concat = "hello";
-        concat += " world"; //new String on the heap
-        System.out.println(singleString == oneLine); //true
-        System.out.println(singleString == concat); //false
-		System.out.println(oneLine == concat); //false
-
-Example7:
-
-		public static String hello = "Hello"; //Class is StringIntern
-        String hello = "Hello", lo = "lo";
-        System.out.println(hello == "Hello"); //true
-        System.out.println(StringIntern.hello == hello); //true
-        System.out.println(hello == ("Hel"+"lo")); //true; Strings concatenated from constant expressions are computed at compile time and then treated as if they were literals.
-        System.out.println(hello == ("Hel"+lo)); //false; Strings computed by concatenation at run time are newly created and therefore distinct.
-        System.out.println(hello == ("Hel"+lo).intern());		 //true
-		
-Example8:
-
-		String first = "rat" + 1; //we have a compile-time constant that automatically gets placed in the string pool as "rat1"
-        String second = "r" + "a" + "t" + "1"; //compile-time constant; treated as if they were literals.
-        String third = "r" + "a" + "t" + new String("1");
-        System.out.println(first == second); //true
-        System.out.println(first == second.intern()); //true; intern() returns reference from Pool if exists, if not it creates new reference on Pool and returns it.
-        System.out.println(first == third); //false; we have a String constructor. This means we no longer have a compile-time constant, and third does not point to a reference in the string pool.
-        System.out.println(first == third.intern()); //true
-		System.out.println(second == third.intern());   //true
-
-Example9:
-
-		String s1 = "Javatpoint";
-        String s2 = s1.intern();
-        String s3 = new String("Javatpoint");
-        String s4 = s3.intern();
-        System.out.println(s1==s2); //true
-        System.out.println(s1==s3); //false
-        System.out.println(s1==s4); //true
-        System.out.println(s2==s3); //false
-        System.out.println(s2==s4);//true
-        System.out.println(s3==s4); //false		
-		
-Example10:
-
-		String s = "d".intern();
-        String p = "d"; // compiler treats it as String p = "d".intern();
-        System.out.println(s == p); // prints true		
-		
-Example11:
-
-		String s1 = "a"; //allocated in the String Constant Pool
-        s1 = s1.concat("b"); //contact() returns a new String object, allocated in the Heap
-        String s2 = "ab";//"ab" still does NOT exist in the String Constant Pool, and it gets allocated there
-        System.out.println(s1 == s2); //returns false, because one object is in the Heap,
-                                     // and another is in the String Constant Pool, and as there already exists the object in the pool,
-                                    // with the same value, existing object will be returned by `intern()`
-
-        System.out.println(s1.intern() == s2); //true	
-		
-Example12:
-
-		String str3 = new String("Welcome to JavaTpoint").intern(); 
-        String str4 = new String("Welcome to JavaTpoint").intern(); 
-        System.out.println(str3 == str4); // prints true		
-		String str5 = new String("Welcome to JavaTpoint").intern(); 
-        String str6 = new String("Welcome to JavaTpoint"); 
-        System.out.println(str5 == str6); // prints false
-
-Example13:
-
-        String myString = "Both".concat(" fickle")
-                .concat(" dwarves")
-                .concat(" jinx")
-                .concat(" my")
-                .concat(" pig")
-                .concat(" quiz");
-
-
-        System.out.println("Both fickle dwarves jinx my pig quiz"== myString); //false
-
-The Java Language Specification:
-
-Returns a canonical representation for the string object.
-A pool of strings, initially empty, is maintained privately by the class String.
-When the intern method is invoked, if the pool already contains a string equal to this String object as determined by the equals(Object) method,
-then the string from the pool is returned. Otherwise, this String object is added to the pool and a reference to this String object is returned.
-It follows that for any two strings s and t, s.intern() == t.intern() is true if and only if s.equals(t) is true.
-All literal strings and string-valued constant expressions are interned. String literals are defined in section 3.10.5 of the The Java™ Language Specification.
-Returns:
-a string that has the same contents as this string, but is guaranteed to be from a pool of unique strings.	
-		
-https://docs.oracle.com/javase/specs/jls/se11/jls11.pdf 3.10.5 String Literals
-https://www.baeldung.com/java-strings-concatenation
-https://www.baeldung.com/string/intern
-https://stackoverflow.com/questions/63252282/why-jvm-is-not-seeing-duplicate-string-value-in-string-pool-memory
-
---------------------------------------
-
-
-String text blocks: *** https://docs.oracle.com/en/java/javase/18/text-blocks/index.html
-
-After adding """, content must gon in new line;
-
-14: String pyramid = """
-15:|   *
-16:|  * *
-17:| * * *
-18:| """; // line without any characters; it is counted as a line in the output
-19: System.out.print(pyramid);
-
-| - imaginary line which marks "incidental boundary" - a vertical line drawn on the leftmost non-whitespace character in your text block. Everything to the left of it is incidental whitespace, and everything to the right is
-essential whitespace
-
-There are four lines of output.
-The closing triple " would have needed to be on line 17 if we didn’t want that blank line.
-There are no incidental whitespace characters here on line 17. The closing """ on line 18 are the leftmost characters, so the line is drawn at the leftmost position
-Line 15 has two essential whitespace characters to begin the line
-Line 16 has one essential whitespace characters
-
-String block = """doe"""; // DOES NOT COMPILE
-
-
-String text = """
-			  a
-			   b
-			  c""";
-
-System.out.println(text); //6
-
-Why 6 is printed? Because text is equivalent with text = "a\n b\nc"; //Implicitly, \n is added on line where 'a' and 'b' are. This is the same string as: "a\n b\nc"
-
-String block = """
-          a
-           b
-          c""";
-		  
-System.out.println(block.length()); //6 OK //Implicitly, \n is added on line where 'a' and 'b' are. This is the same string as: "a\n b\nc"
-System.out.println(block.indent(1).length()); //10
-
-We ask Java to add a single blank space to each of the three lines in block.
-However, the output says we added 4 characters rather than 3 since the length went from 6 to 10. 
-This mysterious additional character is thanks to the line termination normalization. 
-Since the text block doesn’t have a line break at the end, indent() adds one!		  
-
-
-String test= """
-          a\n
-           b\n
-          c\n""";
-
-We will have six rows, as follow:
-Row1: whitespace + a+\n =>>> 3 char total.  \n is added manually, so text block doesn't add another \n
-Row2: whitespace +\n  =>>> 2  char total.  whitespace is added because of indent() and \n is added implicitly by the Java/text block
-Row3: whitespace + whitespace + b + \n   =>>> 4 char total.  \n is added manually, so text block doesn't add another \n
-Row4: whitespace + \n  =>>> 2 char total.  whitespace is added because of indent() and \n is added implicitly by the Java/text block
-Row5: whitespace + c + \n  =>>> 3  char total. Since string is ending with \n indent() doesn't add it
-Row6: empty =>>> 0  char total.
-
-
-		var concat = " a\n"
-				 +   "  b\n"
-				 +   " c";
-
-System.out.println(concat.stripeIndent().length()); //6 OK; Remove all leading incidental white space
-
-String concat = """
-				   \na
-				   b
-				    c"""; 
-					
-					
-
-System.out.println(concat.stripeIndent().length()); //Calling stripeIndent makes no effect on text block
-
-NEEDS TO BE MORE TESTED AND PRACTICED!!!!!!!
-
-
-Trebalo bi tabelu napraviti 3x2, 3 reda su: text-block, concatenated string, regular string.
-kolone su: indent, stripeIndent, 
-
-
-
-
---------------------------------------
-Arrays
-
-int[] arr = new int[3] //int[] is required
-
-int[] numbers2 = new int[] {42, 55, 99}; - anonymous array
-
-Valid:
-
-int[] numAnimals;
-int [] numAnimals2;
-int []numAnimals3;
-int numAnimals4[];
-int numAnimals5 [];
-
-Ex1:
-int[] ids, types; //okay
-ids = new int[2];  //okay
-ids = {}; //not okay
-
-Ex2:
-int[] ids, types; //okay
-ids = new int[]{12}; //okay
-
-
-Ex3:
-int ids[], types; //DOES COMPILE
-ids = new int[2];
-types = 2;
-
-int ids, types[]; //DOES COMPILE
-
-Java has provided a method that prints an array nicely: 
-Arrays.toString(bugs) would print [cricket, beetle, ladybug].
-
-String[] strings = { "stringValue" };
-Object[] objects = strings;
-String[] againStrings = (String[]) objects;
-againStrings[0] = new StringBuilder(); // DOES NOT COMPILE
-objects[0] = new StringBuilder(); //DOES COMPILE; at runtime it gives ArrayStoreException; ]. We have a String[] referred to from an Object[] variable
-
-Sorting Arrays
-
-
-import java.util.*; // import whole package including
-Arrays
-import java.util.Arrays; // import just Arrays
-
-Remember that if you are shown a code snippet with a line number
-that doesn’t begin with 1, you can assume the necessary imports are
-there. Similarly, you can assume the imports are present if you are
-shown a snippet of a method
-
-int[] numbers = { 6, 9, 1 };
-Arrays.sort(numbers); //in place; void method
-
-String[] strings = { "10", "9", "100" };
-Arrays.sort(strings);
-
-for (String string : strings)
-System.out.print(string + " "); // 10 100 9
-
-The problem is that String sorts in alphabetic order, and 1
-sorts before 9. (Numbers sort before letters, and uppercase sorts
-before lowercase, in case you were wondering.)  Sorting order 1-9, A, a
-
-int[] numbers = {2,4,6,8};
-System.out.println(Arrays.binarySearch(numbers, 1)); // -1; This line searches for the index of the value 1. Although 1 isn’t in the list, the
-													// search can determine that it should be inserted at element 0 to preserve the sorted order. Then we negate that index and subtract 1 from it. So -0-1 = -1;
-
-System.out.println(Arrays.binarySearch(numbers, 3)); // -2;  Value 3 isn’t in the list, it would need to be inserted at index 1 to preserve the sorted order. We negate that index and subtract 1 for 1: -1-1 = -2 
-
-System.out.println(Arrays.binarySearch(numbers, 9)); // -5; Value 9 isn’t in the list, it would need to be inserted at index 5 to preserve the sorted order. We negate that index and subtract 1 for 1: -4-1 = -5
-
-int[] numbers = new int[] {3,2,1}; //Considered as not sorted array
-
-		 /**
-          * Searching for an element in a sorted array
-          *
-          * If an array is sorted and supposed element is not in an array,
-          * then its index where it should be placed in array is returned it is negated ith (-) and finally subtracted by -1
-		  * If no match is found, it negates the position
-		  *	where the element would need to be inserted and subtracts 1
-          */
-
-        /*int[] numbers = {2,4,6,8};
-        System.out.println(Arrays.binarySearch(numbers, 2)); // 0
-        System.out.println(Arrays.binarySearch(numbers, 4)); // 1
-        System.out.println(Arrays.binarySearch(numbers, 1)); // -1
-        System.out.println(Arrays.binarySearch(numbers, 3)); // -2
-        System.out.println(Arrays.binarySearch(numbers, 9)); // -5*/
-
-
-compare() on Arrays
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //COMPARING NUMBERS
-
-
-        /**
-         *
-         *Comparing arrays when size of both arrays is equal to 1
-         *
-         **/
-
-       /* //Rule 1: A negative number means the first array is smaller than the second array
-        System.out.println(Arrays.compare(new int[] {1}, new int[] {2})); // -1
-
-        //Rule 2: A zero means the arrays are equal.
-        System.out.println(Arrays.compare(new int[] {2}, new int[] {2})); // 0
-
-        //Rule 3: A positive number means the first array is larger than the second.
-        System.out.println(Arrays.compare(new int[] {2}, new int[] {1})); // 1*/
-
-
-        /**
-         *
-         *Comparing arrays when size of both arrays have different lengths                             
-         *
-         **/
-
-        //Rule 1. If both arrays are the same length and have the same values in each spot in the same order, return zero.
-
-        //Examples:
-        /*System.out.println(Arrays.compare(new int[] {1}, new int[] {1})); //0
-        System.out.println(Arrays.compare(new int[] {1,2}, new int[] {1,2})); //0
-        System.out.println(Arrays.compare(new int[] {}, new int[] {})); //0*/
-
-
-        //Rule 2. If all the elements are the same but the second array has extra elements at the end, return a negative number.
-
-        //Examples:
-        /*System.out.println(Arrays.compare(new int[] {1,5,4}, new int[] {1,5,4,2})); //-1
-        System.out.println(Arrays.compare(new int[] {}, new int[] {4})); //-1*/
-
-        //Rule 3. If all the elements are the same but the first array has extra elements at the end, return a positive number.
-
-        //Examples:
-        /*System.out.println(Arrays.compare(new int[] {1,5,4,2}, new int[] {1,5,4})); // 1
-        System.out.println(Arrays.compare(new int[] {4},new int[] {})); // 1*/
-
-        //Rule 4. If the first element that differs is smaller in the first array, return a negative number.
-
-        //Examples:
-        /*System.out.println(Arrays.compare(new int[] {1,5,4,2}, new int[] {1,5,4,3})); // -1
-        System.out.println(Arrays.compare(new int[] {1,1,-3,1}, new int[] {1,1,1,1})); // -1
-        System.out.println(Arrays.compare(new int[] {1,1,-3,1}, new int[] {1,1,1,-5})); // -1*/
-
-        //Rule 5. If the first element that differs is larger in the first array, return a positive number.
-
-        //Examples:
-        /* System.out.println(Arrays.compare(new int[] {1,5,4,3}, new int[] {1,5,4,2})); // 1
-        System.out.println(Arrays.compare(new int[] {1,1,3,1}, new int[] {1,1,1,1})); // 1
-        System.out.println(Arrays.compare(new int[] {1,1,3,1}, new int[] {1,1,1,-5})); // 1*/
-
-        //My conclusion ---> First apply Rules 4. and 5. and then Rules 2. 3. and 1.
-		
-		
-null is smaller than any other value.
-For numbers, normal numeric order applies.
-For strings, one is smaller if it is a prefix of another.
-For strings/characters, numbers are smaller than letters.
-For strings/characters, uppercase is smaller than lowercase.
-
-
-        System.out.println((int) 'a' ); //97
-        System.out.println((int) 'z' ); //122
-        System.out.println((int) 'A' ); //65
-        System.out.println((int) 'Z' ); //90
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//COMPARING STRINGS
+		public class PolarBear {
+		final int age = 10;
+		final int fishEaten;
+		final String name;
+		{ fishEaten = 10; } // fishEaten must be initialized either or in constructor
+		public PolarBear() {
+		name = "Robert";
+		}
+}
+volatile - Instructs the JVM that the value in this variable may be modified by other threads 
+transient - Used to indicate that an instance variable should not be serialized with the class
+
+
+Creating Methods with Varargs
+
+Rules for Creating a Method with a Varargs Parameter
+1. A method can have at most one varargs parameter.
+2. If a method contains a varargs parameter, it must be the last parameter in the list.
+
+public void walk1(int... steps) {}
+ public void walk2(int start, int... steps) {}
+ public void walk2(int start, int ...steps) {}
+ public void walk2(int start, int ... steps) {}
+ public void walk3(int... steps, int start) {} // DOES NOT COMPILE
+ public void walk4(int... start, int... steps) {} // DOES NOT COMPILE
+ 
+static void fly(int[] lengths) {}
+static void fly2(int... lengths) {} 
+
+	public static void main(String[] args) {
 	
-        /**
-         *
-         *Comparing arrays when size of both arrays have different lengths
-         *
-         **/
-
-        //Rule 1. If both arrays are the same length and have the same values in each spot in the same order, return zero.
-
-        //Examples:
-        /*System.out.println(Arrays.compare(new String[] {"a"}, new String[] {"a"})); //0
-        System.out.println(Arrays.compare(new String[] {"a", "a"}, new String[] {"a", "a"})); //0
-        System.out.println(Arrays.compare(new String[] {"c", "a"}, new String[] {"c", "a"})); //0*/
-
-        //Rule 2. If all the elements are the same but the second array has extra elements at the end, return a negative number.
-
-        //Examples:
-       /* System.out.println(Arrays.compare(new String[] {"a", "b", "c"}, new String[] {"a", "b", "c", "d"})); //-1
-        System.out.println(Arrays.compare(new String[] {}, new String[] {"h"})); //-1*/
-
-        //Rule 3. If all the elements are the same but the first array has extra elements at the end, return a positive number.
-
-        //Examples:
-       /* System.out.println(Arrays.compare(new String[] {"a", "b", "c", "d"}, new String[] {"a", "b", "c"})); // 1
-        System.out.println(Arrays.compare(new String[] {"d"},new String[] {})); // 1*/
-
-        //Rule 4. If the first element that differs is smaller in the first array, return a negative number.
-
-        //Examples:
-        /*System.out.println(Arrays.compare(new String[] {"l", "z", "f", "a"}, new String[] {"l", "z", "f", "z"})); // -1
-        System.out.println(Arrays.compare(new String[] {"a","a","a","a"}, new String[] {"a","a","aa","a"})); // -1
-        System.out.println(Arrays.compare(new String[] {"a","a","cd","F"}, new String[] {"a","a","h","5"})); // -1*/
-
-        //Rule 5. If the first element that differs is larger in the first array, return a positive number.
-
-        //Examples:
-
-        /*System.out.println(Arrays.compare(new String[] {"l", "z", "f", "z"}, new String[] {"l", "z", "f", "a"})); // 1
-        System.out.println(Arrays.compare(new String[] {"l", "z", "f", "z"}, new String[] {"l", "z", "a", "z"})); // 1
-        System.out.println(Arrays.compare(new String[] {"l", "l","z", "l"}, new String[] {"l", "l", "l","a"})); // 1*/
-
-        //My conclusion ---> First apply Rules 4. and 5. and then Rules 2. 3. and 1.
-
-
-mismatch() on Arrays
-
-This method returns the index at which two arrays passed as a parameter to the mismatch() function have the first unequal element.
-
-        int array1[] = { 2, 7, 11, 22, 37 };
-        int array2[] = { 2, 7, 11, 22, 37 };
-        int array3[] = { 2, 7, 19, 31, 39, 56 };
-        int index1 = Arrays.mismatch(array1, array2); //-1
-        int index2 = Arrays.mismatch(array1, array3); //2
-        int index3 = Arrays.mismatch(array2, array3); //2
+		fly(1,2,3); //DOES NOT COMPILE
+		fly(new int[] { 1, 2, 3 }); //DOES COMPILE
 		
-		
+		fly2(1,2,3); //DOES COMPILE
+		fly2(new int[] { 1, 2, 3 }); //DOES COMPILE
+	}
 
 
 --------------------------------------
 
-List
+Protected Access
 
-...
 
-Converting from a String to Primitive ---> NameOfTheWrapperClass.parseXXX
-Converting from a String to Wrapper ---> NameOfTheWrapperClass.valueOfXXX
+package pond.shore;
+public class Bird {
+ protected String text = "floating";
+ protected void floatInWater() {
+ System.out.print(text); // protected access is ok
+ }
+}
 
-Integer primitivea = Integer.valueOf("1"); // DOES COMPILE
-Integer primitive = Integer.valueOf(1); // DOES COMPILE
 
-int wrapper = Integer.parseInt("123");  // DOES COMPILE
-int wrapper = Integer.parseInt(123);  // DOES NOT COMPILE
+package pond.shore;
+public class Eagle extends Bird {
+ 
+	//Eagle is extending Bird
 
-Converting Between array and List
+	public void throughReference(){
 
-ArrayList into an array:
-
-        List<Student> students = new ArrayList<>();
-        Student s1 = new Student();
-        Student s2 = new Student();
-        students.add(s1); students.add(s2);
-        Object[] objects = students.toArray(); //returns a new reference to an Object array object which elements are references (all are copies) pointing to same objects
-											   // as references in 'students' list are pointing to
-        students.get(0).id = 5;
-        Student[] students1 = students.toArray(new Student[0]); //or new Student[students.size()]
-        System.out.println(Arrays.toString(students1));
-
-Array to List
-
-toList(array)
-
-Returns a fixed-size list backed by the specified array. (Changes to the returned list "write through" to the array.) 
-This method acts as bridge between array-based and collection-based APIs, in combination with Collection.toArray.
- The returned list is serializable and implements RandomAccess.
-This method also provides a convenient way to create a fixed-size list initialized to contain several elements:
-      List<String> stooges = Arrays.asList("Larry", "Moe", "Curly");
-  
-Params:
-a – the array by which the list will be backed
-Returns:
-a list view of the specified array
-
-		//List koja je kreirana sa .asList(studentsArr); odrazava sve svoje promene i na niz iz kojeg je kreirana; posto je fixna (ali ne i imutabilna) promena u velicini nije dozvoljena
-
-		Student[] studentsArr = {new Student(1), new Student(1)};
-        List<Student> studentsList = Arrays.asList(studentsArr); // returns fixed size list; "a list view of the specified array" - This is how we will distinguish/memoize whether is 'Array from List' or 'List from Array' direction
-        System.out.println(studentsList.size()); // 2
-        studentsList.set(1, new Student(12)); //
-        studentsArr[0] = new Student(121);
-        System.out.print(Arrays.toString(studentsArr));//
-        studentsList.remove(1); //Exception
-		//studentsList.clear(); //Exception
+		//Preconditions:
+		// - We are in a subclass of a target class ('Bird' in this case)
+		// - We are in a same package as a target class ('Bird' in this case)
+		// - Trying to access protected members through a reference variable of a target type ('Bird' in this case)
+																																																																																																					
+		Bird b = new Bird();																																															
 		
-Immutable list
+		b.floatInWater(); //DOES COMPILE //Referring to protected members through reference variable of type which has those protected member is OK.
+		System.out.print(b.text); //same here
+		
+		Eagle e = new Eagle(); //DOES COMPILE
+		e.floatInWater();
+																																																									
+	}																																																							
+																																																							
+	public void withoutReference(){
+																																																							
+																																																							
+		//Preconditions:
+		// - We are in a subclass of a target class ('Bird' in this case) 																	
+		// - We are in a same package as a target class ('Bird' in this case) 																	
+		// - Trying to access protected members without a reference variable of a target type ('Bird' in this case) 																	
 
-That means you cannot you cannot change the values or the size of the List. You can change the original
-array, but changes will not be reflected in the immutable List.
+		floatInWater(); //DOES COMPILE //Referring to protected members (of superclass) without reference variable of type which has those protected member is OK.  																	
+		System.out.print(text); //same here
+		
+	}
+}
+
+package pond.shore;
+public class Pigeon  {
+ 
+	
+	public void withBirdReference(){
+
+		//Preconditions:
+		// - We are not in a subclass of a target class ('Bird' in this case)
+		// - We are in a same package as a target class ('Bird' in this case)
+		// - Trying to access protected members through a reference variable of a target type ('Bird' in this case)
+
+		Bird b = new Bird();
+		b.floatInWater(); //DOES COMPILE //Referring to protected members of a type whose reference variable we are using and which has those protected member is OK. 
+		System.out.print(b.text); //same here
+		
+	}
+
+	public void withBirdSubclassReferences(){
+
+		//Preconditions:
+		// - We are not in a subclass of a target class ('Bird' in this case)
+		// - We are in a same package as a target class ('Bird' in this case)
+		// - Trying to access protected members through a reference variable of a subclass of a target type ('Bird' in this case)
+
+		Eagle e = new Eagle();
+		e.floatInWater(); //DOES COMPILE
+		System.out.print(e.text); 
+		
+	}
+
+}
+
+
+package pond.shore;
+public class TestMain{
+
+public static void main(String[] args) {
+
+
+		//Preconditions:
+		// - We are not in a subclass of a target class ('Bird' in this case)
+		// - We are in a same package as a target class ('Bird' in this case)
+		// - Trying to access protected members through a reference variable of a target type ('Bird' in this case)
+		
+
+	Bird b = new Bird();
+	String t = b.text; //DOES COMPILE
+
+		//Preconditions:
+		// - We are not in a subclass of a target class ('Bird' in this case)
+		// - We are in a same package as a target class ('Bird' in this case)
+		// - Trying to access protected members through a reference variable of a subclass of a target type ('Bird' in this case)
+
+
+	Eagle e = new Eagle();
+	String t1= e.text; //DOES COMPILE
+
+	Bird be = new Eagle();
+	be.floatInWater(); //DOES COMPILE
+
+}
+
+
+package pond.goose;
+import pond.shore.Bird;
+import pond.shore.Eagle;
+public class Goose extends Bird {
+ 
+	public void withoutReference(){
+
+		//Preconditions:
+		// - We are in a subclass of a target class ('Bird' in this case)
+		// - We are in a different package then target class ('Bird' in this case)
+		// - Trying to access protected members without a reference variable of a target type ('Bird' in this case)
+		
+		floatInWater(); //DOES COMPILE 
+		//System.out.print(text); //same here
+		
+	}
+	
+	public void throughItsOwnReference(){
+		//Preconditions:
+		// - We are in a subclass of a target class ('Bird' in this case)
+		// - We are in a different package then target class ('Bird' in this case)
+		// - Trying to access protected members through a reference variable of a (this) current defined subclass of a target type ('Bird' in this case)
+		
+		/*
+		 * If we were to define a subclass of Goose such as 'public class Goosling extends Goose{}', we could do the following within this class:
+		 * 
+		 * public void test(){
+		 * 		Goosling ss = new Goosling();
+		 *		ss.floatInWater(); //DOES COMPILE
+		 * }
+		 */
+		
+		Goose g = new Goose();
+		g.floatInWater(); //DOES COMPILE 
+		System.out.print(g.text); //same here
+	}
+
+	public void throughTargetReference(){
+		//Preconditions:
+		// - We are in a subclass of a target class ('Bird' in this case)
+		// - We are in a different package then target class ('Bird' in this case)
+		// - Trying to access protected members through a reference variable of a target type ('Bird' in this case)
+		
+		Bird b = new Bird();
+		//b.floatInWater(); //DOES NOT COMPILE  'floatInWater() has protected access in Bird'; DOES NOT COMPILE
+		//System.out.print(b.text); //same here
+		
+		Bird be = new Eagle();
+		// be.floatInWater(); //DOES NOT COMPILE 
 		
 		
-		 String[] array = { "hawk", "robin" }; // [hawk, robin]
-         List<String> list = List.of(array); // returns immutabl list
-         System.out.println(list.size()); // 2
-         array[0] = "new";
-         System.out.println(Arrays.toString(array)); // [new, robin]
-         System.out.println(list); // [hawk, robin]
-         list.set(1, "test"); // throws UnsupportedOperationException
+	}
+	
+	public void throughOtherSubclassReference(){
+	//Preconditions:
+		// - We are in a subclass of a target class ('Bird' in this case)
+		// - We are in a different package then target class ('Bird' in this case)
+		// - Trying to access protected members by using a reference variable of a subclass of a target type ('Bird' in this case)
+		Eagle e = new Eagle();
+		//e.floatInWater(); //DOES NOT COMPILE 
+		//System.out.print(e.text); //same here
+	}
+	
+	public void testPackageScopedMethodFromSuperclass() {
+		//packageMetod(); //DOES NOT COMPILE 
+		Bird b = new Bird();
+		//b.packageMetod(); //DOES NOT COMPILE 
 		
+		Goose g = new Goose();
+		//g.packageMetod(); //DOES NOT COMPILE 
+	}
+	
+
+}
+
+
+package pond.goose;
+
+public class Goosling extends Goose{
+
+}
+
+
+package pond.goose;
+
+import pond.shore.Bird;
+import pond.shore.Eagle;
+
+public class TestMain {
+	
+	
+	public static void main(String[] args) {
 		
+		Bird b = new Bird();
+		//b.floatInWater(); //DOES NOT COMPILE, 
 		
+		Goose g = new Goose();
+		//g.floatInWater(); //DOES NOT COMPILE, 
+		
+		Eagle e = new Eagle();
+		//e.floatInWater(); //DOES NOT COMPILE, 
+
+		Bird be = new Eagle();
+		//be.floatInWater(); //DOES NOT COMPILE, 
+		
+		Bird bg = new Goose();
+		//bg.floatInWater(); //DOES NOT COMPILE, 
+	}
+}
+
+
+
+Reviewing Access Modifiers
+Make sure you know why everything in Table 5.4 is true. Use the first column for the
+first blank and the first row for the second blank. Also, remember that a member is a
+method or field.
+
+TABLE 5.4 A method in ______ can access a ______ member.  A method in can access a member.
+
+
+																private 			package 			protected 				public
+the same class 		 											 Yes 				  Yes 				   Yes 					 Yes
+
+another class in the same package 								 No 				  Yes 				   Yes 					 Yes
+
+a subclass in a different package 								 No 				   No 				   Yes 					 Yes
+
+an unrelated class in a different package 						 No 				   No 					No 					 Yes
+
+
+the same class:
+1.  A method in the same class can access a private member. - Yes
+2.  A method in the same class can access a package member. - Yes
+3.  A method in the same class can access a protected member. - Yes
+4.  A method in the same class can access a public member. - Yes
+
+another class in the same package:
+1.  A method in another class in the same package can access a private member. - No
+2.  A method in another class in the same package can access a package member. - Yes
+3.  A method in another class in the same package can access a protected member. - Yes
+4.  A method in another class in the same package can access a public member. - Yes
+
+a subclass in a different package:
+1.  A method in a subclass in a different package can access a private member. - No
+2.  A method in a subclass in a different package can access a package member. - No
+3.  A method in a subclass in a different package can access a protected member. - Yes
+4.  A method in a subclass in a different package can access a public member. - Yes
+
+an unrelated class in a different package
+1.  A method in an unrelated class in a different package can access a private member. - No
+2.  A method in an unrelated class in a a different package can access a package member. - No
+3.  A method in an unrelated class in a a different package can access a protected member. - No
+4.  A method in an unrelated class in a a different package can access a public member. - Yes
+
 --------------------------------------
-Multidimensional Array
+Static
 
-int[][] vars1; // 2D array
-int vars2 [][]; // 2D array
-int[] vars3[]; // 2D array
-int[] vars4 [], space [][]; // a 2D AND a 3D array
+Three important rules:
 
+1. Iz Static metode ne mozes da pozivas non-static/instance metodu. Moras da imas "objekat" nad kojim pozivas.
+2. Static variable ne mogu da koriste instance variable
+3. Static variable se mogu koristiti i u static i u non-static/instance metodama
+4. static final variables (konstante) must be initialzed after they are declared OR they must be initialzed in static block
 
-int [][] args = new int[4][];
-args[0] = new int[5];
-args[1] = new int[3];
+	
+	private static int one;
+	private static final int two;
+	private static final int three = 3;
+	private static final int four; // DOES NOT COMPILE
+	static {
+	one = 1;
+	two = 2;
+	three = 3; // DOES NOT COMPILE
+	two = 4; // DOES NOT COMPILE
+	}
+	
+	
+	
 
-int [][] args2 = new int[4][];
-args2[0] = new int[5]; //legal
-args2[1] = {1,2}; //not legal
-
-Some examples:
-
-int[][] scores = new int[5][]; //DOES COMPILE
-Object[][][] cubbies = new Object[3][0][5];  //DOES COMPILE
-String beans[] = new beans[6]; //DOES NOT COMPILE
-java.util.Date[] dates[] = new java.util.Date[2][]; //DOES COMPILE
-int[][] types = new int[]; //DOES NOT COMPILE
-int[][] java = new int[][]; //DOES NOT COMPILE ---> to compile: int[][] java = new int[2][];
-
-
-
+--------------------------------------
