@@ -12,6 +12,13 @@ protected - The protected modifier means the method can be called only from a cl
 
 public - The public modifier means the method can be called from anywhere.
 
+Which of the following statements is correct?
+A. Package access is more lenient than protected access. - FALSE
+B. A public class that has private fields and package methods is not visible to classes outside the package. - FALSE
+C. You can use access modifiers so only some of the classes in a package see a particular package class. - FALSE
+D. You can use access modifiers to allow access to all methods and not any instance variables. - TRUE
+E. You can use access modifiers to restrict access to all classes that begin with the word Test. - FALSE
+
 TABLE 5.1 Parts of a method declaration in Figure 5.1
 Element 					Value in nap() example 				Required?
 Access modifier 				public 								No
@@ -68,8 +75,7 @@ Effectively Final Variables
 
 An effectively final local variable is one that is not modified after it is assigned.
 
-This means
-that the value of a variable doesn’t change after it is set, regardless of whether it is explicitly
+This means that the value of a variable doesn’t change after it is set, regardless of whether it is explicitly
 marked as final. If you aren’t sure whether a local variable is effectively final, just add the
 final keyword. If the code still compiles, the variable is effectively final.
 
@@ -86,8 +92,7 @@ final keyword. If the code still compiles, the variable is effectively final.
 
 Instance Variable Modifiers
 
-Like methods, instance variables can use access modifiers, such as private, package, protected,
-and public.
+Like methods, instance variables can use access modifiers, such as private, package, protected and public.
 
 
 final - Specifies that the instance variable must be initialized with each instance of the class exactly once. If an instance variable is
@@ -113,12 +118,15 @@ Rules for Creating a Method with a Varargs Parameter
 2. If a method contains a varargs parameter, it must be the last parameter in the list.
 
 public void walk1(int... steps) {}
- public void walk2(int start, int... steps) {}
- public void walk2(int start, int ...steps) {}
- public void walk2(int start, int ... steps) {}
- public void walk3(int... steps, int start) {} // DOES NOT COMPILE
- public void walk4(int... start, int... steps) {} // DOES NOT COMPILE
+public void walk2(int start, int... steps) {}
+public void walk2(int start, int ...steps) {}
+public void walk2(int start, int ... steps) {}
+public void walk3(int... steps, int start) {} // DOES NOT COMPILE
+public void walk4(int... start, int... steps) {} // DOES NOT COMPILE
  
+As you can see, we can overload by changing anything in the parameter list. We can have a different type, more types, or the same types in a different order. 
+Also notice that the return type, access modifier, and exception list are irrelevant to overloading. Only the method name and parameter list matter
+
 static void fly(int[] lengths) {}
 static void fly2(int... lengths) {} 
 
@@ -560,6 +568,21 @@ static {
 	two = 4; // DOES NOT COMPILE
 	}
 	
+public class RopeSwing {
+
+private static final String bench;
+
+static{
+	//nothing here
+}
+ public static void main(String[] args) {
+ //bench = "bench";
+ }
+}
+**In this example two lines don't compile. First 'bench' - If a variable is static final, it must be set exactly once, and it must be in the declaration line or in a static initialization block. Line 4 doesn’t compile because bench is
+not set in either of these locations. Second 'bench'  - doesn’t compile because final variables are not
+allowed to be set after that point (initialization line or static block). 
+
 	
 static Imports
 
@@ -631,3 +654,12 @@ public class OverloadingExample {
 	}
 	static class Student{}
 }
+
+
+public int juggle(boolean b, boolean... b2) {
+ return b2.length;
+}
+
+juggle(true, {true, true}); // DOES NOT COMPILE
+
+
