@@ -125,7 +125,7 @@ public void walk3(int... steps, int start) {} // DOES NOT COMPILE
 public void walk4(int... start, int... steps) {} // DOES NOT COMPILE
  
 As you can see, we can overload by changing anything in the parameter list. We can have a different type, more types, or the same types in a different order. 
-Also notice that the return type, access modifier, and exception list are irrelevant to overloading. Only the method name and parameter list matter
+Also notice that the return type, access modifier, and exception list are irrelevant to overloading. ****Only the method name and parameter list matter (Order of parameters)
 
 static void fly(int[] lengths) {}
 static void fly2(int... lengths) {} 
@@ -134,6 +134,7 @@ static void fly2(int... lengths) {}
 	
 		fly(1,2,3); //DOES NOT COMPILE
 		fly(new int[] { 1, 2, 3 }); //DOES COMPILE
+		fly({1,2,3}); //DOES NOT COMPILE
 		
 		fly2(1,2,3); //DOES COMPILE
 		fly2(new int[] { 1, 2, 3 }); //DOES COMPILE
@@ -403,9 +404,9 @@ a subclass in a different package:
 
 an unrelated class in a different package
 1.  A method in an unrelated class in a different package can access a private member. - No
-2.  A method in an unrelated class in a a different package can access a package member. - No
-3.  A method in an unrelated class in a a different package can access a protected member. - No
-4.  A method in an unrelated class in a a different package can access a public member. - Yes
+2.  A method in an unrelated class in a different package can access a package member. - No
+3.  A method in an unrelated class in a different package can access a protected member. - No
+4.  A method in an unrelated class in a different package can access a public member. - Yes
 
 --------------------------------------
 
@@ -420,9 +421,8 @@ public class Snake {
 7: s = null;
 8: System.out.println(s.hiss); // s is still a Snake DOES COMPILEL; No NPE
 
-Remember to look at the reference type for a variable when you see a
-static method or variable. The exam creators will try to trick you into
-thinking a NullPointerException is thrown because the variable happens to be null. Don’t be fooled!
+Remember to look at the reference type for a variable when you see a static method or variable. 
+The exam creators will try to trick you into thinking a NullPointerException is thrown because the variable happens to be null. Don’t be fooled!
 
 Example1:
 
@@ -466,7 +466,7 @@ public class MantaRay {
  private static String name = "Sammy";
  public static void first() { }
  public static void second() { }
- public static void third() { System.out.print(name); }
+ public static void third() { System.out.print(name); } // DOES  COMPILE
  
  public static void main(String args[]) {
  first();
@@ -497,7 +497,7 @@ Five important rules:
 
 1. Iz Static metode ne mozes da pozivas non-static/instance metode i ne mozes da pristupis non-static variablama. Moras da imas "objekat" nad kojim pozivas (on moze biti null) ili preko imena klase.
 2. Static variable ne mogu da koriste instance variable
-3. Static variable se mogu koristiti i u static i u non-static/instance metodama
+3. Static variable se mogu koristiti i u static i u non-static/instance metodama i u obicni initializer blokovima
 4. static final variables (konstante) must be initialzed after they are declared OR they must be initialzed in static block
 5. U static metodi ne mozes da koristis this
 
@@ -579,15 +579,15 @@ static{
  //bench = "bench";
  }
 }
-**In this example two lines don't compile. First 'bench' - If a variable is static final, it must be set exactly once, and it must be in the declaration line or in a static initialization block. Line 4 doesn’t compile because bench is
-not set in either of these locations. Second 'bench'  - doesn’t compile because final variables are not
-allowed to be set after that point (initialization line or static block). 
+**In this example two lines don't compile. First 'bench' - If a variable is static final, it must be set exactly once, and it must be in the declaration line or in a static initialization block. That line doesn’t compile because 'bench' is
+not set in either of these locations. Second 'bench'  - doesn’t compile because final variables are not allowed to be set after that point (initialization line or static block). 
 
 	
 static Imports
 
 import java.util.List;
 import static java.util.Arrays.asList; // static import
+import static java.util.Arrays.* //import all static members DOES COMPILE
 public class ZooParking {
  public static void main(String[] args) {
  List<String> list = asList("one", "two"); // No Arrays. prefix
