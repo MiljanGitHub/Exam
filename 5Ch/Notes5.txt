@@ -116,8 +116,8 @@ public class Test{
 	
 	 private String color;
 	 private  final int weight; // DOES NOT COMPILE
-	weight = 2; // DOES NOT COMPILE
-	  private  final Integer weight2; // DOES NOT COMPILE
+	 weight = 2; // DOES NOT COMPILE
+	 private  final Integer weight2; // DOES NOT COMPILE
 	 static int test32() {
 		 return 2;
 	 }
@@ -130,11 +130,12 @@ public class Test{
 public class MouseHouse {
  private final int volume;
  private final String name = "The Mouse House"; // Declaration assignment
+  static final int test;
  {
  volume = 10; // Instance initializer assignment; DOES COMPILE
  }
  public MouseHouse() {
-		super();
+		test = 22; // DOES NOT COMPILE
 		volume = 2; // DOES NOT COMPILE; already assigned in block
 		
 }
