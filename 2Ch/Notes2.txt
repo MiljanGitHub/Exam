@@ -25,7 +25,7 @@ its braces outside a method.
 instance init
 
 ------------------------------------------------
-Following Order of Initialization
+Following Order of Initialization (have a look at 'final fields' in Notes5; hava a look at 'Initializing Classes with inheritance and static' in Notes6)
 
 **Fields and instance initializer blocks are run in the order in which
 they appear in the file.

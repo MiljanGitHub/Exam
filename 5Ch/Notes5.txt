@@ -110,6 +110,40 @@ final - Specifies that the instance variable must be initialized with each insta
 volatile - Instructs the JVM that the value in this variable may be modified by other threads 
 transient - Used to indicate that an instance variable should not be serialized with the class
 
+final fields
+
+public class Test{
+	
+	 private String color;
+	 private  final int weight; // DOES NOT COMPILE
+	weight = 2; // DOES NOT COMPILE
+	  private  final Integer weight2; // DOES NOT COMPILE
+	 static int test32() {
+		 return 2;
+	 }
+
+	 int  test22() {
+		  return 2;
+	 }	 
+}
+
+public class MouseHouse {
+ private final int volume;
+ private final String name = "The Mouse House"; // Declaration assignment
+ {
+ volume = 10; // Instance initializer assignment; DOES COMPILE
+ }
+ public MouseHouse() {
+		super();
+		volume = 2; // DOES NOT COMPILE; already assigned in block
+		
+}
+}
+
+***Important rule: 
+
+Unlike static class members, though, final instance fields can also be set in a constructor. The constructor is part of the initialization process, so it is allowed to assign final
+instance variables. For the exam, you need to know one important rule: by the time the constructor completes, all final instance variables must be assigned a value exactly once.
 
 Creating Methods with Varargs
 
@@ -498,7 +532,7 @@ public class Hamster{
 	 private String color;
 	 private int weight;
 	 
-	 static int x = test32(); // DOES  COMPILE
+	 static int x = test32(); // DOES  COMPILE *******
 	 static int y = test22(); // DOES NOT COMPILE
 	 
 	 static int test32() {
