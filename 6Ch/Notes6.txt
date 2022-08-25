@@ -1,0 +1,250 @@
+Classes and Inheritance
+
+class B {
+class A{}
+ class Animal {
+    String a;
+    public static void main(String[] args) {
+
+        class Test2 {} //Compiler generates ---> Animal$1Test2.class
+        class Test {}  //Compiler generates ---> Animal$1Test.class
+       
+    }
+    
+    void test() {
+    	 class Test3 {
+    		 class Test {}
+    	 }
+    }
+    
+    class Test3 {}
+    class Test {} //Compiler generates ---> Animal$Test.class
+
+	class B{} //DOES NOT COMPILE
+}
+}
+
+In another class which is in the same package:
+
+public static void main(String[] args) {
+		
+		B b; //DOES COMPILE
+		A a;  //DOES COMPILE
+		Test3 t;  //DOES NOT COMPILE
+	}
+
+// Bear.java ***
+class Bird {}
+class Bear {}
+class Fish {} 
+//DOES COMPILE
+
+// ClownFish.java
+protected class ClownFish{} // DOES NOT COMPILE
+// BlueTang.java
+private class BlueTang {} // DOES NOT COMPILE
+
+
+this
+The 'this' reference refers to the current instance of the
+class and can be used to access any member of the class, including inherited members. It can
+be used in any instance method, constructor, or instance initializer block. It cannot be used
+when there is no implicit instance of the class, such as in a static method or static initializer
+block.
+
+this vs super Example
+
+class Insect {
+protected int numberOfLegs = 4;
+String label = "buggy";
+}
+
+public class Beetle extends Insect {
+protected int numberOfLegs = 6;
+short age = 3;
+public void printData() {
+ System.out.println(this.label); //Looks in current and within inheritance tree (superclasses); DOES COMPILE
+ System.out.println(super.label); //Only looks in superclasses; DOES COMPILE
+ System.out.println(this.age); //Finds it in current class;  DOES NOT COMPILE
+ System.out.println(super.age); //Only looks in superclasses; DOES NOT COMPILE
+ System.out.println(numberOfLegs); //DOES COMPILE  //Looks in current and within inheritance tree (superclasses); Java checks outward, starting with the narrowest scope. 
+												  //For this reason, the value of numberOfLegs in the Beetle class is used, and 6 is printed. 
+												 //In this example, this.numberOfLegs and super.numberOfLegs refer to different variables with distinct values.; 
+ }
+ public static void main(String []n) {
+ new Beetle().printData();
+ }
+ }
+ 
+ *** Remember, while 'this' includes current and inherited members, 'super' only includes inherited members.
+ 
+ 
+ 
+ constructors
+ 
+public class DemoMain {
+	
+	public DemoMain(int i) {};
+	
+	public static void main(String[] args) {
+		DemoMain dm = new DemoMain(); //DOES NOT COMPILE - compiler only inserts the default constructor when no constructors are defined.
+	}
+	***Having only private constructors in a class tells the compiler not to
+	   provide a default no-argument constructor. It also prevents other classes
+	   from instantiating the class. This is useful when a class has only static
+	   methods or the developer wants to have full control of all calls to create
+	   new instances of the class.
+}
+
+ 
+this()
+
+
+public class Hamster {
+ private String color;
+ private int weight;
+  public Hamster() {}
+ public Hamster(int weight, String color) { // First constructor
+ this.weight = weight;
+ this.color = color;
+ }
+ public Hamster(int weight) { // Second constructor
+ this.weight = weight;
+ color = "brown";
+ }
+  void test() {
+		 this() //DOES NOT COMPILE
+  }
+}
+
+
+***public Hamster(int weight) { // Second constructor
+ this(weight, "brown");
+ }
+ 
+ When this() is used with parentheses, Java calls another
+constructor on the same instance of the class.
+Despite using the same keyword, this and this() are very different. The first, 'this',
+refers to an instance of the class, while the second, 'this()', refers to a constructor call
+within the class. The exam may try to trick you by using both together, so make sure you
+know which one to use and why. Calling this() has one special rule you need to know. If you choose to call it, the this() call
+must be the first statement in the constructor. The side effect of this is that there can be only
+one call to this() in any constructor.
+
+public Hamster(int weight) { //Second constructor
+ 
+    this(weight, "color");
+	System.out.println("obj");	
+    this(weight, "aaa"); //DOES NOT COMPILE
+	
+}
+
+public Hamster(int weight) { //Second constructor
+ 
+	System.out.println("obj");	
+    this(weight, "color"); //DOES NOT COMPILE
+	
+}
+or
+public Hamster(int weight) { //Second constructor
+ 
+    this(weight, "color"); //DOES COMPILE
+	System.out.println("obj");
+}
+or
+public Hamster(int weight) { //Second constructor
+ 
+    this(); //DOES COMPILE
+	System.out.println("obj");
+	 this.weight = weight;
+}
+
+public Hamster(int weight) { // Second constructor
+	 
+	this(weight);	 //DOES NOT COMPILE
+}
+
+**Cannot have multiple this() only single this() and it must be first line within constructor; and it cannot call 'itself' using this()
+
+The compiler and cyclic this():
+
+public class Gopher {
+ public Gopher(int dugHoles) {
+ this(5); // DOES NOT COMPILE
+ }
+}
+
+public class Gopher {
+ public Gopher() {
+ this(5); // DOES NOT COMPILE
+ }
+ public Gopher(int dugHoles) {
+ this(); // DOES NOT COMPILE; if we comment out this line, then code compiles OR other line 'this(5);' then code again compiles. Notice we have two compile errors
+ }
+} 
+
+Rukes for constructors:
+
+■ A class can contain many overloaded constructors, provided the signature for each is distinct.
+■ The compiler inserts a default no-argument constructor if no constructors are declared.
+■ If a constructor calls this(), then it must be the first line of the constructor.
+■ Java does not allow cyclic constructor calls.
+
+
+--------------------------------------
+
+super()
+
+class Mammal{
+	//public Mammal() {System.out.println("ff");} DEAFULT CONSTRUCTOR IS NOT CREATED ***
+	public Mammal(int i) {System.out.println("aa");}
+	public Mammal(int i, String ff) {System.out.println("ff");}
+	public int weight;
+}
+
+public class Hamster extends Mammal{
+	
+	 private String color;
+	 private int weight;
+	 
+	 public Hamster() { this(2, "ffg");}
+	 
+	 public Hamster(int weight, String color) { // First constructor
+		 this(1);
+
+	 }
+	 public Hamster(int weight) { // Second constructor
+		 super(2, ""); //In case we are not using this() such as current 'public Hamster(int weight) {...}' constructor, java automatically inserts super() if we don't specify and super method call, as we did with 'super(2, "");'	 	
+	 }
+	 
+	 public Hamster(long kk) {
+		 super(1,"fFG");
+	 }
+	 
+	 void test() {
+		 super(1); //DOES NOT COMPILE
+	 }
+	 
+	 public static void main(String[] args) {
+		new Hamster(2,  "");
+	}
+	 
+}
+*** The first statement of every constructor is a call to a parent constructor using super() or another constructor in the class using this(). They cannot be together. super() must be on the first line if this() is not used, and vice-reversed.
+
+*** In every subclass constructor implicit super() call is made by the compiler. Obviously, it tries to call no-arg super constructor if it exists. Superclass no-args constructor will not be created
+if there is already definde any other superclass constructor. And if that constructor doesn't exist, calls from constructors in a subclass to a superclass no-arg constructor won't be made and we get DOES NOT COMPILE error. 
+In that case you have to find appropriate overloaded superclass constructor and call it with super(params1, paramsN) or manually define a default constructor in a superclass.
+
+
+■ The first line of every constructor is a call to a parent constructor using super() or an overloaded constructor using this().
+■ If the constructor does not contain a this() or super() reference, then the compiler automatically inserts super() with no arguments as the first line of the constructor.
+■ If a constructor calls super(), then it must be the first line of the constructor
+
+
+--------------------------------------
+
+Initializing Classes
+
+First, we initialize the class, which involves invoking all static members in the class hierarchy, starting with the
+highest superclass and working downward. This is sometimes referred to as loading the class. 

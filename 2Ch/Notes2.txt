@@ -72,12 +72,18 @@ public class Panda {
 	
 	{System.out.println("upper initializer block in Panda");}
 	
+	static{
+		System.out.println("static upper Panda");
+	}
+	
 	public Panda() {
 		System.out.println("panda constructor");
 	}
-	public static void main(String[] args) {
-		
+	
+	static{
+		System.out.println("static lower Panda");
 	}
+	
 	{System.out.println("lower initializer block in Panda");}
 }
 
@@ -86,17 +92,25 @@ package paket1;
 
 public class Duck {
 
-	int duckx = 1;
 	Panda p = new Panda();
+	
+	static{
+		System.out.println("static upper Duck");
+	}
 	
 	{System.out.println("upper initializer block in Duck");}
 	
 	public Duck() {
 		System.out.println("Duck constructor");
+
 	}
 	
 	public static void main(String[] args) {
 		new Duck();
+	}
+	
+	static{
+		System.out.println("static lower Duck");
 	}
 	
 	{System.out.println("lower initializer block in Duck");}
@@ -104,12 +118,17 @@ public class Duck {
 
 If we run from Duck's main method:
 
+static upper Duck
+static lower Duck
+static upper Panda
+static lower Panda
 upper initializer block in Panda
 lower initializer block in Panda
 panda constructor
 upper initializer block in Duck
 lower initializer block in Duck
 Duck constructor
+
 
 
 

@@ -493,6 +493,25 @@ public class MantaRay {
  }
 }
 
+public class Hamster{
+	
+	 private String color;
+	 private int weight;
+	 
+	 static int x = test32(); // DOES  COMPILE
+	 static int y = test22(); // DOES NOT COMPILE
+	 
+	 static int test32() {
+		 return 2;
+	 }
+
+	 int  test22() {
+		  return 2;
+	 }	 
+	
+	 
+}
+
 Five important rules:
 
 1. Iz Static metode ne mozes da pozivas non-static/instance metode i ne mozes da pristupis non-static variablama. Moras da imas "objekat" nad kojim pozivas (on moze biti null) ili preko imena klase.
@@ -663,3 +682,9 @@ public int juggle(boolean b, boolean... b2) {
 juggle(true, {true, true}); // DOES NOT COMPILE
 
 
+TABLE 5.6 The order that Java uses to choose the right overloaded method
+Rule 								Example of what will be chosen for glide(1,2)
+Exact match by type 				String glide(int i, int j)
+Larger primitive type 				String glide(long i, long j)
+Autoboxed type 						String glide(Integer i, Integer j)
+Varargs 							String glide(int... nums)
