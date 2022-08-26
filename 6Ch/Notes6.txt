@@ -272,67 +272,53 @@ Evauluate order of initialization for static members in inheritance hierarchy:
 
 Follow all three cases!!!
 
+Example 1:
+
 public class Test{
-	static {
-		 System.out.println("in Test static block upper");
-	 }
+	 static {System.out.println("in Test static block upper"); }
 	 private Helper h1 = new Helper("pera");
 	 private static Helper h = new Helper();
 	 private static final int x = test32();
 	 private String color;
 	 
-	 {
-			System.out.println("Upper block Test");
-		}
+	 {System.out.println("Upper block Test");}
 	 
 	 static int test32() {
 		 System.out.println("in test32...");
 		 return 2;
 	 }
 	 
+	 public Test(int i) {
+		 this("ggg");
+		 System.out.println("yy");
+	 }
+	 
+	 public Test(String i) {
+		 System.out.println("ff");
+	 }
+	 
 	 public static void main(String[] args) {
 		 System.out.println("From test main");
-		 new Exam();
-		 /*
-		  * 'new Exam();' will output:
+		 //new Test(1);
+		 /**
+		  * Output:
 		  * 
 		  * in Test static block upper
 			in helper constructor
 			in test32...
 			in Test static block lower
 			From test main
-			in Exam static block upper
-			in helper constructor3: djura
-			in Exam getObj...
-			in Exam static block lower
 			in helper constructor3: pera
 			Upper block Test
 			Lower block Test
-			in helper constructor2: 5
-			Upper block Exam
-			Lower block Exam
-			No arg constructor Exam
-		  */
-		
-		 
-		 //new Test();
-		 /*
-		  * 'new Test();' will output:
-		  * in Test static block upper
-			in helper constructor
-			in test32...
-			in Test static block lower
-			From test main
-			in helper constructor3: pera
-			Upper block Test
-			Lower block Test
+			ff
+			yy
 
-		  * 
 		  */
 		 
-		// Exam.main(null);
-		 /*
-		  * 'Exam.main(null);' will output: *** TRICKY!!! static/initialization happens only once
+		 //Exam.main(args);
+		 /**
+		  * Output:
 		  * 
 		  * in Test static block upper
 			in helper constructor
@@ -347,35 +333,64 @@ public class Test{
 			in helper constructor3: pera
 			Upper block Test
 			Lower block Test
+			ff
+			yy
+			in helper constructor2: 5
+			Upper block Exam
+			Lower block Exam
+			No arg constructor Exam
+			
+			in helper constructor3: pera
+			Upper block Test
+			Lower block Test
+			ff
+			yy
 			in helper constructor2: 5
 			Upper block Exam
 			Lower block Exam
 			No arg constructor Exam
 
+		  */
+		 
+		// new Exam();
+		 /**
+		  * 
+		  * Output:
+		  * 
+		  * in Test static block upper
+			in helper constructor
+			in test32...
+			in Test static block lower
+			From test main
+			in Exam static block upper
+			in helper constructor3: djura
+			in Exam getObj...
+			in Exam static block lower
+			in helper constructor3: pera
+			Upper block Test
+			Lower block Test
+			ff
+			yy
+			in helper constructor2: 5
+			Upper block Exam
+			Lower block Exam
+			No arg constructor Exam
 
 		  */
 	}
 	 
-	 {
-			System.out.println("Lower block Test");
-		}
+	 {System.out.println("Lower block Test");}
 	 
-	 static {
-		 System.out.println("in Test static block lower");
-	 }
+	 static { System.out.println("in Test static block lower");}
 }
 
 class Exam extends Test{
 	
-	 static {
-		 System.out.println("in Exam static block upper");
-	 }
+	 static {System.out.println("in Exam static block upper");}
 	
 	 private Helper h = new Helper(5);
-	  {
-		 System.out.println("Upper block Exam");
-	 }
-		 private static Helper h2 = new Helper("djura");
+	 {System.out.println("Upper block Exam");}
+	 private static Helper h2 = new Helper("djura");
 	 static Object x = getObj();
 			 
 			 
@@ -384,22 +399,21 @@ class Exam extends Test{
 		 return null;
 	 }
 	 
-	 static {
-		 System.out.println("in Exam static block lower");
-	 }
+	 static {System.out.println("in Exam static block lower");}
 	 
 	 public Exam() {
+		 super(1);
 		 System.out.println("No arg constructor Exam");
 	 }
-	 
 	 
 	 public static void main(String[] args) {
 		 System.out.println("From Exam main");
 		 new Exam();
+		 System.out.println();
+		 new Exam();
+		 
 	}
-	{
-		System.out.println("Lower block Exam");
-	}
+	{System.out.println("Lower block Exam");}
 }
 
 class Helper{
@@ -416,6 +430,29 @@ class Helper{
 		System.out.println("in helper constructor3: " + x);
 	}
 }
+
+
+Example2:
+
+public class Animal {
+ static { System.out.print("A"); }
+}
+public class Hippo extends Animal {
+ public static void main(String[] grass) {
+ System.out.print("C");
+ new Hippo();
+ new Hippo();
+ new Hippo();
+ }
+ static { System.out.print("B"); }
+}
+
+Why the Hippo Program Printed C After AB?
+
+the Hippo class was initialized before the main() method was
+executed. This happened because our main() method was inside the class being executed,
+so it had to be loaded on startup
+
 
 
 ***Important rule: 
@@ -451,11 +488,17 @@ public class StaticFinalInstanceVariables {
 	private final int y = 22;
 	private final int y1;
 	private final int y3;
+	//private final int y4; //final instance variables must be assigned a value If they are not assigned a value
+    //when they are declared or in an instance initializer, then they must be assigned a value in
+    //the constructor declaration. Failure to do so will result in a compiler error on the line that
+    //declares the constructor
+	//** by the time the constructor completes, all final instance variables must be assigned a value exactly once.
 	static {
 		//y = 224; //DOES NOT COMPILE; Cannot make a static reference to the non-static field y
 		//y1 = 222; //DOES NOT COMPILE; Cannot make a static reference to the non-static field y1
 	}
 	{
+		//y = 222; //DOES NOT COMPILE; already assigned
 		y1 = 55; 
 	    //y1 = 22; //DOES NOT COMPILE; already assigned value
 	}
@@ -471,7 +514,7 @@ public class StaticFinalInstanceVariables {
 		c0 = 2222; //can be reassigned value
 	}
 	
-	{c = 66; c0 = 22;} {c1 = 6622;} //DOES COMPILE
+	{c = 66; c0 = 22;} {c1 = 6622;} //DOES COMPILE ***Important in non-static block, static variable can be used
 	
 	
 	//static final variable initialization
@@ -483,7 +526,9 @@ public class StaticFinalInstanceVariables {
 	{
 		//s0 = 2; //DOES NOT COMPILE; static-final cannot be initialized in non-static block
 	}
-	public StaticFinalInstanceVariables() {
+	//** by the time the constructor completes, all final instance variables must be assigned a value exactly once.
+	
+	public StaticFinalInstanceVariables() { 
 		
 		x1 = 32; //DOES COMPILE
 		x = 444; //DOES COMPILE
@@ -498,3 +543,78 @@ public class StaticFinalInstanceVariables {
 		//s0 = 2; //DOES NOT COMPILE; static and final variables must be initialized either in-line or in static blocks; not allowed in constructors
 	}
 }
+
+
+Initializing Classes
+
+1. If there is a superclass Y of X, then initialize class Y first.
+2. Process all static variable declarations in the order in which they appear in the class.
+3. Process all static initializers in the order in which they appear in the class
+
+
+Initializing Instances
+
+Initialize Instance of X
+1. Initialize class X if it has not been previously initialized.
+2. If there is a superclass Y of X, then initialize the instance of Y first.
+3. Process all instance variable declarations in the order in which they appear in the class.
+4. Process all instance initializers in the order in which they appear in the class.
+5. Initialize the constructor, including any overloaded constructors referenced with this().
+
+
+
+We conclude this section by listing important rules you should know for the exam:
+■ A class is initialized at most once by the JVM before it is referenced or used.
+■ All static final variables must be assigned a value exactly once, either when they are declared or in a static initializer.
+■ All final fields must be assigned a value exactly once, either when they are declared, in an instance initializer, or in a constructor.
+■ Non-final static and instance variables defined without a value are assigned a default value based on their type.
+■ Order of initialization is as follows: variable declarations, then initializers, and finally constructors.
+
+
+
+--------------------------------------
+
+
+Initializing final Fields with constructor compiler error
+
+
+public class MouseHouse {
+ private final int volume;
+ private final String type;
+ {
+ this.volume = 10;
+ }
+ public MouseHouse(String type) {
+ this.type = type;
+ }
+ public MouseHouse() { // DOES NOT COMPILE
+ this.volume = 2; // DOES NOT COMPILE
+ }
+}
+
+In this example, the first constructor that takes a String argument compiles. In terms
+of assigning values, each constructor is reviewed individually, which is why the second constructor does not compile. 
+First, the constructor fails to set a value for the type variable.
+The compiler detects that a value is never set for type and reports an error on the line where
+the constructor is declared. Second, the constructor sets a value for the volume variable,
+even though it was already assigned a value by the instance initializer.
+
+
+On the exam, be wary of any instance variables marked final. Make
+sure they are assigned a value in the line where they are declared, in an
+instance initializer, or in a constructor. They should be assigned a value
+only once, and failure to assign a value is considered a compiler error in
+the constructor
+
+
+What about final instance variables when a constructor calls another constructor in the
+same class? In that case, you have to follow the flow carefully, making sure every final instance variable is assigned a value exactly once. We can replace our previous bad constructor
+with the following one that does compile:
+ public MouseHouse() {
+ this(null);
+ }
+This constructor does not perform any assignments to any final instance variables, but
+it calls the MouseHouse(String) constructor, which we observed compiles without issue.
+
+--------------------------------------
+
