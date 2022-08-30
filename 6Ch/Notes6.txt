@@ -997,6 +997,24 @@ public class Lion extends Animal{
 *Hidden methods DON'T need to have the same return type.
 
 
+Example 4:
+Example which includes 'hiding static' error:
+
+Important: Examine this example and count compilation errors!!!
+
+public class Rodent {
+	public Rodent(Integer x) {}
+	protected static Integer chew() throws Exception {
+		System.out.println("Rodent is chewing");
+		return 1;
+	}
+}
+class Beaver extends Rodent {
+	public  Number chew() throws RuntimeException {
+		System.out.println("Beaver is chewing on wood");
+		return 2;
+	} 
+}
 
 
 --------------------------------------
@@ -1039,6 +1057,21 @@ public class FirstConcreteSubclass {
 //	successfully
 
 }
+
+Example: --> A concrete method that implements an abstract method must match the method declaration of the abstract method exactly?
+
+abstract class Vozilo{
+	 abstract protected  CharSequence test(int i);
+}
+
+public class Kamion extends Vozilo{
+	
+	public String test(int i) {
+		return null;
+	}
+} //This DOES COMPILE and previous statement is FALSE
+
+
 
 abstract and final Modifiers
 
