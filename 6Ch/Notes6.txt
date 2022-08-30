@@ -931,6 +931,22 @@ public  class Lion extends Animal{
 	}
 }
 
+Example 3:
+
+class Animal{
+	protected CharSequence str2(int i) throws IOException{
+		return null;
+	}
+}
+
+public  class Lion extends Animal{
+	
+	 public StringBuilder str2(int i) throws RuntimeException{ //DOES COMPILE;
+		return null;
+	}
+}
+**An overridden method may declare a new exception, provided it is not checked.
+
 Hiding Static Methods
 
 If we have 4 rules in place for method overriding and 'static' keyword is present, then we are talking about method hiding. However, subclass AND superclass must comply have 'static' if other method 
@@ -964,7 +980,21 @@ public class Lion extends Animal{
 	}
 }
 
+Example 3:
 
+ class Animal{
+	public  static CharSequence str2(int i) {
+		return null;
+	}
+}
+
+public class Lion extends Animal{
+	public  static String str2(int i) { //DOES NOT COMPILE
+		return null;
+	}
+}
+
+*Hidden methods DON'T need to have the same return type.
 
 
 
@@ -1056,3 +1086,15 @@ abstract and static Modifiers
 abstract class Hippopotamus {
  abstract static void swim(); // DOES NOT COMPILE
 }
+
+
+--------------------------------------
+
+Declaring an Immutable Class
+
+1. Mark the class as final OR make all of the constructors private.
+2. Mark all the instance variables private and final.
+3. Don’t define any setter methods.
+4. Don’t allow referenced mutable objects to be modified.
+5. Use a constructor to set all properties of the object, making a copy if needed.
+

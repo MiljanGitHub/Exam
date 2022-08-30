@@ -1,0 +1,43 @@
+
+RAZNO1
+
+
+
+class Vozilo{
+	
+}
+
+public class Kamion extends Vozilo{
+	public static void main(String[] args) {
+		
+		//Example1:
+		//Vozilo x = new Vozilo();
+		//Kamion x1 = (Vozilo) x; //citanje s desna: 'Vozilo je Kamion', ta izjava nije tacna, pa se ovo ne kompajlira; //DOES NOT COMPILE
+		
+		//Example2:
+		Kamion k = new Kamion();
+		Kamion x1 = (Vozilo) k;  //DOES NOT COMPILE
+		
+	    //Example3:
+		Vozilo v = new Kamion();
+		Vozilo v1 = (Kamion) v; //citanje sa desna 'Kamion je vozilo' je izjava koja je u redu  //DOES  COMPILE
+		
+		//Example4:
+		Vozilo v = new Vozilo();
+		Vozilo v1 = (Kamion) v; //DOES COMPILE; ClassCastException
+	}
+}
+
+
+
+
+--------------------------------------
+
+RAZNO2
+
+
+
+
+
+
+--------------------------------------
