@@ -490,6 +490,53 @@ class GiraffeFamily {
 	 }
  }
 
+Example3:
+
+class Canine {
+	
+	public Canine(boolean t) { logger.append("a"); }
+	public Canine() { logger.append("q"); }
+	 static { System.out.print("ff");}
+	private StringBuilder logger = new StringBuilder();
+	protected void print(String v) { System.out.print(v); } //logger.append(v);
+	protected String view() { return logger.toString(); }
+}
+
+class Fox extends Canine {
+	{ System.out.print("d");}
+	static {
+		System.out.print("m");
+	}
+ public Fox(long x) { System.out.print("p"); }
+ public Fox(String name) {
+	 this(2);
+	 print("z");
+ }
+ { System.out.print("r");}
+}
+
+ public class Fennec extends Fox {
+	 public Fennec(int e) {
+		 super("tails");
+		 print("j");
+	 }
+	 static {
+		 System.out.print("s");
+	 }
+	 public Fennec(short f) {
+		 super("eevee");
+		 print("m");
+	 }
+	 
+	 { System.out.print("g");}
+
+	 public static void main(String... unused) {
+		 new Fennec(1);
+		 System.out.println();
+	 } 
+ 
+ }
+
 
 ***Important rule: 
 
@@ -630,7 +677,7 @@ public class MouseHouse {
 
 In this example, the first constructor that takes a String argument compiles. In terms
 of assigning values, each constructor is reviewed individually, which is why the second constructor does not compile. 
-First, the constructor fails to set a value for the type variable.
+First, the constructor fails to set a value for the 'type' variable.
 The compiler detects that a value is never set for type and reports an error on the line where
 the constructor is declared. Second, the constructor sets a value for the volume variable,
 even though it was already assigned a value by the instance initializer.
@@ -640,7 +687,7 @@ On the exam, be wary of any instance variables marked final. Make
 sure they are assigned a value in the line where they are declared, in an
 instance initializer, or in a constructor. They should be assigned a value
 only once, and failure to assign a value is considered a compiler error in
-the constructor
+the constructor!!!!!
 
 
 What about final instance variables when a constructor calls another constructor in the
@@ -669,4 +716,8 @@ access modifiers, optional specifiers, or any declared exceptions.
 
 While these rules may seem confusing or arbitrary at first, they are needed for consistency.
 Without these rules in place, it is possible to create contradictions within the Java language.
+
+--------------------------------------
+
+Abstract classes
 
