@@ -537,6 +537,26 @@ class Fox extends Canine {
  
  }
 
+Example4:
+
+1: class Antelope {
+2: public Antelope(int p) {
+3: System.out.print("4");
+4: }
+5: { System.out.print("2"); }
+6: static { System.out.print("1"); }
+7: }
+8: public class Gazelle extends Antelope {
+9: public Gazelle(int p) {
+10: super(6);
+11: System.out.print("3");
+12: }
+13: public static void main(String hopping[]) {
+14: new Gazelle(0);
+15: }
+16: static { System.out.print("8"); }
+17: { System.out.print("9"); }
+18: }
 
 ***Important rule: 
 
@@ -709,6 +729,9 @@ To override a method, you must follow a number of rules. The compiler performs t
 2. The method in the child class must be at least as accessible as the method in the parent class.
 3. The method in the child class may not declare a checked exception that is new or broader than the class of any exception declared in the parent class method.
 4. If the method returns a value, it must be the same or a subtype of the method in the parent class, known as covariant return types.
+For hiding -> The method defined in the child class must be marked as static if it is marked as static in a parent class.
+Put simply, it is method hiding if the two methods are marked static and method overriding if they are not marked static. If one is marked static and the other is not, the
+class will not compile.
 
 'same signature' - Remember that a method signature is composed of the name of the
 method and method parameters. It does not include the return type,
@@ -717,7 +740,319 @@ access modifiers, optional specifiers, or any declared exceptions.
 While these rules may seem confusing or arbitrary at first, they are needed for consistency.
 Without these rules in place, it is possible to create contradictions within the Java language.
 
+
+Examples:
+
+
+Rule1:
+
+Example 1
+
+ class Animal{
+	public Object str2(int i) {
+		return null;
+	}
+}
+
+public class Lion extends Animal{
+	public Object str2(int i) { //DOES COMPILE; overrides str2
+		return null;
+	}
+}
+
+Example 2:
+
+class Animal{
+	public Object str2(int i) {
+		return null;
+	}
+}
+
+public class Lion extends Animal{
+	public Object str2(int i, String x) { //DOES COMPILE; doesn't overrides str2
+		return null;
+	}
+}
+
+
+
+Rule2: (examples are stayisfying Rule1)
+
+Example1:
+
+class Animal{
+	
+	protected Object str2(int i) {
+		return null;
+	}
+}
+
+public  class Lion extends Animal{
+	
+	 Object str2(int i) { //DOES NOT COMPILE
+		return null;
+	}
+	
+}
+
+Example2:
+
+class Animal{
+	 Object str2(int i) {
+		return null;
+	}
+}
+
+public  class Lion extends Animal{
+	
+	protected Object str2(int i) { //DOES COMPILE
+		return null;
+	}
+}
+
+Example3:
+
+
+class Animal{
+	 Object str2(int i) {
+		return null;
+	}
+}
+
+public  class Lion extends Animal{
+	
+	private Object str2(int i) { //DOES NOT COMPILE
+		return null;
+	}
+}
+
+
+Rule3: (examples are stayisfying Rule1, Rule2)
+
+//IOException (superclass -  BROADER exception !!!!!!!!) checked
+//	  /|\
+//   / | \
+//	   |
+//	   |
+//FileNotFoundException (subclass - narrower exception; "more focused/narrowed capabilities) checked
+
+Example 1:
+
+class Animal{
+	 Object str2(int i) throws FileNotFoundException{
+		 if (true) throw new FileNotFoundException();
+		return null;
+	}
+}
+
+public  class Lion extends Animal{
+	
+	 Object str2(int i) throws FileNotFoundException{  //DOES  COMPILE
+		 if (true) throw new FileNotFoundException();
+		return null;
+	}
+}
+
+Example 2:
+
+class Animal{
+	protected Object str2(int i) throws FileNotFoundException{
+		return null;
+	}
+}
+
+public  class Lion extends Animal{
+	
+	 public Object str2(int i) throws IOException {  //DOES NOT COMPILE //cannot throw broader exception
+		return null;
+	}
+}
+
+Example 3:
+
+class Animal{
+	protected Object str2(int i) throws FileNotFoundException{
+		return null;
+	}
+}
+
+public  class Lion extends Animal{
+	
+	 public Object str2(int i) throws FileNotFoundException, RuntimeException{ //DOES  COMPILE, it is okay to throw unchecked exception
+		return null;
+	}
+}
+
+Exmaple 4:
+
+class Animal{
+	protected Object str2(int i) throws IOException{
+		return null;
+	}
+}
+
+public  class Lion extends Animal{
+	
+	 public Object str2(int i) throws FileNotFoundException{ //DOES COMPILE; it can throw narrower exception
+		return null;
+	}
+}
+
+
+Rule 4 (examples are stayisfying Rule1, Rule2, Rule3):
+
+Example 1:
+
+class Animal{
+	protected CharSequence str2(int i) throws IOException{
+		return null;
+	}
+}
+
+public  class Lion extends Animal{
+	
+	 public Object str2(int i) throws FileNotFoundException{ //DOES NOT COMPILE;
+		return null;
+	}
+}
+
+Example 2:
+
+class Animal{
+	protected CharSequence str2(int i) throws IOException{
+		return null;
+	}
+}
+
+public  class Lion extends Animal{
+	
+	 public StringBuilder str2(int i) throws FileNotFoundException{ //DOES NOT COMPILE;
+		return null;
+	}
+}
+
+Hiding Static Methods
+
+If we have 4 rules in place for method overriding and 'static' keyword is present, then we are talking about method hiding. However, subclass AND superclass must comply have 'static' if other method 
+is also having 'static'.
+
+Example1:
+
+ class Animal{
+	public  static Object str2(int i) {
+		return null;
+	}
+}
+
+public class Lion extends Animal{
+	public  Object str2(int i) { //DOES NOT COMPILE
+		return null;
+	}
+}
+
+Example2:
+
+ class Animal{
+	public   Object str2(int i) {
+		return null;
+	}
+}
+
+public class Lion extends Animal{
+	public  static Object str2(int i) { //DOES NOT COMPILE; not that in both cases child method is being reported for a compiler error
+		return null;
+	}
+}
+
+
+
+
+
+
 --------------------------------------
 
 Abstract classes
 
+■ Only instance methods can be marked abstract within a class, not variables, constructors, or static methods. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+■ An abstract method can only be declared in an abstract class.
+■ A non-abstract class that extends an abstract class must implement all inherited abstract methods.
+■ Overriding an abstract method follows the existing rules for overriding methods that you learned about earlier in the chapter.
+
+
+first concrete subclass
+
+public class FirstConcreteSubclass {
+	
+	public abstract class Animal {
+		 abstract String getName(); //DEFINITION of abstract method: 1. no {} 2. obligatory () with optional parameters 3. obligatory ; after () 
+		 //4. obligatory abstract
+	}
+	
+	public abstract class BigCat extends Animal {
+		 protected abstract void roar(); // it is not required to provide an implementation for the 'getName()' method
+	}
+	
+	public class Lion extends BigCat {
+		public String getName() { 
+		 return "Lion";
+		}
+		
+		public void roar() {
+		 System.out.println("The Lion lets out a loud ROAR!");
+		}
+	}
+	
+//	In this sample code, BigCat extends Animal but is marked as abstract; therefore, it
+//	is not required to provide an implementation for the getName() method. The class Lion
+//	is not marked as abstract, and as the first concrete subclass, it must implement all of the
+//	inherited abstract methods not defined in a parent class. All three of these classes compile
+//	successfully
+
+}
+
+abstract and final Modifiers
+
+public abstract final class Tortoise { // DOES NOT COMPILE
+ public abstract final void walk(); // DOES NOT COMPILE
+}
+
+abstract and private Modifiers
+
+public abstract class Whale {
+ private abstract void sing(); // DOES NOT COMPILE
+}
+
+public class HumpbackWhale extends Whale {
+ private void sing() {
+	System.out.println("Humpback whale is singing");
+ } 
+}
+
+
+In this example, the abstract method sing() defined in the parent class Whale is not
+visible to the subclass HumpbackWhale. Even though HumpbackWhale does provide an
+implementation, it is not considered an override of the abstract method since the abstract
+method is not inherited. The compiler recognizes this in the parent class and reports an error
+as soon as private and abstract are applied to the same method.
+
+
+public abstract class Whale {
+ protected abstract void sing();
+}
+public class HumpbackWhale extends Whale {
+ private void sing() { // DOES NOT COMPILE
+	System.out.println("Humpback whale is singing");
+ }
+}
+
+In this modified example, the code will still not compile, but for a completely different
+reason. If you remember the rules for overriding a method, the subclass cannot reduce the
+visibility of the parent method, sing(). Because the method is declared protected in
+the parent class, it must be marked as protected or public in the child class. Even with
+abstract methods, the rules for overriding methods must be followed.
+
+abstract and static Modifiers
+
+abstract class Hippopotamus {
+ abstract static void swim(); // DOES NOT COMPILE
+}
