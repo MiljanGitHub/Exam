@@ -214,7 +214,7 @@ public class Hamster extends Mammal{
 
 	 }
 	 public Hamster(int weight) { // Second constructor
-		 super(2, ""); //In case we are not using this() such as current 'public Hamster(int weight) {...}' constructor, java automatically inserts super() if we don't specify and super method call, as we did with 'super(2, "");'	 	
+		 super(2, ""); //In case we are not using this() such as current 'public Hamster(int weight) {...}' constructor, java automatically inserts super() if we don't specify and super constructor call, as we did with 'super(2, "");'	 	
 	 }
 	 
 	 public Hamster(long kk) {
@@ -496,7 +496,7 @@ class Canine {
 	
 	public Canine(boolean t) { logger.append("a"); }
 	public Canine() { logger.append("q"); }
-	 static { System.out.print("ff");}
+	static { System.out.print("ff");}
 	private StringBuilder logger = new StringBuilder();
 	protected void print(String v) { System.out.print(v); } //logger.append(v);
 	protected String view() { return logger.toString(); }
@@ -629,7 +629,8 @@ public class StaticFinalInstanceVariables {
 	{
 		//s0 = 2; //DOES NOT COMPILE; static-final cannot be initialized in non-static block
 	}
-	//** by the time the constructor completes, all final instance variables must be assigned a value exactly once.
+	//** by the time the constructor completes, all final instance variables must be assigned a value exactly once. 
+	//** 'static final' variables only in static block or in in-line assignment/initialization
 	
 	public StaticFinalInstanceVariables() { 
 		
@@ -668,9 +669,9 @@ Initialize Instance of X
 
 We conclude this section by listing important rules you should know for the exam:
 ■ A class is initialized at most once by the JVM before it is referenced or used.
-■ All static final variables must be assigned a value exactly once, either when they are declared or in a static initializer.
+■ All static final and final variables must be assigned a value exactly once, either when they are declared or in a static initializer (if only final, then no static initializers, but in consturctor)
 ■ All final fields must be assigned a value exactly once, either when they are declared, in an instance initializer, or in a constructor.
-■ Non-final static and instance variables defined without a value are assigned a default value based on their type.
+■ Non-final (static) and instance variables defined without a value are assigned a default value based on their type.
 ■ Order of initialization is as follows: variable declarations, then initializers, and finally constructors.
 
 
@@ -698,8 +699,8 @@ public class MouseHouse {
 In this example, the first constructor that takes a String argument compiles. In terms
 of assigning values, each constructor is reviewed individually, which is why the second constructor does not compile. 
 First, the constructor fails to set a value for the 'type' variable.
-The compiler detects that a value is never set for type and reports an error on the line where
-the constructor is declared. Second, the constructor sets a value for the volume variable,
+The compiler detects that a value is never set for 'type' and reports an error on the line where
+the constructor is declared. Second, the constructor sets a value for the 'volume' variable,
 even though it was already assigned a value by the instance initializer.
 
 
@@ -769,7 +770,7 @@ class Animal{
 }
 
 public class Lion extends Animal{
-	public Object str2(int i, String x) { //DOES COMPILE; doesn't overrides str2
+	public Object str2(int i, String x) { //DOES COMPILE; doesn't overrides str2; it overloads
 		return null;
 	}
 }
@@ -822,6 +823,21 @@ class Animal{
 public  class Lion extends Animal{
 	
 	private Object str2(int i) { //DOES NOT COMPILE
+		return null;
+	}
+}
+
+Example4:
+
+class Animal{
+	private Object str2(int i) {
+		return null;
+	}
+}
+
+public  class Lion extends Animal{
+	
+	 Object str2(int i) { //DOES COMPILE
 		return null;
 	}
 }
@@ -949,7 +965,7 @@ public  class Lion extends Animal{
 
 Hiding Static Methods
 
-If we have 4 rules in place for method overriding and 'static' keyword is present, then we are talking about method hiding. However, subclass AND superclass must comply have 'static' if other method 
+If we have 4 rules in place for method overriding and 'static' keyword is present, then we are talking about method hiding. However, subclass AND superclass must comply and have 'static' if other method 
 is also having 'static'.
 
 Example1:
@@ -989,7 +1005,7 @@ Example 3:
 }
 
 public class Lion extends Animal{
-	public  static String str2(int i) { //DOES NOT COMPILE
+	public  static String str2(int i) { //DOES  COMPILE
 		return null;
 	}
 }
@@ -1032,7 +1048,7 @@ first concrete subclass
 public class FirstConcreteSubclass {
 	
 	public abstract class Animal {
-		 abstract String getName(); //DEFINITION of abstract method: 1. no {} 2. obligatory () with optional parameters 3. obligatory ; after () 
+		 abstract String getName(); //DEFINITION of an abstract method: 1. no {} 2. obligatory () with optional parameters inside () 3. obligatory ; after () 
 		 //4. obligatory abstract
 	}
 	
@@ -1066,7 +1082,7 @@ abstract class Vozilo{
 
 public class Kamion extends Vozilo{
 	
-	public String test(int i) {
+	public String test(int i) throws RuntimeException{
 		return null;
 	}
 } //This DOES COMPILE and previous statement is FALSE
@@ -1112,7 +1128,7 @@ In this modified example, the code will still not compile, but for a completely 
 reason. If you remember the rules for overriding a method, the subclass cannot reduce the
 visibility of the parent method, sing(). Because the method is declared protected in
 the parent class, it must be marked as protected or public in the child class. Even with
-abstract methods, the rules for overriding methods must be followed.
+abstract methods, the rules for overriding methods must be followed. !!!!!!!!!!!!!!
 
 abstract and static Modifiers
 
