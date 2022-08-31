@@ -551,7 +551,7 @@ Five important rules:
 
 1. Iz Static metode ne mozes da pozivas non-static/instance metode i ne mozes da pristupis non-static variablama. Moras da imas "objekat" nad kojim pozivas (on moze biti null) ili preko imena klase.
 2. Static variable ne mogu da koriste instance variable
-3. Static variable se mogu koristiti i u static i u non-static/instance metodama i u obicni initializer blokovima
+3. Static variable se mogu koristiti i u static i u non-static/instance metodama i u obicni initializer blokovima i u static blokovima
 4. static final variables (konstante) must be initialzed after they are declared OR they must be initialzed in static block
 5. U static metodi ne mozes da koristis this
 
