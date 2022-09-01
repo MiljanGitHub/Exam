@@ -232,32 +232,124 @@ public class Snake implements IsColdBlooded {
 	 public static void main(String[] args) {
 		Snake s = new Snake();
 		System.out.println(s.getTemperature());;
-		//IsColdBlooded.getTemperature(); //DOES NOT COMPILE
+		//IsColdBlooded.getTemperature(); //DOES NOT COMPILE;  they are associated with the instance of the class implementing the interface.
 	}
 }
 
 Example2:
 
+TODO...Don't know what...
 
+!!!Default Interface Method Definition Rules!!! 
 
-
-
-
-
-
-
-
-
-
-
-Default Interface Method Definition Rules
 1. A default method may be declared only within an interface.
+
+public class Rule {
+	
+	public interface HasTail {}
+	
+	class Test implements HasTail{
+		default void test(); //DOES NOT COMPILE
+	}
+}
+	
+	
 2. A default method must be marked with the default keyword and include a method body.
+
+public class Rule {
+	
+	public interface HasTail {
+		//default void test(); //DOES NOT COMPILE
+		default void test() {
+			//DOES COMPILE
+		}
+	}
+	class Test implements HasTail{
+		
+	}
+}
+
+
 3. A default method is implicitly public.
+
+public class Rule {
+	
+	public interface HasTail {
+
+		public default void test() {} //DOES COMPILE
+		default void test2 () {} //DOES COMPILE
+	}
+}
+
+
 4. A default method cannot be marked abstract, final, or static.
+
+public class Rule {
+	
+	public interface HasTail {
+		public abstract default void test3 () {} //DOES NOT COMPILE: Cannot be 'abstract' since they must have a body/("deafault")implementation Illegal combination of modifiers for the interface method test3; only one of abstract, default, or static permitted
+		public static default void test4 () {} //DOES NOT COMPILE: they are associated with the instance of the class implementing the interface. Illegal combination of modifiers for the interface method test3; only one of abstract, default, or static permitted
+		public final default void test3 () {} //DOES NOT COMPILE: they are designed so that they can be overridden in classes implementing the interface, just like abstract methods. 
+	}
+
+}
+
+
 5. A default method may be overridden by a class that implements the interface.
+
+*Example1 in this section, above
+
 6. If a class inherits two or more default methods with the same method signature, then the class must override the method.
 
+Exaplanation for Rule 6:
+
+Inheriting Duplicate default Methods
+
+The last rule for creating a default interface method requires some explanation. For example,
+what value would the following code output?
+public interface Walk {
+ public default int getSpeed() { return 5; }
+}
+public interface Run {
+ public default int getSpeed() { return 10; }
+}
+public class Cat implements Walk, Run {} // DOES NOT COMPILE
+In this example, Cat inherits the two default methods for getSpeed(), so which does
+it use? Since Walk and Run are considered siblings in terms of how they are used in the Cat
+class, it is not clear whether the code should output 5 or 10. In this case, the compiler throws
+up its hands and says, “Too hard, I give up!” and fails.
+All is not lost, though. If the class implementing the interfaces overrides the duplicate
+default method, the code will compile without issue. By overriding the conflicting method,
+the ambiguity about which version of the method to call has been removed. For example, the
+following modified implementation of Cat will compile:
+
+public class Cat implements Walk, Run {
+ public int getSpeed() { return 1; }
+}
+
+--------------------------------------
+
+Calling a Hidden default Method
+
+
+In the last section, we showed how our Cat class could override a pair of conflicting
+default methods, but what if the Cat class wanted to access the version of getSpeed() in
+Walk or Run? Is it still accessible?
+Yes, but it requires some special syntax.
+public class Cat implements Walk, Run {
+ public int getSpeed() {
+ return 1;
+ }
+ public int getWalkSpeed() {
+ return Walk.super.getSpeed(); //Note that calling Walk.getSpeed() or Walk.this.getSpeed() would not have worked
+							   //We use the interface name to indicate which method we want to call, but we
+						       //use the super keyword to show that we are following instance inheritance, not class inheritance.
+ } }
+
+
+--------------------------------------
+
+Declaring static Interface Methods
 
 
 
