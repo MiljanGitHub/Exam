@@ -1,0 +1,265 @@
+
+Classes, interfaces and abstract classes
+
+Example1:
+
+public class Interfaces {
+	
+	interface Fly{ //in every interface, methods are by default 'public abstract'
+		void fly(); //same as in abstract methods in abstract classes, must have (param1, param2), no body with {} and must have ; at the end
+		//'void fly();' is equivalent to 'public abstract void fly();'
+	}
+	
+	interface Swim{
+		void swim();
+	}
+	
+	abstract class Animal{
+		abstract CharSequence getType();
+//		String getType() { //same method signature in abstract class; DOES NOT COMPILE
+//			return null;
+//		}
+	}
+	
+	abstract class Bird extends Animal implements Fly{
+		//Since it is an abstract class, no need to implement Fly interface, although we could, like so:
+		public void fly() { //must be public; if it is not public, and we leave package-access level, we get DOES NOT COMPILE
+							//since methods in interfaces have public access by default
+			
+			//super.getType() //DOES NOT COMPILE; not exists in super-class since it super-class is abstract
+			
+		} //we could comment this implementation and it would compile
+		
+		//public abstract Object fly(); //DOES NOT COMPILE; The return type is incompatible with Fly.fly()
+		
+		//abstract public void fly(); //DOES COMPILE ( as long as we have uncommented implementation of fly() ); but is not necessary thing to do; Cannot have 'abstract public void fly();' and 'public void fly() {...}' at the same time
+		//abstract void fly(); //DOES NOT COMPILE; Reduced visibility from interface
+		
+		//abstract Object getType(); //DOES NOT COMPILE; Incompatible return type from superclass Animal
+		
+		abstract String getType(); //can have, but it also can be commented; same method as in super-abstract-class 'Animal'. This is some kind of 'override'. Same package access since this method is coming from a superclass not from a interface 
+		
+		//some other regular abstract method
+		abstract boolean test();
+		
+		
+		**Some conclusion on my own: if the compile figures out that METHOD SIGNATURE is matching from either a superclass or a interface, then it starts to apply rules for overriding, package access, return type etc...
+		
+	}
+	
+	class Swan extends Bird implements Swim{
+		
+		public boolean test(){
+			return false;
+		}
+		
+		String getType() {
+			return null;
+		}
+		
+		//public void fly() {}	//Commented method DOES COMPILE since we gave implementation for interface Fly.fly() in abstract superclass
+		
+		public void swim() {}	
+	}
+}
+
+
+
+Example2:
+
+public class Interfaces2 {
+	
+	public abstract interface CanBurrow { //'abstract' is an implicit modifier which compiler inserts into interface declaration
+		 public abstract Number getSpeed(int age);
+		 public static final int MINIMUM_DEPTH = 2;
+	}
+	
+	public interface Climb {
+		Float getSpeed(int age);
+	}
+	
+	public class FieldMouse implements Climb, CanBurrow {
+		public Float getSpeed(int age) {
+			return 11f;
+		} //one method implementation for two interfaces
+	}
+}
+
+
+Example3:
+
+public class Interfaces3 {
+	public interface Nocturnal {
+		 public int hunt();
+	}
+	public interface CanFly {
+		 public void flap();
+	}
+
+	public interface HasBigEyes extends Nocturnal, CanFly {
+		 public void flap(); //DOES COMPILE; it also compiles if we omit this line and leave empty {}
+	}
+
+	public class Owl implements HasBigEyes {
+		 public int hunt() { return 5; }
+		 public void flap() { System.out.println("Flap!"); }
+	}
+}
+
+Example4:
+
+
+public class Interfaces4 {
+	public interface HasTail {
+		 public int getTailLength();
+		}
+		public interface HasWhiskers {
+		 public int getNumberOfWhiskers();
+		}
+		abstract class Test{
+			abstract void t();
+		}
+		
+		public abstract class HarborSeal extends Test implements HasTail, HasWhiskers {}
+		
+		public class CommonSeal extends HarborSeal {} // DOES NOT COMPILE
+}
+
+**The HarborSeal class compiles because it is abstract and not required to implement
+any of the abstract methods it inherits or implements. The concrete CommonSeal class, though, must
+override all inherited abstract methods.
+
+Example5:
+
+public interface CanRun {}
+public class Cheetah extends CanRun {} // DOES NOT COMPILE
+public class Hyena {}
+public interface HasFur extends Hyena {} // DOES NOT COMPILE
+public class Hyena2 {}
+public interface HasFur2 implements Hyena2 {} // DOES NOT COMPILE
+
+
+Example6:
+
+public class Interfaces5 {
+	//Example a:
+//	public interface Herbivore { public void eatPlants(); }
+//	public interface Omnivore { public void eatPlants(); }
+//	
+//	public class Bear implements Herbivore, Omnivore {
+//
+//		public void eatPlants() {
+//			System.out.println("Eating plants");
+//	 } 
+//	}
+	
+	//Example b:
+//	public interface Herbivore2 { public String eatPlants(); }
+//	public interface Omnivore2 { public StringBuilder eatPlants(); } 	
+//	
+//	public class Horse implements Herbivore2, Omnivore2 {
+//	
+//		public CharSequence eatPlants() { //Question to ask to myself: "Is CharSequence a String??" or "Is CharSequence a StringBuilder??"
+//			//Since answer is NO: ----> DOES NOT COMPILE
+//			return null;
+//	 }
+//	}
+	
+	//Example c:
+//	public interface Herbivore3 { public CharSequence eatPlants(); }
+//	public interface Omnivore3 { public CharSequence eatPlants(); } 	
+//	
+//	public class Donkey implements Herbivore3, Omnivore3 {
+//	
+//		public String eatPlants() { //Question to ask to myself: "Is String a CharSequence??" or "Is StringBuilder a CharSequence??" - Compatible method ---> meaning, a method can be written that properly overrides both inherited
+																																							  methods: for example, by using covariant return types that you learned about in Chapter 6
+//			//Since answer is YES: ----> DOES COMPILE
+//			return null;
+//	 }
+//	}
+
+	//Example d:
+	public interface Herbivore4 { public void eatPlants(); }
+	public interface Omnivore4 { public int eatPlants(); }
+	public class Tiger implements Herbivore4, Omnivore4 { // DOES NOT COMPILE - 
+		//It’s impossible to write a version of Tiger that satisfies both inherited abstract
+		//methods. The code does not compile, regardless of what is declared inside the Tiger class.
+	}
+}
+
+Example7:
+
+public class Interfaces6 {
+	public interface Dance {
+		 //private int count = 4; // DOES NOT COMPILE
+		 //protected void step(); // DOES NOT COMPILE
+		 *two compilation erros
+		
+		private static void test() { } // DOES COMPILE
+		
+		private  void test2() {}  // DOES COMPILE
+		
+	}
+}
+
+
+--------------------------------------
+
+default Interface Method
+
+A default method is a method defined in an interface with the default keyword
+and includes a method body. It may be optionally overridden by a class implementing the
+interface.
+
+Example1:
+
+ interface IsColdBlooded {
+	 boolean hasScales();
+	 default double getTemperature() {
+		 return 10.0;
+	 } 
+}
+public class Snake implements IsColdBlooded {
+
+	 public boolean hasScales() { // Required override
+		 return true;
+	 }
+	 
+	 public double getTemperature() { // Optional override
+		 return 12;
+	 }
+	 
+	 public static void main(String[] args) {
+		Snake s = new Snake();
+		System.out.println(s.getTemperature());;
+		//IsColdBlooded.getTemperature(); //DOES NOT COMPILE
+	}
+}
+
+Example2:
+
+
+
+
+
+
+
+
+
+
+
+
+
+Default Interface Method Definition Rules
+1. A default method may be declared only within an interface.
+2. A default method must be marked with the default keyword and include a method body.
+3. A default method is implicitly public.
+4. A default method cannot be marked abstract, final, or static.
+5. A default method may be overridden by a class that implements the interface.
+6. If a class inherits two or more default methods with the same method signature, then the class must override the method.
+
+
+
+
+
+--------------------------------------
