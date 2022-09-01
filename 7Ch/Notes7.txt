@@ -351,7 +351,128 @@ public class Cat implements Walk, Run {
 
 Declaring static Interface Methods
 
+Static Interface Method Definition Rules
+1. A static method must be marked with the static keyword and include a method body.
+2. A static method without an access modifier is implicitly public.
+3. A static method cannot be marked abstract or final.
+4. A static method is not inherited and cannot be accessed in a class implementing the interface without a reference to the interface name.
 
+interface Test1{
+	static void m() {} //static methods are not inherited like default
+}
+
+interface Test2{
+	static void m() {}
+}
+interface Swim{
+	//Rule1
+	//public static void print(); //DOES NOT COMPILE; need body implementation
+	
+	//Rule2
+	 static void print() {} //DOES COMPILE; equivalent to: 'public static void print(){}'
+	 
+	//Rule3
+	// static abstract void print2() {} //DOES NOT COMPILE;
+	// static final void print3() {} //DOES NOT COMPILE;
+}
+
+public class Interfaces7 implements Test1, Test2, Swim{ //can impl both Test1 and Test2 - Java “solved” the multiple inheritance problem of static interface methods by not allowing them to be inherited
+	
+	public static void main(String[] args) {
+		//usage of static interface methods
+		
+		Swim.print(); //DOES COMPILE
+		
+		//print();  //DOES NOT COMPILE; even tho the class implements the interface
+		
+		Interfaces7 obj = new Interfaces7();
+		//obj.print(); //DOES NOT COMPILE;
+		
+	}
+}
 
 
 --------------------------------------
+
+Reusing Code with private Interface Methods
+
+Example1:
+
+public class Interfaces8 {
+	
+	interface Swim{
+		
+		default void print() {
+			sm(); //DOES COMPILE
+			print(); //DOES COMPILE - Stackoverflow/Recursion
+			pr();  //DOES COMPILE
+			test();  //DOES COMPILE
+		}
+		
+		//Accessing static and non-static interface methods within a static interface method:
+		static void sm() {
+			//print(); //DOES NOT COMPILE
+			Swim.sm(); //DOES COMPILE
+			Swim s = null;
+			//s.sm();  //DOES NOT COMPILE
+			//test(); //DOES NOT COMPILE
+			//pr();  //DOES NOT COMPILE
+		}
+		
+		//Accessing static and non-static interface methods within a non-static private interface method:
+		private void pr() {
+			pr(); //DOES COMPILE
+			Swim.sm(); //DOES COMPILE
+			print();  //DOES COMPILE
+			test();  //DOES COMPILE
+			
+			Swim sm = null;
+			sm.print();  //DOES COMPILE - NPE
+			
+			Swim sm2 = null;
+			sm2.test();   //DOES COMPILE - NPE
+			
+		}
+		
+		void test();
+	}
+
+}
+
+Example2:
+
+public class Interfaces9 {
+	public interface Schedule {
+		 default void wakeUp() { checkTime(7); test();}
+		 private void haveBreakfast() { checkTime(9); test();}
+		 static void workOut() { checkTime(18); }
+		 
+		 void test1();
+		 
+		 private void test() {
+			 test1();
+		 }
+		 
+		 private static void checkTime(int hour) {
+			 if (hour> 17) {
+				 System.out.println("You're late!");
+			 } else {
+				 System.out.println("You have "+(17-hour)+" hours left to make the appointment");
+			 } 
+			 
+			 //test(); //DOES NOT COMPILE
+			 workOut(); //DOES COMPILE
+		 } 
+	}
+}
+
+The difference between a non-static private method and a static one is analogous to the difference between an instance and static method declared within a class. In
+particular, it’s all about what methods each can be called from.
+Private Interface Method Definition Rules
+1. A private interface method must be marked with the private modifier and include a method body.
+2. A private static interface method may be called by any method within the interface definition.
+3. A private interface method may only be called by default and other private nonstatic methods within the interface definition.
+
+Another way to think of it is that a private interface method is only accessible to nonstatic methods defined within the interface. A private static interface method,  
+on the other hand, can be accessed by any method in the interface. For both types of private
+methods, a class inheriting the interface cannot directly invoke them.
