@@ -463,7 +463,7 @@ Example11:
 		int length = 12;
 		var name = switch(fish) {
 			case 1 -> "Goldfish";
-			case 2 -> {} // DOES NOT COMPIL yield are required in block; 
+			case 2 -> {} // DOES NOT COMPILE yield are required in block; 
 			case 3 -> {
 				if(length > 10) yield "Blobfish";
 				//DOES NOT COMPILE; yield are required in block;  yield statements are not optional if the switch statement returns a value.

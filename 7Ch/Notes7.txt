@@ -6,7 +6,7 @@ Example1:
 public class Interfaces {
 	
 	interface Fly{ //in every interface, methods are by default 'public abstract'
-		void fly(); //same as in abstract methods in abstract classes, must have (param1, param2), no body with {} and must have ; at the end
+		void fly(); //same as in abstract methods in abstract classes, must have (optional param1, param2), no body with {} and must have ; at the end
 		//'void fly();' is equivalent to 'public abstract void fly();'
 	}
 	
@@ -149,7 +149,7 @@ public class Interfaces5 {
 //	public class Bear implements Herbivore, Omnivore {
 //
 //		public void eatPlants() {
-//			System.out.println("Eating plants");
+//			System.out.println("Eating plants"); //DOES COMPILE
 //	 } 
 //	}
 	
@@ -194,11 +194,8 @@ public class Interfaces6 {
 		 //private int count = 4; // DOES NOT COMPILE
 		 //protected void step(); // DOES NOT COMPILE
 		 *two compilation erros
-		
 		private static void test() { } // DOES COMPILE
-		
 		private  void test2() {}  // DOES COMPILE
-		
 	}
 }
 
@@ -476,3 +473,22 @@ Private Interface Method Definition Rules
 Another way to think of it is that a private interface method is only accessible to nonstatic methods defined within the interface. A private static interface method,  
 on the other hand, can be accessed by any method in the interface. For both types of private
 methods, a class inheriting the interface cannot directly invoke them.
+
+
+Example3:
+
+public interface ZooRenovation {
+ public String projectName();
+ abstract String status();
+ default void printStatus() {
+ System.out.print("The " + projectName() + " project " + status());
+ } }
+ 
+ 
+*It turns out default and private non-static methods can access abstract methods
+declared in the interface. This is the primary reason we associate these methods with instance
+membership.
+
+--------------------------------------
+
+Working with Enums
