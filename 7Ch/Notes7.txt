@@ -492,3 +492,288 @@ membership.
 --------------------------------------
 
 Working with Enums
+
+Example1:
+
+public enum Season {
+	WINTER, SPRING, SUMMER, FALL
+}
+
+Example2:
+
+public class Enums1 {
+	public enum Season {
+		 WINTER, SPRING, SUMMER, FALL //; is optional 
+	}
+	
+	public enum SeasonComplex {
+		 WINTER(Season.WINTER); //; is mandatory 
+		
+		private SeasonComplex(Season s) {
+			
+		}
+	}
+	
+	public static void main(String[] args) {
+		Season[] x = Season.values();
+	}
+}
+
+
+public enum Season { //only public or package-access
+ WINTER, SPRING, SUMMER, FALL; //since this is a simple-enum, ; is OPTIONAL
+} //this is so called 'simple-enum' -> only contains a list of values
+
+
+var s = Season.SUMMER;
+System.out.println(Season.SUMMER); // SUMMER
+System.out.println(s == Season.SUMMER); // true
+
+
+As you can see, enums print the name of the enum when toString() is called. They can
+be compared using == because they are like 'static final' constants. In other words, you
+can use equals() or == to compare enums, since EACH ENUM IS INITIALIZED ONLY ONCE in
+the Java Virtual Machine (JVM).
+
+Calling the values(), name(), and ordinal() Methods
+
+values() ->  array of all of the values: Season[] x = Season.values();
+for(var season: Season.values()) {
+ System.out.println(season.name() + " " + season.ordinal());
+}
+WINTER 0
+SPRING 1
+SUMMER 2
+FALL 3
+
+
+You can’t compare an int and an enum value directly anyway since an enum is a type, like
+a Java class, and not a primitive int.
+if ( Season.SUMMER == 2) {} // DOES NOT COMPILE
+
+
+Season s = Season.valueOf("SUMMER"); // SUMMER 
+//***Note that line above is
+not creating an enum value, at least not directly. Each enum value is created once when the
+enum is first loaded. Once the enum has been loaded, it retrieves the single enum value with
+the matching name.
+
+Season t = Season.valueOf("summer"); // IllegalArgumentException
+
+
+Season summer = Season.SUMMER;
+switch(summer) {
+ case WINTER: // <- enums in switch statement must be noted as 'WINTER' not as  'Season.WINTER'
+	System.out.print("Get out the sled!");
+	break;
+ case SUMMER:
+	System.out.print("Time for the pool!");
+	break;
+ default:
+	System.out.print("Is it summer yet?");
+} //DOES COMPILE
+
+
+Season summer = Season.SUMMER;
+var message = switch(summer) {
+ case Season.WINTER -> "Get out the sled!"; // DOES NOT COMPILE
+ case 0 -> "Time for the pool!"; // DOES NOT COMPILE; pay attention
+ default -> "Is it summer yet?";
+};
+
+Adding Constructors, Fields, and Methods
+
+Example1:
+
+
+public class Enums1 {
+	
+	
+	public enum SeasonComplex {
+		
+		
+		WINTER(Season.WINTER), SUMMER(Season.SUMMER), TEST(1), TEST2(""); //; is mandatory 
+		//The part 'WINTER(Season.WINTER)' (and others) represent constructor call without a 'new' keyword
+		
+		//These "fake" constructor calls, must be first lines of the Enum file. Apparently these constructor call are made for JVM for initial initialization and assignment
+		
+		//The first time we ask for any of the enum values, Java constructs all of the enum values. After that, Java just returns the already constructed enum values.
+		
+		//if we try to add: ', TEST3(this.x1)' in as one more constructor call we get error: 'Cannot use 'this' in a static context'
+		
+		private  int x1;
+		private  Season s; //if it is 'final' the it must be assigned a value either in a instance block or in a constructor (note: every constructor is considered for 'final' variables assignments on its own, i.e. if we or JVM calls any constructor, each 'final' variable must be assigned) 
+		
+		//SeasonComplex
+		{s = null;} //DOES COMPILE
+		
+		private static String x = initX();
+		{System.out.println("Upper block in SeasonComplex");}
+		
+		static {
+			System.out.println("upper static in SeasonComplex");
+		}
+		
+		private SeasonComplex(Season s) {
+			System.out.println("Constructor with Season");
+		}
+		private SeasonComplex(int x) {
+			System.out.println("Constructor with int");	
+		}
+		
+		private SeasonComplex(String x) {
+			System.out.println("Constructor with String");
+		}
+		
+		private SeasonComplex(long x) { //we can have 'other' constructors 
+			System.out.println("Constructor with long");
+		}
+		
+		private SeasonComplex() {
+			System.out.println("Constructor no-args");
+		}
+		
+		//private SeasonComplex(int i) {this(555);} //DOES NOT COMPILE; recursive constructor
+		//private SeasonComplex(int x) {} //DOES NOT COMPILE; Duplicate method
+		
+		public static void s() {}
+		
+		private static String initX(){
+			System.out.println("initX called...");
+			return "aa";
+		}
+		
+		{System.out.println("Lower block in SeasonComplex");}
+		static {
+			System.out.println("Lower static in SeasonComplex");
+		}
+		
+		 public void printExpectedVisitors() {
+			System.out.println(x1);
+		 }
+	}
+	
+	public enum Season {
+		 WINTER, SPRING, SUMMER, FALL; //; is optional if there is nothing in the enum (simple enum). If there is something, like instance block, then ; is mandatory 
+		 {System.out.println("@ffff");}
+		 
+		
+	}
+	
+	public static void main(String[] args) {
+		Season[] x = Season.values();
+		SeasonComplex[] s = SeasonComplex.values();
+		SeasonComplex.SUMMER.s();
+//		
+//		Season x = SeasonComplex.SUMMER.s; //even though 's' is private in a enum file it is still accessible in this manner
+//		int y = SeasonComplex.TEST.x1; // even though 'x1' is private in a enum file it is still accessible in this manner
+//		
+//		int x1 = SeasonComplex.SUMMER.x1; //even though 'x1' is private in a enum file it is still accessible in this manner
+//		Season y1 = SeasonComplex.TEST.s;  //even though 's' is private in a enum file it is still accessible in this manner
+		
+	}
+}
+
+Output:
+
+@ffff
+@ffff
+@ffff
+@ffff
+Upper block in SeasonComplex
+Lower block in SeasonComplex
+Constructor with Season
+Upper block in SeasonComplex
+Lower block in SeasonComplex
+Constructor with Season
+Upper block in SeasonComplex
+Lower block in SeasonComplex
+Constructor with int
+Upper block in SeasonComplex
+Lower block in SeasonComplex
+Constructor with String
+initX called...
+upper static in SeasonComplex
+Lower static in SeasonComplex
+
+
+***Interestingly, static members are eveluated last...
+
+Example 2:
+
+
+public enum OnlyOne {
+ ONCE(true);
+ private OnlyOne(boolean b) {
+ System.out.print("constructing,");
+ }
+}
+public class PrintTheOne {
+ public static void main(String[] args) {
+ System.out.print("begin,");
+ OnlyOne firstCall = OnlyOne.ONCE; // Prints constructing,
+ OnlyOne secondCall = OnlyOne.ONCE; // Doesn't print anything
+ System.out.print("end");
+ }
+}
+
+**If the OnlyOne enum was used earlier in the program, and therefore initialized sooner,
+then the line that declares the firstCall variable would not print anything.
+
+
+How do we call an enum method? That’s easy, too: we just use the enum value followed by the method call.
+Season.SUMMER.printExpectedVisitors();
+
+Example3:
+
+public enum Season {
+ WINTER {
+ public String getHours() { return "10am-3pm"; }
+ },
+ SPRING {
+ public String getHours() { return "9am-5pm"; }
+ },
+ SUMMER {
+ public String getHours() { return "9am-7pm"; }
+ },
+ FALL {
+ public String getHours() { return "9am-5pm"; }
+ };
+ public abstract String getHours();
+}
+
+Example3a:
+
+public enum Season {
+ WINTER {
+ public String getHours() { return "10am-3pm"; }
+ },
+ SUMMER {
+ public String getHours() { return "9am-7pm"; }
+ },
+ SPRING, FALL;
+ public String getHours() { return "9am-5pm"; } //We only code the special cases and let the others use the enum-provided implementation
+}
+
+Example4:
+
+public interface Weather { int getAverageTemperature(); }
+public enum Season implements Weather {
+ WINTER, SPRING, SUMMER, FALL;
+ public int getAverageTemperature() { return 30; }
+}
+
+***This was not an accident. Whether the enum is simple
+or complex, the list of values always comes first.
+
+
+
+--------------------------------------
+
+Sealing Classes
+
+
+
+
+
+
