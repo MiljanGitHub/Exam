@@ -199,6 +199,21 @@ public class Interfaces6 {
 	}
 }
 
+Example8:
+public interface A {
+	default   void test(){
+		System.out.println("a");
+	}
+}
+
+public interface B extends A {}
+
+public class Interfaces11 implements B{
+	public static void main(String[] args) {
+		new Interfaces11().test(); //DOES COMPILE
+	}
+}
+
 
 --------------------------------------
 
@@ -773,7 +788,186 @@ or complex, the list of values always comes first.
 Sealing Classes
 
 
+Sealing allows classes and interfaces to define their permitted subtypes.
+In other words, a class or an interface can now define which classes can implement or extend it. It is a useful feature for domain modeling and increasing the security of libraries.
+
+
+ having restricted subclasses should not limit the accessibility of its superclass.
+Thus, the main motivation behind sealed classes is to have the possibility for a superclass to be widely accessible but not widely extensible.
+
+***sealed -> Indicates that a class or interface may only be extended/implemented by named classes or interfaces
+
+***permits -> Used with the sealed keyword to list the classes and interfaces allowed
+
+***non-sealed -> Applied to a class or interface that extends a sealed class, indicating that it can be extended by unspecified classes
+
+Example1:
+
+public class sealed Frog permits GlassFrog {} // DOES NOT COMPILE; 'sealed' must be before 'class' keyword
+public final class GlassFrog extends Frog {}
+
+Example2:
+
+public abstract sealed class Wolf permits Timber {} // DOES COMPILE; can be abstract; Sealed classes are commonly declared with the abstract modifier, although this is certainly not required
+public final class Timber extends Wolf {}
+public final class MyWolf extends Wolf {} // DOES NOT COMPILE; MyWolf is not defined in the 'permits' list of the Wolf class; The type MyWolf extending a sealed class Wolf should be a permitted subtype of Wolf
+
+Example3:
+
+***a sealed class needs to be declared (and compiled) in the same package as its direct subclasses.
+//Bear1.java
+ package sealed;
+ import sealed.test.Kodiak1;
+ import sealed.test.Panda1;
+ public sealed class Bear1 permits Kodiak1, Panda1 {} //DOES NOT COMPILE: Permitted type Kodiak1 in an unnamed module should be declared in the same package sealed of declaring type Bear1
+ 																	      Permitted type Panda1 in an unnamed module should be declared in the same package sealed of declaring type Bear1
+ //Kodiak1.java
+  package sealed.test;
+  import sealed.Bear1;
+  public final class Kodiak1 extends Bear1 {}  //DOES COMPILE 
+  
+ //Panda1.java
+  package sealed.test;
+  import sealed.Bear1;
+  public non-sealed class Panda1 extends Bear1 {}  //DOES COMPILE 
+
+
+Example4:
+
+But what about the subclasses themselves?
+They must each extend the sealed class. 
+
+//Penguin.java
+package test3;
+
+public sealed class Penguin permits Emperor {} // DOES NOT COMPILE; Permitted class Emperor does not declare test3.Penguin as direct super class
+
+//Emperor.java
+package sealed.test3;
+
+public final class Emperor {}
+
+***Specifying the Subclass Modifier
+While some types, like interfaces, have a certain number of implicit modifiers, sealed classes
+do not. Every class that directly extends a sealed class must specify exactly one of the following three modifiers: final, sealed, or non-sealed. Remember this rule for the exam!
 
 
 
+Modifier1: 'final'
 
+public sealed class Antelope permits Gazelle {}
+public final class Gazelle extends Antelope {}
+public class George extends Gazelle {} // DOES NOT COMPILE
+
+
+Modifier2: 'sealed'
+
+public sealed class Mammal permits Equine {}
+public sealed class Equine extends Mammal permits Zebra {}
+public final class Zebra extends Equine {}
+
+The sealed modifier applied to the subclass Equine means the same kind of rules that
+we applied to the parent class Mammal must be present. Namely, Equine defines its own list
+of permitted subclasses. Notice in this example that Zebra is an indirect subclass of Mammal
+but is not named in the Mammal class
+
+
+Modifier3: 'non-sealed'
+
+The non-sealed modifier is used to open a sealed parent class to potentially unknown subclasses.
+
+public sealed class Wolf permits Timber {}
+public non-sealed class Timber extends Wolf {}
+public class DummyWolf extends Timber {}
+
+then this is allowed: public class MyFurryWolf extends MyWolf {}
+
+Example5:
+
+// Snake.java -> This is regular way of doing:
+public sealed class Snake permits Cobra {}
+final class Cobra extends Snake {} 
+
+// Snake.java 
+public sealed class Snake { //omits 'permits' keyword
+	public static void main(String args[]) {
+		System.out.print("D"); //print D
+	}
+}
+final class Cobra extends Snake {} 
+
+If we had two files:
+
+// Snake.java
+public sealed class Snake {}
+final class Cobra extends Snake {}
+If these classes were in separate files, this code would not compile! 
+// Snake.java
+public sealed class Snake {
+ final class Cobra extends Snake {}
+}
+
+Example6:
+
+Previous rule also applies to sealed classes with nested subclasses.
+
+// Snake.java
+public sealed class Snake {
+	public static void main(String args[]) {
+	 	System.out.print("D");	 //prints D
+	}
+ 	final class Cobra extends Snake {} //nested subclass; DOES COMPILE
+}
+
+However, if we try to use 'permits' in this example:
+
+public sealed class Snake permits Cobra{ // DOES NOT COMPILE; it must be written as public sealed class Snake permits Snake.Cobra{...}
+	public static void main(String args[]) {
+	 	System.out.print("D");	 
+	}
+ 	final class Cobra extends Snake {} //nested subclass
+}
+**When all of your subclasses are nested, we strongly recommend omitting the
+permits class.
+
+Usage of the permits clause in sealed classes:
+
+Location of direct subclasses 										permits clause
+
+In a different file from the sealed class 						    Required
+In the same file as the sealed class 								Permitted, but not required
+Nested inside of the sealed class 									Permitted, but not required
+
+
+Sealing Interfaces
+
+
+One distinct feature of a sealed interface is that the permits list can apply to a class that
+implements the interface or an interface that extends the interface.
+// Sealed interface
+public sealed interface Swims permits Duck, Swan, Floats {} //with intefaces in 'permits', we can mix class (which impl 'sealed' interface) and other interfaces (which extend 'sealed' interface)
+
+// Classes permitted to implement sealed interface
+public final class Duck implements Swims {}
+public final class Swan implements Swims {}
+
+// Interface permitted to extend sealed interface
+public non-sealed interface Floats extends Swims {}
+
+***
+What about the modifier applied to interfaces that extend the sealed interface? Well,
+remember that interfaces are implicitly abstract and cannot be marked final. For
+this reason, interfaces that extend a sealed interface can only be marked sealed or
+non-sealed. They cannot be marked final.
+
+Sealed Class Rules:
+
+Any time you see a sealed class on the exam, pay close attention to the subclass declaration
+and modifiers.
+
+■ Sealed classes are declared with the sealed and permits modifiers.
+■ Sealed classes must be declared in the same package or named module as their direct subclasses.
+■ Direct subclasses of sealed classes must be marked final, sealed, or non-sealed.
+■ The permits clause is optional if the sealed class and its direct subclasses are declared within the same file or the subclasses are nested within the sealed class.
+■ Interfaces can be sealed to limit the classes that implement them or the interfaces that extend them.
+■ Iterfaces that extend a sealed interface can only be marked sealed or non-sealed. They cannot be marked final.
