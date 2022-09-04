@@ -930,6 +930,9 @@ public sealed class Snake permits Cobra{ // DOES NOT COMPILE; it must be written
 **When all of your subclasses are nested, we strongly recommend omitting the
 permits class.
 
+
+
+
 Usage of the permits clause in sealed classes:
 
 Location of direct subclasses 										permits clause
@@ -971,3 +974,19 @@ and modifiers.
 ■ The permits clause is optional if the sealed class and its direct subclasses are declared within the same file or the subclasses are nested within the sealed class.
 ■ Interfaces can be sealed to limit the classes that implement them or the interfaces that extend them.
 ■ Iterfaces that extend a sealed interface can only be marked sealed or non-sealed. They cannot be marked final.
+
+
+Example7:
+
+package sealed;
+//TraficLight.java
+
+public sealed interface TraficLight{}
+
+final class RedLight implements TraficLight{}
+
+sealed class YellowLight implements TraficLight{} //with first three lines it DOES NOT COMPILE; 
+												//reason: YellowLight (sealed) must have a class which extends it (that is, its a 'permits' list, inserted by a compiler, must not be empty. And since we are in a single file we just need to define a inheriting class):
+												//Sealed class or interface lacks the permits clause and no class or interface from the same compilation unit declares YellowLight as its direct superclass or super-interface
+												
+final class SpecialYellowLight extends YellowLight{} //DOES COMPILE
