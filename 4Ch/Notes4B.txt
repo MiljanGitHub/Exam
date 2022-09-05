@@ -34,7 +34,7 @@ an individual character or a whole String as input
 
 indexOf()
 The following code shows how to use indexOf():
-String string = "animals";
+String string = "animals"; string.length() -> 7
 System.out.println(string.indexOf('a')); // 0
 System.out.println(string.indexOf("al")); // 4
 System.out.println(string.indexOf('a', 4)); // 4
@@ -52,6 +52,9 @@ System.out.println(string.substring(3, 7)); //mals
 System.out.println(string.substring(3, 3)); // empty string
 System.out.println(string.substring(3, 2)); // throws exception
 System.out.println(string.substring(3, 8)); // throws exception
+System.out.println("A".substring(1).equals("")); //true
+System.out.println("A".substring(2).equals("")); //Exception
+System.out.println("A".substring(2123).equals("")); //Exception
 
 startsWith() and endsWith()
 

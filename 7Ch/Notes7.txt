@@ -990,3 +990,200 @@ sealed class YellowLight implements TraficLight{} //with first three lines it DO
 												//Sealed class or interface lacks the permits clause and no class or interface from the same compilation unit declares YellowLight as its direct superclass or super-interface
 												
 final class SpecialYellowLight extends YellowLight{} //DOES COMPILE
+
+--------------------------------------
+
+Records
+
+public record Crane(int numberEggs, String name) {}
+
+equivalent to:
+
+public final class Crane {
+
+	private final int numberEggs;
+	private final String name;
+	
+	public Crane(int numberEggs, String name) {
+		this.numberEggs = numberEggs; 
+		this.name = name;
+	}
+	public int numberEggs() { // getter
+		return numberEggs;
+	}
+	public String name() { // getter
+		return name;
+	}
+ }
+
+Crane c = new Crane(2, "");
+c.numberEggs();
+c.name();
+
+*A record is a special type of data-oriented class in which the
+compiler inserts boilerplate code for you.
+In fact, the compiler inserts much more than the 14 lines we wrote earlier. As a bonus, the
+compiler inserts useful implementations of the Object methods equals(), hashCode() and toString().
+
+Behind the scenes, it creates a constructor for you with the parameters in the same order in which they appear in
+the record declaration. Omitting or changing the type order will lead to compiler errors:
+var mommy1 = new Crane("Cammy", 4); // DOES NOT COMPILE
+var mommy2 = new Crane("Cammy"); // DOES NOT COMPILE
+
+public record Crane() {} //DOES COMPILE
+
+
+In order to “modify” a record, you have to make a new object and copy all of the data you want to preserve.
+
+var cousin = new Crane(3, "Jenny");
+var friend = new Crane(cousin.numberEggs(), "Janeice");
+
+public final record Crane(int numberEggs, String name) {} //DOES COMPILE
+
+public record BlueCrane() extends Crane {} // DOES NOT COMPILE
+
+public interface Bird {}
+public record Crane(int numberEggs, String name) implements Bird {} //DOES COMPILE
+
+Declaring Constructors (long and compact):
+
+What if you need to declare a record with some guards as we did earlier?
+
+The Long Constructor
+
+First, we can just declare the constructor the compiler normally inserts automatically, which we refer to as the long constructor.
+
+public record Crane(int numberEggs, String name) {
+ public Crane(int numberEggs, String name) {
+	if (numberEggs < 0) throw new IllegalArgumentException();
+	this.numberEggs = numberEggs;
+	this.name = name;
+ }
+}
+
+The compiler will not insert a constructor if you define one with the same list of parameters in the same order. 
+Since each field is final, the constructor must set every field. For example, this record does not compile:
+
+public record Crane(int numberEggs, String name) {
+ public Crane(int numberEggs, String name) {} // DOES NOT COMPILE
+}
+
+Example a:
+
+public record Crane(int numberEggs, String name) {
+	 public Crane(int numberEggs, String name) { // DOES  COMPILE; our custom constructor; MUST follow order of parameters in a record declaration, BOTH types and parameter names
+		 if (numberEggs < 0) throw new IllegalArgumentException();
+		 this.numberEggs = numberEggs;
+		 this.name = name;
+	 }
+}
+
+Example b:
+
+public record Crane(int numberEggs, String name) {
+	
+	 public Crane(int numberEggs, String a) { //DOES NOT COMPILE; invalid parameter names in canonical constructor
+		 if (numberEggs < 0) throw new IllegalArgumentException();
+		 this.numberEggs = numberEggs;
+		 this.name = a;
+	 }
+}
+
+Example c:
+
+public record Crane(int numberEggs, String name) {
+	
+	 public Crane(int numberEggs, String a) { //our custom constructor; 
+		 if (numberEggs < 0) throw new IllegalArgumentException();
+		 this.numberEggs = numberEggs;
+		 this.name = a;
+	 }
+
+	public Crane(String name, int numberEggs) { //DOES NOT COMPILE
+		 this.numberEggs = numberEggs;
+		 this.name = name;
+	}	
+}
+
+Example d:
+
+public record Crane(int numberEggs, String name) {
+	
+	 public Crane(int numberEggs, String a) { //our custom constructor;
+		 if (numberEggs < 0) throw new IllegalArgumentException();
+		 this.numberEggs = numberEggs;
+		 this.name = a;
+	 }
+
+	 public Crane(String name) { //DOES NOT COMPILE
+		 this(null, null);
+	 }
+}
+
+
+Compact Constructors
+
+Java calls the full constructor after the compact constructor but with the modified constructor parameters.
+
+Example a:
+
+Compact constructor serves only for validation/transformation of the data, it then implicitly calls default Java-generated constructor. We cannot have that default constructor written manaully insteda of Java,
+Java has to do it.
+
+public record Crane(int numberEggs, String name) {
+	
+	 public Crane(int numberEggs, String a) { 
+		 this.numberEggs = numberEggs;
+		 this.name = a;
+	 }
+	 
+	 public Crane { // DOES NOT COMPILE since we have defined a regular constructor
+		 if (numberEggs < 0) throw new IllegalArgumentException();
+		 numberEggs = 999;
+		 name = name.toUpperCase();
+		 
+		 //*** note that 'numberEggs' and 'name' are reffering to local variables not on instance variables
+		 //***Note there is no () after 'public Crane'
+	}
+}
+
+
+
+Example b:
+
+You can manipulate only certain fields, no need to touch other fields i.e. local variables which will later be asigned to instance variables in default constructor
+
+
+public record Crane(int numberEggs, String name) {
+	 
+	public Crane {
+		 numberEggs = 999;
+	}
+}
+
+Example c:
+
+Cannot have multiple compact constructors
+
+public record Crane(int numberEggs, String name) {
+
+	public Crane {
+		numberEggs = 999;
+	}
+	 
+	public Crane { //DOES NOT COMPILE;  constructor Crane(int,String) is already defined in record Crane
+		numberEggs = 123;
+	}
+}
+
+Example d:
+
+While compact constructors can modify the constructor parameters, they cannot modify the fields of the record. For example, this does not compile:0
+
+public record Crane(int numberEggs, String name) {
+ public Crane {
+ this.numberEggs = 10; // DOES NOT COMPILE
+ }
+}
+
+Overloaded Constructors
