@@ -1097,32 +1097,32 @@ public record Crane(int numberEggs, String name) {
 Example c:
 
 public record Crane(int numberEggs, String name) {
-	
-	 public Crane(int numberEggs, String a) { //our custom constructor; 
-		 if (numberEggs < 0) throw new IllegalArgumentException();
-		 this.numberEggs = numberEggs;
-		 this.name = a;
-	 }
 
-	public Crane(String name, int numberEggs) { //DOES NOT COMPILE
-		 this.numberEggs = numberEggs;
-		 this.name = name;
-	}	
+    public Crane(int numberEggs, String name) { //our custom constructor;
+        if (numberEggs < 0) throw new IllegalArgumentException();
+        this.numberEggs = numberEggs;
+        this.name = name;
+    }
+
+    public Crane(String name, int numberEggs) { //DOES NOT COMPILE
+        this.numberEggs = numberEggs;
+        this.name = name;
+    }
 }
 
 Example d:
 
 public record Crane(int numberEggs, String name) {
-	
-	 public Crane(int numberEggs, String a) { //our custom constructor;
-		 if (numberEggs < 0) throw new IllegalArgumentException();
-		 this.numberEggs = numberEggs;
-		 this.name = a;
-	 }
 
-	 public Crane(String name) { //DOES NOT COMPILE
-		 this(null, null);
-	 }
+    public Crane(int numberEggs, String name) { //our custom constructor;
+        if (numberEggs < 0) throw new IllegalArgumentException();
+        this.numberEggs = numberEggs;
+        this.name = name;
+    }
+
+    public Crane(String name) { //DOES COMPILE
+        this(-1, null);
+    }
 }
 
 
@@ -1137,9 +1137,9 @@ Java has to do it.
 
 public record Crane(int numberEggs, String name) {
 	
-	 public Crane(int numberEggs, String a) { 
+	 public Crane(int numberEggs, String name) { 
 		 this.numberEggs = numberEggs;
-		 this.name = a;
+		 this.name = name;
 	 }
 	 
 	 public Crane { // DOES NOT COMPILE since we have defined a regular constructor
@@ -1183,7 +1183,7 @@ public record Crane(int numberEggs, String name) {
 
 Example d:
 
-While compact constructors can modify the constructor parameters, they cannot modify the fields of the record. For example, this does not compile:0
+While compact constructors can modify the constructor parameters, they cannot modify the fields of the record. For example, this does not compile:
 
 public record Crane(int numberEggs, String name) {
  public Crane {
@@ -1217,7 +1217,7 @@ public record Crane(int numberEggs, String name) {
 		System.out.println(c);
 //		Inside compact constructor
 //		Overloaded constructor completed
-//		Crane[numberEggs=999, name=A B]
+//		Crane[numberEggs=22, name=A B]
 	}
 }
 
@@ -1239,7 +1239,7 @@ public record Crane(int numberEggs, String name) {
 	 public Crane() {
 		 this(0, "asd");
 		 numberEggs = 1; //DOES NOT COMPILE; The final field numberEggs may already have been assigned
-		 //Since we are not in compact constructor, Java thinks we are touching instance variable...
+		 //Since we are not in compact constructor, Java thinks we are touching instance variable, which are already assigned...
 	 }
 }
 
@@ -1353,7 +1353,7 @@ public record  Crane2(int numberEggs, String name) {
     If we do have compact constructor, then this is a constructor which is created:
     
     public Crane2(int numberEggs, String name) {
-        int numberEggs = 22; // 'overriding'/gazim ulazne konstruktor parametre
+        numberEggs = 22; // 'overriding'/gazim ulazne konstruktor parametre
         name = "aaa"; // 'overriding'/gazim ulazne konstruktor parametre
         this.numberEggs = numberEggs;
         this.name = name;
@@ -1381,3 +1381,6 @@ public record Crane(int numberEggs, String name) {
     }
 }
 
+--------------------------------------
+
+Nested Classes
