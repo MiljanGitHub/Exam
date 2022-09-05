@@ -1064,8 +1064,11 @@ public record Crane(int numberEggs, String name) {
 The compiler will not insert a constructor if you define one with the same list of parameters in the same order. 
 Since each field is final, the constructor must set every field. For example, this record does not compile:
 
+In other words, if we have a constructor whose signature is the same as the one that is in record's declaration, the we will get compiler error, provided that there is no compact constructor and no assignment of final fields inside that constructor
+If we, however, do have compact constructor then it takse precedence and it is it (the compact constructor) which is converted to record's constructor declaration.
+
 public record Crane(int numberEggs, String name) {
- public Crane(int numberEggs, String name) {} // DOES NOT COMPILE
+ public Crane(int numberEggs, String name) {} // DOES NOT COMPILE; no assignment of final fields
 }
 
 Example a:
@@ -1187,3 +1190,175 @@ public record Crane(int numberEggs, String name) {
 }
 
 Overloaded Constructors
+
+Example a: ***Tricky example
+
+public record Crane(int numberEggs, String name) {
+	
+
+	public Crane(String firstName, String lastName) {
+		
+		this(0, firstName + " " + lastName);
+		System.out.println("Overloaded constructor completed");
+	}
+	
+	public Crane {
+		System.out.println("Inside compact constructor");
+		numberEggs = 999;
+		if (true) {
+			numberEggs = 22; //DOES COMPILE since we are modifying constructor parameters
+		}
+	}
+	
+	public static void main(String[] args) {
+		Crane c = new Crane("A", "B");
+		System.out.println(c);
+//		Inside compact constructor
+//		Overloaded constructor completed
+//		Crane[numberEggs=999, name=A B]
+	}
+}
+
+Example b:
+
+public record Crane(int numberEggs, String name) {
+ public Crane(String firstName, String lastName) {
+	this(0, firstName + " " + lastName); // DOES COMPILE
+ }
+}
+
+Example c:
+
+public record Crane(int numberEggs, String name) {
+	 public Crane(String firstName, String lastName) {
+		 this();
+	 }
+	 
+	 public Crane() {
+		 this(0, "asd");
+		 numberEggs = 1; //DOES NOT COMPILE; The final field numberEggs may already have been assigned
+		 //Since we are not in compact constructor, Java thinks we are touching instance variable...
+	 }
+}
+
+Example d:
+
+public record  Crane2(int numberEggs, String name) {
+    
+    public Crane2(){
+        this(0, "a");
+    }
+
+    public Crane2(int x){
+        this(0, "a");
+    }
+
+    public Crane2{
+        numberEggs = 22;
+        name = "aaa";
+    }
+
+    public static void main(String[] args) {
+        new Crane2(1, "aaaafff");
+    }
+}
+//DOES COMPILE
+
+Example e:
+
+
+public record  Crane2(int numberEggs, String name) {
+
+    public Crane2(){
+        this(0, "a");
+    }
+
+    public Crane2(int x){
+        this();
+    }
+
+    public Crane2{
+        numberEggs = 22;
+        name = "aaa";
+    }
+
+    public static void main(String[] args) {
+        new Crane2(1, "aaaafff");
+    }
+}
+
+//DOES COMPILE
+
+Example f:
+
+public record Crane(int numberEggs, String name) {
+ public Crane(int numberEggs, String firstName, String lastName) {
+	this(numberEggs + 1, firstName + " " + lastName);
+	numberEggs = 10; // NO EFFECT (applies to parameter, not instance field)
+	this.numberEggs = 20; // DOES NOT COMPILE; instance var already assigned
+ }
+}
+
+Example g:
+
+public record Crane(int numberEggs, String name) {
+ public Crane(String name) {
+ this(1); // DOES NOT COMPILE
+ }
+ public Crane(int numberEggs) {
+ this(""); // DOES NOT COMPILE
+ }
+}
+
+Example h:
+
+public record Crane(int numberEggs, String name) {
+	public Crane(int numberEggs, String name) { // DOES NOT COMPILE
+		
+	} 
+	
+	 public Crane{ // DOES NOT COMPILE; two construcotrs with same signature
+		numberEggs = 1;
+		name = "";
+	}
+}
+
+Example j:
+
+public record  Crane2(int numberEggs, String name) {
+
+    public Crane2(){
+        this(0, "a");
+    }
+
+    public Crane2(int x){
+        this();
+    }
+
+    public Crane2{
+        numberEggs = 22;
+        name = "aaa";
+    }
+	
+    /*
+    If no compact constructor is used in source file (commented) then this is a constructor which is created:
+
+    public Crane2(int numberEggs, String name) {
+        this.numberEggs = numberEggs;
+        this.name = name;
+    }
+
+    If we do have compact constructor, then this is a constructor which is created:
+    
+    public Crane2(int numberEggs, String name) {
+        int numberEggs = 22; // 'overriding'/gazim ulazne konstruktor parametre
+        name = "aaa"; // 'overriding'/gazim ulazne konstruktor parametre
+        this.numberEggs = numberEggs;
+        this.name = name;
+    }
+    */
+
+    public static void main(String[] args) {
+        new Crane2(1, "aaaafff"); //Everything COMPILES
+    }
+}
