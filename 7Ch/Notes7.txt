@@ -995,9 +995,11 @@ final class SpecialYellowLight extends YellowLight{} //DOES COMPILE
 
 Records
 
+*Records cannot be inherited because of 'final'; not they can be extended
+
 public record Crane(int numberEggs, String name) {}
 
-equivalent to:
+is equivalent to:
 
 public final class Crane {
 
@@ -1362,3 +1364,20 @@ public record  Crane2(int numberEggs, String name) {
         new Crane2(1, "aaaafff"); //Everything COMPILES
     }
 }
+
+Example i:
+
+public record Crane(int numberEggs, String name) {
+    private static int type = 10;
+    public int size; // DOES NOT COMPILE
+    private boolean friendly; // DOES NOT COMPILE
+    
+	{
+        System.out.println("@");  // DOES NOT COMPILE
+    }
+	
+    public Crane { 
+        numberEggs = 999;
+    }
+}
+
