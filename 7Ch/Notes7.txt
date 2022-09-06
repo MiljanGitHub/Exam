@@ -1737,14 +1737,125 @@ method returns. This means you can create instances only from within the method.
 Local classes are not limited to being declared only inside methods. For example, they can be declared inside constructors and initializers. 
 
 
+Example11:
+
+public class Local {
+
+    private int x;
+	
+	{
+        static class F{} //DOES NOT COMPILE
+    }
+
+
+	{
+         class H{ }  //DOES  OMPILE
+    }
+
+    {
+        interface H{ } //DOES  OMPILE
+    }
+	
+	
+	static {
+        class K{ } //DOES  OMPILE
+    }
+	
+    void m(){
+
+        private class A{} //DOES NOT COMPILE
+        protected class B{} //DOES NOT COMPILE
+        public class C{} //DOES NOT COMPILE
+
+        final class D{} //DOES  OMPILE
+        abstract class E{} //DOES COMPILE
+		class R{}  //DOES COMPILE
+    }
+}
+
+
+Example12:
+
+public class Local {
+    private int x;
+    private void m1(){ }
+
+    void m(){
+
+        final int g = 5;
+        int r = 32;
+        int h = 66;
+        if (true) r = 444;
+
+         class E{
+             //private int f = r; // DOES NOT COMPILE
+             private int x1 = h;  //DOES COMPILE
+             private int x2 = g;
+
+             void m(){
+                 System.out.println(g); //DOES COMPILE
+                 System.out.println(x); //DOES COMPILE
+                 m1(); //DOES COMPILE
+             }
+
+             public E(){
+                 m1(); //DOES COMPILE
+             }
+         }
+    }
+}
+
+Example13:
+
+public void processData() {
+ final int length = 5;
+ int width = 10;
+ int height = 2;
+ class VolumeCalculator {
+	public int multiply() {
+		return length * width * height; // DOES NOT COMPILE; 'width' is not effecitivly final
+	}
+ }
+ width = 2;
+}
 
 
 
+Example14:
+
+public class Local {
+    private int x;
+    private void m1(){ }
 
 
+    public Tester getT(){ // DOES NOT COMPILE;
+        class Tester{}
+        final Tester tester = new Tester();
+        return tester; // DOES NOT COMPILE;
+    }
+
+}
 
 
+Example15:
 
+If you declare the local class in a method, it can access the method's parameters.
+ 
+public class Local {
+    private int x;
+	private static int y;
+    public void m1(String x){
+       
+        interface A{  }
+		
+        class Student implements A{
+            public Student(){
+                System.out.println(x); //from m1 parameter
+				 System.out.println(y); //DOES COMPILE
+            }
+        }
+    }
+}
 
 
 --------------------------------------
