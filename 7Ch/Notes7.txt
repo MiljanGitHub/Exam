@@ -1453,6 +1453,7 @@ public class Home {
 		System.out.println(repeat); //DOES NOT COMPILE; Enclosing class cannot access inner class memeber even tho they are public; vice-reverese is possible
     }
     public static void main(String[] args) {
+	    //Home.Room R = new Room(); DOES NOT COMPILE, must use instance of enclosing class
         var home = new Home(); // Create the outer class instance
         home.enterRoom();
     } 
@@ -1533,13 +1534,13 @@ public class Fox {
     }
 }
 
-The line 'private class Den {}' must be observed as a member of a class, such methods and instance variables. In this case it is not a static member, so 
-if we want to access that member ('private class Den {}') from some other static member, that won't be allowed. We either have to either of three things:
+The line 'private class Den {}' must be observed as a member of a class Fox, such as methods and instance variables. In this case it is not a static member, so 
+if we want to access that member ('private class Den {}') from some other static member (such as main()), that won't be allowed. We have to do either of three things:
 1. remove 'static' from 'public static void visitFriend() {..}'
 2. make Den class static
 3. or within 'public static void visitFriend() {...}' create an instance of Fox class and refere to 'new Den' as if it (private class Den {}') is a member of Fox
 	public static void visitFriend() {
-        new Fox().new Den(); // DOES NOT COMPILE
+        new Fox().new Den(); // DOES COMPILE
     }
 	This would work since we are in Fox class and Den is a private member
 
@@ -1551,6 +1552,7 @@ public class Fox {
 
 public class Squirrel {
     public void visitFox() {
+		new Den(); // DOES NOT COMPILE
         new Fox().new Den(); // DOES NOT COMPILE
     }
 }
@@ -1593,12 +1595,10 @@ public class Home {
 		}
     }
 	
-	
-	
     public static void main(String[] args) {
 
         var home = new Home(); // Create the outer class instance
-        final String a = home.new Room().a; //DOES COMPILE; since we are in the enclosing class: my explanation: 'accessing private member of a protected member is OK'
+        final String a = home.new Room().a; //DOES COMPILE; since we are in the enclosing class: my explanation: 'accessing private member of a protected member is OK' while we are in enclosing class
         home.enterRoom();
     }
 }
@@ -1607,7 +1607,7 @@ class X{
 
     void h(){
         final Home.Room room = new Home().new Room();
-        System.out.println(room.a); //DOES NOT COMPILE; since we are not in the enclosing class: my explanation: 'accessing private member of a protected member is NOT OK'
+        System.out.println(room.a); //DOES NOT COMPILE; since we are not in the enclosing class: my explanation: 'accessing private member of a protected member is NOT OK' since we are not in enclosing class
     }
 }
 
@@ -1619,8 +1619,8 @@ class X{
 
 2. Creating a static Nested Class
 
-A static nested class is a static type defined at the member level. Unlike an inner class (which is non-static and does require an instance of the enclosing class to be instantiated if we are in static method of enclosing class), 
-a static nested class can be instantiated, inside a static member(method) of an enclosing class,with or without an instance of the enclosing class. 
+A static nested class is a static type defined at the member level. Unlike an inner class, 
+a static nested class can be instantiated "directly" inside a static member(method) of an enclosing class, without an instance of the enclosing class. 
 
 
 The trade-off, though, is that it can’t access instance variables or methods declared in the outer class.
@@ -1647,8 +1647,9 @@ public class Home2 {
     public static void main(String[] args) {
         Room room = new Room(); //inside static method of an enclosing class, we don't need an instance of enclosing class to
                                 //instantiate static-nested class
-        var home = new Home(); //we could do as well:
-        home.new Room(); //Create static-nested class instance via instance of enclosing class
+								
+        var home = new Home(); //Careful:
+        home.new Room(); //We CANNOT create static-nested class instance via instance of enclosing class
     }
 }
 
@@ -1667,6 +1668,81 @@ public class Enclosing {
         //all DOES COMPILE
     }
 }
+
+
+Example9:
+
+Static-nested classes cannot access members of an enclosing class
+
+public class Enclosing {
+
+    private int x;
+    private static int x1;
+
+    protected static class D{
+
+        private int x;
+
+        void m1(){
+            System.out.println(x1); //DOES COMPILE
+        }
+
+        private void m(){
+            //System.out.println(x); //DOES NOT COMPILE
+        }
+        
+        void accessMethodFromOuterClass(){
+            m5(); //DOES NOT COMPILE
+            m5static();  //DOES  COMPILE
+        }
+    }
+    public static void m5static(){
+        
+    }
+    public void m5(){
+        //accessing members of static-nested class while we are in enclosing class
+        final int x2 = new D().x;  //DOES COMPILE
+        new D().m(); //DOES COMPILE
+
+    }
+
+    public static void main(String[] args) {
+        //accessing members of static-nested class while we are in enclosing class in static member
+        final int x2 = new D().x;  //DOES COMPILE
+        new D().m(); //DOES COMPILE
+		
+		
+    }
+}
+
+Example10:
+
+public class Park {
+    static class Ride {
+        private int price = 6;
+    }
+    public static void main(String[] args) {
+        var ride = new Ride();
+        System.out.println(ride.price); //DOES COMPILE
+    } }
+
+
+
+
+3. A Local Classes
+
+
+A local class is a nested class defined within a method. Like local variables, a local class declaration does not exist until the method is invoked, and it goes out of scope when the
+method returns. This means you can create instances only from within the method. Those instances can still be returned from the method. This is just how local variables work. 
+Local classes are not limited to being declared only inside methods. For example, they can be declared inside constructors and initializers. 
+
+
+
+
+
+
+
+
 
 
 
