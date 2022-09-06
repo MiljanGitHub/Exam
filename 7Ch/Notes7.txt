@@ -1384,3 +1384,291 @@ public record Crane(int numberEggs, String name) {
 --------------------------------------
 
 Nested Classes
+
+A nested class is a class that is defined within another class. A nested class can come in one of four flavors:
+■ Inner class: A non-static type defined at the member level of a class
+■ Static nested class: A static type defined at the member level of a class
+■ Local class: A class defined within a method body
+■ Anonymous class: A special case of a local class that does not have a name
+*All four types of nested classes can now define static variables and methods!
+
+
+1. An Inner Class
+
+An inner class, also called a member inner class, is a non-static type defined at the member
+level of a class (the same level as the methods, instance variables, and constructors). Because
+they are not top-level types, they can use any of the four access levels, not just public and
+package access.
+
+Inner classes have the following properties:
+■ Can be declared public, protected, package, or private
+■ Can extend a class and implement interfaces
+■ Can be marked abstract or final
+■ Can access members of the outer class, including private members
+
+Example1:
+
+public class Inner1 {
+	
+	private int x = 2;
+	
+	class InnerPackage{}
+	
+	private class InnerPrivate implements SomeInterface{}
+	
+	public final class InnerPublic{}
+	
+	protected abstract class InnerProtected{
+		private int t = x;
+		
+		void test() {
+			System.out.println(x);
+		}
+	}
+}
+
+
+Example2:
+
+public class Home {
+    private String greeting = "Hi"; // Outer class instance variable
+    private static String greeting2 = "Hi";
+   
+    protected class Room { // Inner class declaration
+        public int repeat = 3;
+        public void enter() {
+            for (int i = 0; i < repeat; i++) greet(greeting);
+			System.out.println(greeting2); //inner non-static member can access static member of enclosing class
+        }
+        private static void greet(String message) {
+            System.out.println(message);
+			System.out.println(greeting); //inner static member cannot access non-static member of enclosing class; in static method you cannot touch non-static members
+
+        }
+    }
+
+    public void enterRoom() { // Instance method in outer class
+        var room = new Room(); // Create the inner class instance
+        room.enter();
+		System.out.println(repeat); //DOES NOT COMPILE; Enclosing class cannot access inner class memeber even tho they are public; vice-reverese is possible
+    }
+    public static void main(String[] args) {
+        var home = new Home(); // Create the outer class instance
+        home.enterRoom();
+    } 
+}
+
+
+Example3:
+
+//different way of creating nested inner class
+20: public static void main(String[] args) {
+21: 	var home = new Home();
+22: 	Room room = home.new Room(); // Create the inner class instance
+23: 	room.enter();
+24: }
+
+We can’t just call new Room() inside the static main() method, because Java won’t
+know which instance of Home it is associated with. Java solves this by calling new as if it
+were a method on the room variable
+
+Example4:
+
+public class A {
+    private int x = 10;
+    class B extends A{
+        private int x = 20;
+        class C extends  B{
+            private int x = 30;
+            public void allTheX() {
+             
+                System.out.println(C.B.this.x);
+                System.out.println(C.super.x);
+                System.out.println(A.this.x);
+                System.out.println(B.this.x);
+                System.out.println(C.B.super.x);
+            } } }
+    public static void main(String[] args) {
+        A a = new A();
+        A.B b = a.new B();
+        A.B.C c = b.new C();
+        c.allTheX();
+    }}
+
+Example5:
+
+public class A {
+    private int x = 10;
+    class B {
+        private int x = 20;
+        class C {
+            private int x = 30;
+            public void allTheX() {
+                System.out.println(x); // 30
+                System.out.println(this.x); // 30
+                System.out.println(B.this.x); // 20
+                System.out.println(A.this.x); // 10
+                
+            } } }
+    public static void main(String[] args) {
+        A a = new A();
+        A.B b = a.new B(); //or:  'B bb = a.new B();' but DOES NOT COMPILE as:  'B b1 = new B();' 
+							//new B() inside the static main() method, Java won’t know which instance of B it is associated with. 
+							//Java solves this by calling 'new' as if it were a method on the 'a' variable
+        A.B.C c = b.new C();  //or B.C c1 = b.new C(); but DOES NOT COMPILE as: C c2 = b.new C(); //their explanation: C is too deep for Java to know where to look.
+        c.allTheX();
+    }}
+
+Example6:
+
+public class Fox {
+
+    private class Den {}
+
+    public void goHome() {
+        new Den();
+    }
+    public static void visitFriend() {
+        new Den(); // DOES NOT COMPILE
+    }
+}
+
+The line 'private class Den {}' must be observed as a member of a class, such methods and instance variables. In this case it is not a static member, so 
+if we want to access that member ('private class Den {}') from some other static member, that won't be allowed. We either have to either of three things:
+1. remove 'static' from 'public static void visitFriend() {..}'
+2. make Den class static
+3. or within 'public static void visitFriend() {...}' create an instance of Fox class and refere to 'new Den' as if it (private class Den {}') is a member of Fox
+	public static void visitFriend() {
+        new Fox().new Den(); // DOES NOT COMPILE
+    }
+	This would work since we are in Fox class and Den is a private member
+
+Example7:
+
+public class Fox {
+    private class Den {}
+}
+
+public class Squirrel {
+    public void visitFox() {
+        new Fox().new Den(); // DOES NOT COMPILE
+    }
+}
+
+Constructor call does not compile for two reasons. Even though it is an instance method (visitFox()), it is not an instance method inside the Fox class. Adding a Fox reference
+would not fix the problem entirely, though. Den is private and not accessible in the Squirrel class.
+
+Example7:
+
+Accessing private member in Inner classes (expansion of point 4. from te properties of Inner classes from above)
+
+Simple example 7a:
+
+public class K {
+    private  int x;
+    public static void main(String[] args) {
+	    System.out.println(x);  //DOES NOT COMPILE
+        final int x1 = new K().x; //DOES COMPILE
+    }
+}
+class  Test2{
+    public static void main(String[] args) {
+        final K k = new K();
+        System.out.println(k.x); //DOES NOT COMPILE
+    }
+}
+
+
+Example 7b:
+
+public class Home {
+    private String greeting = "Hi"; // Outer class instance variable
+    private static String greeting2 = "Hi";
+	
+    protected class Room { // Inner class declaration
+        public int repeat = 3;
+        private String a;
+		void test(){
+			System.out.println(greeting); //They refere to this example when they say that Inner classes can have access to private members of enclosing class
+		}
+    }
+	
+	
+	
+    public static void main(String[] args) {
+
+        var home = new Home(); // Create the outer class instance
+        final String a = home.new Room().a; //DOES COMPILE; since we are in the enclosing class: my explanation: 'accessing private member of a protected member is OK'
+        home.enterRoom();
+    }
+}
+
+class X{
+
+    void h(){
+        final Home.Room room = new Home().new Room();
+        System.out.println(room.a); //DOES NOT COMPILE; since we are not in the enclosing class: my explanation: 'accessing private member of a protected member is NOT OK'
+    }
+}
+
+**if Roome was declared as private class Room {...} then: 'final Home.Room room = new Home().new Room();' would not compile
+
+
+
+
+
+2. Creating a static Nested Class
+
+A static nested class is a static type defined at the member level. Unlike an inner class (which is non-static and does require an instance of the enclosing class to be instantiated if we are in static method of enclosing class), 
+a static nested class can be instantiated, inside a static member(method) of an enclosing class,with or without an instance of the enclosing class. 
+
+
+The trade-off, though, is that it can’t access instance variables or methods declared in the outer class.
+
+
+public class Home2 {
+    private  String greeting = "Hi"; // Outer class instance variable
+
+    protected static class Room { // Inner class declaration
+        public  int repeat = 3;
+        public void enter() {
+            for (int i = 0; i < repeat; i++) greet(greeting); //DOES NOT COMPILE; static-nested classes cannot access members of enclosing class, if they are not static
+        }
+        private static void greet(String message) {
+            System.out.println(message);
+        }
+    }
+
+    public void enterRoom() { // Instance method in outer class
+        var room = new Room(); // Create the inner class instance
+        room.enter();
+
+    }
+    public static void main(String[] args) {
+        Room room = new Room(); //inside static method of an enclosing class, we don't need an instance of enclosing class to
+                                //instantiate static-nested class
+        var home = new Home(); //we could do as well:
+        home.new Room(); //Create static-nested class instance via instance of enclosing class
+    }
+}
+
+Example8:
+
+public class Enclosing {
+
+    public static class A{}
+
+    private static class C{ }
+
+    static class B{}
+    protected static class D{}
+    
+    public static void main(String[] args) {
+        //all DOES COMPILE
+    }
+}
+
+
+
+
+--------------------------------------
