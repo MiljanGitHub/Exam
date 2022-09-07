@@ -1390,7 +1390,7 @@ A nested class is a class that is defined within another class. A nested class c
 ■ Static nested class: A static type defined at the member level of a class
 ■ Local class: A class defined within a method body
 ■ Anonymous class: A special case of a local class that does not have a name
-*All four types of nested classes can now define static variables and methods!
+*All four types of nested classes can now define static variables and methods!!!!!!!!!!!!!!!!!!!!!!
 
 
 1. An Inner Class
@@ -1410,7 +1410,7 @@ Example1:
 
 public class Inner1 {
 	
-	private int x = 2;
+	private int x1 = 2;
 	
 	class InnerPackage{}
 	
@@ -1419,10 +1419,10 @@ public class Inner1 {
 	public final class InnerPublic{}
 	
 	protected abstract class InnerProtected{
-		private int t = x;
+		private int t = x1;
 		
 		void test() {
-			System.out.println(x);
+			System.out.println(x)1;
 		}
 	}
 }
@@ -1562,7 +1562,7 @@ would not fix the problem entirely, though. Den is private and not accessible in
 
 Example7:
 
-Accessing private member in Inner classes (expansion of point 4. from te properties of Inner classes from above)
+Accessing private member in Inner classes (expansion of point 4. from the properties of Inner classes from above)
 
 Simple example 7a:
 
@@ -1648,7 +1648,7 @@ public class Home2 {
         Room room = new Room(); //inside static method of an enclosing class, we don't need an instance of enclosing class to
                                 //instantiate static-nested class
 								
-        var home = new Home(); //Careful:
+        var home = new Home2(); //Careful:
         home.new Room(); //We CANNOT create static-nested class instance via instance of enclosing class
     }
 }
@@ -1857,5 +1857,140 @@ public class Local {
     }
 }
 
+Example16:
+
+public class Local {
+    private int x;
+    private static int y;
+
+    {
+        class Teacher{
+            void m(){
+                System.out.println(x);  //DOES COMPILE
+                System.out.println(y); //DOES COMPILE
+            }
+        }
+    }
+
+
+    private void m1(String x) {
+        interface A {}
+        class Student implements A {
+            private static int x1;
+
+            public Student() {
+                //constructor
+                System.out.println(x); //Local class defined in an instance method can access enclosing instance members from constructor
+                System.out.println(y); //Local class defined in an instance method can access enclosing static instance members from constructor
+            }
+
+            public void t1() {
+                System.out.println(x); //DOES COMPILE
+            }
+
+            public static void t2() {
+                System.out.println(x);  //DOES NOT COMPILE; cannot access static members of enclosing class
+            }
+        }
+    }
+}
+
 
 --------------------------------------
+
+An Anonymous Classes
+
+
+An anonymous class is a specialized form of a local class that does not have a name. It is
+declared and instantiated all in one statement using the new keyword, a type name with
+parentheses, and a set of braces {}. Anonymous classes must extend an existing class or
+implement an existing interface. They are useful when you have a short implementation that
+will not be used anywhere else.
+
+Example1:
+
+1: public class ZooGiftShop {
+2: abstract class SaleTodayOnly {
+3: 	abstract int dollarsOff();
+4: }
+5: public int admission(int basePrice) {
+6: 		SaleTodayOnly sale = new SaleTodayOnly() { //Notice () and after it {...}
+7: 			int dollarsOff() { return 3; }
+8:		 }; // Don't forget the semicolon!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! We are declaring a local variable on thes lines. 
+9: 	return basePrice - sale.dollarsOff();
+10: } 
+11: }
+
+Example2:
+
+1: public class ZooGiftShop {
+2: 	interface SaleTodayOnly {
+3: 		int dollarsOff();
+4: 	}
+5: public int admission(int basePrice) {
+6: 	SaleTodayOnly sale = new SaleTodayOnly() {
+7: 		public int dollarsOff() { return 3; } //Line 7 is public instead of using default access since interfaces require public methods.
+8: 	};
+9: 	return basePrice - sale.dollarsOff();
+10: } 
+11: }
+
+Example3:
+
+public class Gorilla {
+ interface Climb {}
+ Climb climbing = new Climb() {}; //Notice {}
+}
+
+
+Example4:
+
+ public void sayHello() {
+	abstract class HungarianGreeting{
+       public HungarianGreeting(int i){}
+       protected abstract void hi();
+    }
+	
+	HungarianGreeting hg = new HungarianGreeting(666666){
+       public void hi(){
+           System.out.println("Miklos...");
+       }
+    };
+    hg.hi();
+ }
+
+
+Example5:
+
+public class Gorilla {
+    private int k;
+    interface Climb {}
+    Climb climbing = new Climb() {
+		int y  = k; //DOES COMPILE
+        void m2(){
+            System.out.println(k); //DOES COMPILE
+        }
+    }; //Notice {}
+    
+    void m(){
+        interface Hi{}
+        
+        Hi h = new Hi() {
+            
+            void m1(){
+                System.out.println(k); //DOES COMPILE
+            }
+        };
+        
+    }
+}
+
+
+
+
+
+
+--------------------------------------
+
+
+Understanding Polymorphism
