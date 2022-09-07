@@ -426,6 +426,12 @@ public class Interfaces8 {
 			//print(); //DOES NOT COMPILE
 			Swim.sm(); //DOES COMPILE
 			Swim s = null;
+			Swim ss = new Swim() {
+				public void test() {
+					
+				}
+			};
+			ss.sm(); //DOES NOT COMPILE
 			//s.sm();  //DOES NOT COMPILE
 			//test(); //DOES NOT COMPILE
 			//pr();  //DOES NOT COMPILE
@@ -562,8 +568,7 @@ SUMMER 2
 FALL 3
 
 
-You can’t compare an int and an enum value directly anyway since an enum is a type, like
-a Java class, and not a primitive int.
+You can’t compare an int and an enum value directly anyway since an enum is a type, like a Java class, and not a primitive int.
 if ( Season.SUMMER == 2) {} // DOES NOT COMPILE
 
 
@@ -679,7 +684,7 @@ public class Enums1 {
 		Season[] x = Season.values();
 		SeasonComplex[] s = SeasonComplex.values();
 		SeasonComplex.SUMMER.s();
-//		
+
 //		Season x = SeasonComplex.SUMMER.s; //even though 's' is private in a enum file it is still accessible in this manner
 //		int y = SeasonComplex.TEST.x1; // even though 'x1' is private in a enum file it is still accessible in this manner
 //		
@@ -880,7 +885,7 @@ public sealed class Wolf permits Timber {}
 public non-sealed class Timber extends Wolf {}
 public class DummyWolf extends Timber {}
 
-then this is allowed: public class MyFurryWolf extends MyWolf {}
+then this is allowed: public class MyFurryWolf extends DummyWolf {}
 
 Example5:
 
@@ -921,7 +926,7 @@ public sealed class Snake {
 
 However, if we try to use 'permits' in this example:
 
-public sealed class Snake permits Cobra{ // DOES NOT COMPILE; it must be written as public sealed class Snake permits Snake.Cobra{...}
+public sealed class Snake permits Cobra{ // DOES NOT COMPILE; it must be written as 'public sealed class Snake permits Snake.Cobra{...}'
 	public static void main(String args[]) {
 	 	System.out.print("D");	 
 	}
@@ -945,10 +950,10 @@ Nested inside of the sealed class 									Permitted, but not required
 Sealing Interfaces
 
 
-One distinct feature of a sealed interface is that the permits list can apply to a class that
+One distinct feature of a sealed interface is that the 'permits' list can apply to a class that
 implements the interface or an interface that extends the interface.
 // Sealed interface
-public sealed interface Swims permits Duck, Swan, Floats {} //with intefaces in 'permits', we can mix class (which impl 'sealed' interface) and other interfaces (which extend 'sealed' interface)
+public sealed interface Swims permits Duck, Swan, Floats {} //with intefaces in 'permits', we can mix classES (which impl 'sealed' interface) and other interfaces (which extend 'sealed' interface)
 
 // Classes permitted to implement sealed interface
 public final class Duck implements Swims {}
@@ -1994,3 +1999,31 @@ public class Gorilla {
 
 
 Understanding Polymorphism
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
