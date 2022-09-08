@@ -347,6 +347,12 @@ var x = {12,13} //DOES NOT COMPILE (array initializer needs an explicit target-t
 List chimpanzees = new ArrayList<Integer>();
 for(var ham : chimpanzees) //var type is Object;  Object o = chimpanzees.get(0);
 
+
+  public static void main(String[] args) {
+        for(final var e : Flavors.values()) //DOES COMPILE
+            System.out.print(e.ordinal()+" ");
+    }
+
 ------------------------------------------------
 
 

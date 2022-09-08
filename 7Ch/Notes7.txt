@@ -214,6 +214,31 @@ public class Interfaces11 implements B{
 	}
 }
 
+Example9:
+
+1: interface HasExoskeleton {
+2: double size = 2.0f;
+3: abstract int getNumberOfSections();
+4: }
+5: abstract class Insect implements HasExoskeleton {
+6: abstract int getNumberOfLegs();
+7: }
+8: public class Beetle extends Insect { //This line DOES NOT COMPILE. try to figure out why??
+9: int getNumberOfLegs() { return 6; }
+10: int getNumberOfSections(int count) { return 1; }
+11: }
+
+Example10:
+
+interface Aquatic {
+    int getNumOfGills(int p);
+}
+public class ClownFish implements Aquatic {
+    String getNumOfGills() { return "14"; }
+    int getNumOfGills(int input) { return 15; } //This line DOES NOT COMPILE; comapare it with Example9
+    public static void main(String[] args) {
+        System.out.println(new ClownFish().getNumOfGills(-1));
+    } }
 
 --------------------------------------
 
@@ -786,6 +811,40 @@ public enum Season implements Weather {
 ***This was not an accident. Whether the enum is simple
 or complex, the list of values always comes first.
 
+Example5:
+
+public class Bear {
+/*    enum FOOD {
+        BERRIES,INSECTS {
+            public boolean isHealthy() { return true; }
+        },
+        FISH, ROOTS, COOKIES, HONEY;
+        public abstract boolean isHealthy();
+    }*/ This DOES NOT COMPILE, implementation for INSECTS is only given!!!
+
+
+/*    enum FOOD { 
+        BERRIES{
+            public boolean isHealthy() { return true; }
+        },
+
+        INSECTS {
+            public boolean isHealthy() { return true; }
+        },
+        FISH{
+            public boolean isHealthy() { return true; }
+        }, ROOTS{
+            public boolean isHealthy() { return true; }
+        }, COOKIES{
+            public boolean isHealthy() { return true; }
+        }, HONEY{
+            public boolean isHealthy() { return true; }
+        };
+        public abstract boolean isHealthy();
+		
+		//All DOES COMPILE, we have all the implementations
+    }*/
+}
 
 
 --------------------------------------
@@ -1027,8 +1086,7 @@ Crane c = new Crane(2, "");
 c.numberEggs();
 c.name();
 
-*A record is a special type of data-oriented class in which the
-compiler inserts boilerplate code for you.
+*A record is a special type of data-oriented class in which the compiler inserts boilerplate code for you.
 In fact, the compiler inserts much more than the 14 lines we wrote earlier. As a bonus, the
 compiler inserts useful implementations of the Object methods equals(), hashCode() and toString().
 
@@ -1048,6 +1106,15 @@ var friend = new Crane(cousin.numberEggs(), "Janeice");
 public final record Crane(int numberEggs, String name) {} //DOES COMPILE
 
 public record BlueCrane() extends Crane {} // DOES NOT COMPILE
+
+public record Crane(int numberEggs, String name) extends A{} // DOES NOT COMPILE
+
+class TestA extends Crane{ // DOES NOT COMPILE
+
+    public TestA(int numberEggs, String name) {
+        super(numberEggs, name);
+    }
+}
 
 public interface Bird {}
 public record Crane(int numberEggs, String name) implements Bird {} //DOES COMPILE
@@ -1133,7 +1200,7 @@ public record Crane(int numberEggs, String name) {
 
 Compact Constructors
 
-Java calls the full constructor after the compact constructor but with the modified constructor parameters.
+Java calls the full constructor after the compact constructor but with the modified constructor parameters. Acutally, comapct constructor is converted to a primary constructor
 
 Example a:
 
@@ -1373,9 +1440,14 @@ public record  Crane2(int numberEggs, String name) {
 Example i:
 
 public record Crane(int numberEggs, String name) {
-    private static int type = 10;
+    private static int type = 10; //DOES COMPILE
     public int size; // DOES NOT COMPILE
     private boolean friendly; // DOES NOT COMPILE
+	 
+	public static void t(){  //DOES COMPILE
+        System.out.println("ss");
+    }
+
     
 	{
         System.out.println("@");  // DOES NOT COMPILE
@@ -1384,7 +1456,18 @@ public record Crane(int numberEggs, String name) {
     public Crane { 
         numberEggs = 999;
     }
+	
+	 static { //DOES COMPILE
+        System.out.println("aaa");
+    }
 }
+
+Example j:
+
+public record BeardedDragon(boolean fun) {
+ @Override public boolean fun() { return false; } //DOES COMPILE
+ @Override public boolean equals(Object obj) { return false; } //DOES COMPILE; sam as for hashCode toString()
+} 
 
 --------------------------------------
 
@@ -1453,12 +1536,15 @@ public class Home {
     }
 
     public void enterRoom() { // Instance method in outer class
+	     Home.Room R = new Room();  //DOES  COMPILE
+        Home.Room R1 = new Home.Room(); //DOES  COMPILE
+		
         var room = new Room(); // Create the inner class instance
         room.enter();
 		System.out.println(repeat); //DOES NOT COMPILE; Enclosing class cannot access inner class memeber even tho they are public; vice-reverese is possible
     }
     public static void main(String[] args) {
-	    //Home.Room R = new Room(); DOES NOT COMPILE, must use instance of enclosing class
+	    //Home.Room R = new Room(); //DOES NOT COMPILE, cannot be referenced from a static context
         var home = new Home(); // Create the outer class instance
         home.enterRoom();
     } 
@@ -1527,6 +1613,7 @@ public class A {
 
 Example6:
 
+//Fox.java
 public class Fox {
 
     private class Den {}
@@ -1536,6 +1623,16 @@ public class Fox {
     }
     public static void visitFriend() {
         new Den(); // DOES NOT COMPILE
+    }
+}
+
+//MainTest.java
+public class MainTest {
+
+    public static void main(String[] args) {
+        Fox f = new Fox();
+
+        final Fox.Den den = f.new Den(); //DOES NOT COMPILE, if it was public as: 'public class Den {}', then it would compile
     }
 }
 
@@ -1616,7 +1713,7 @@ class X{
     }
 }
 
-**if Roome was declared as private class Room {...} then: 'final Home.Room room = new Home().new Room();' would not compile
+**if Roome was declared as 'private class Room {...}' then: 'final Home.Room room = new Home().new Room();' would not compile
 
 
 
@@ -1715,7 +1812,8 @@ public class Enclosing {
         //accessing members of static-nested class while we are in enclosing class in static member
         final int x2 = new D().x;  //DOES COMPILE
         new D().m(); //DOES COMPILE
-		
+		new D().t(); //DOES COMPILE; warning is given, since we are accessing static member via instance of a class
+        D.t(); //DOES COMPILE; no warning
 		
     }
 }
@@ -1751,6 +1849,11 @@ public class Local {
 	{
         static class F{} //DOES NOT COMPILE
     }
+	
+	public Local{
+		class T{ }  //DOES  OMPILE
+	
+	}
 
 
 	{
@@ -1991,7 +2094,23 @@ public class Gorilla {
 }
 
 
+Example6:
 
+public class Ghost {
+    public static void boo() {
+        System.out.println("Not scared");
+    }
+    protected  class Spirit {
+        public void boo() {
+            System.out.println("Booo!!!");
+        }
+    }
+
+    public static void main(String... haunt) {
+        var g = new Ghost().new Spirit() {}; //DOES COMPILE; if Spirit was 'final' then it would not compile
+    }
+
+}
 
 
 
