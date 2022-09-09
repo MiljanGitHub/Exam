@@ -819,7 +819,7 @@ public class Bear {
             public boolean isHealthy() { return true; }
         },
         FISH, ROOTS, COOKIES, HONEY;
-        public abstract boolean isHealthy();
+        public abstract boolean isHealthy(); //if the method is marked 'abstract' all enums MUST have implementation
     }*/ This DOES NOT COMPILE, implementation for INSECTS is only given!!!
 
 
@@ -840,11 +840,51 @@ public class Bear {
         }, HONEY{
             public boolean isHealthy() { return true; }
         };
-        public abstract boolean isHealthy();
+        public abstract boolean isHealthy(); //if the method is marked 'abstract' all enums MUST have implementation
 		
 		//All DOES COMPILE, we have all the implementations
     }*/
+	
+/*   enum FOOD{
+        TEST1, TEST2{
+            
+        };
+        public boolean isHealthy(){
+            return true;
+        }
+    }*/ This Enum DOES COMPILE; all enums are using default method
+	
+	
+/*   enum FOOD{
+        TEST1, TEST2{
+            //DOES COMPILE
+            public boolean isHealth2(){
+                return false;
+            }
+
+            @Override //DOES COMPILE
+            public boolean isHealthy(){
+                return false;
+            }
+        }, TEST3{}, TEST4;   //DOES COMPILE; ';' mandatory
+
+        
+        public boolean isHealthy(){
+            return true;
+        }
+		
+		private FOOD(){ } //DOES COMPILE
+        public FOOD(){ } //DOES NOT COMPILE
+
+    } //FROM ENUM
+	
+*/
+	
+	
+	
 }
+
+***Exam will be try to tricky you with usage of semi-colons only with Enums
 
 
 --------------------------------------
@@ -1829,7 +1869,54 @@ public class Park {
         System.out.println(ride.price); //DOES COMPILE
     } }
 
+Example11:
 
+public class Lion {
+    class Cub {}
+
+    static class Den {}
+    
+    void methodWhichDoesntMatterIfItIsStaticOrNonStatic(){
+        //Two ways how to create nested static class within en enclosing class!!! ***************
+        var d = new Den();
+        Lion.Den g = new Lion.Den();
+    }
+    
+
+    void noStaticRest(){
+        // Cub a = Lion.new Cub(); //DOES NOT COMPILE;
+       // Lion.Cub b = new Lion().Cub(); //DOES NOT COMPILE;
+        Lion.Cub c = new Lion().new Cub();  //DOES COMPILE;
+
+        var d = new Den(); //DOES  COMPILE;
+
+        //var e = Lion.new Cub(); //DOES NOT COMPILE;
+        Lion.Den g = new Lion.Den();  //DOES  COMPILE;
+
+        var h = new Cub();  //DOES  COMPILE;
+    }
+
+    static void rest() {
+
+        //Cub a = Lion.new Cub(); //DOES NOT COMPILE; Cub is not a static member
+
+        //Lion.Cub b = new Lion().Cub(); //DOES NOT COMPILE; missing 'new' before Cub() and after '.'
+
+        Lion.Cub c = new Lion().new Cub(); //DOES  COMPILE; Correctly creates an instance of an inner class Cub using an instance of the outer class Lion.
+
+        var d = new Den(); //DOES  COMPILE; correctly create an instance of the static nested Den class, which does not require an instance of Lion
+
+        //var e = Lion.new Cub(); //DOES NOT COMPILE;
+
+        // Lion.Den f = Lion.new Den(); //DOES NOT COMPILE; Even tho Den is a static member, in order to create it we must use instance of Lion as in 'new Lion'.Den();' and not as stated in example
+
+        Lion.Den g = new Lion.Den(); //DOES  COMPILE; correctly create an instance of the static nested Den class, which does not require an instance of Lion
+                                    // If we were to use 'new Lion().new Den();' that would NOT COMPILE; Den is static, and does not need an instance 'new'
+
+       //var h = new Cub();  //DOES NOT COMPILE;
+
+    }
+}
 
 
 3. A Local Classes
