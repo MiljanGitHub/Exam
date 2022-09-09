@@ -982,7 +982,7 @@ public  class Lion extends Animal{
 Hiding Static Methods
 
 If we have 4 rules in place for method overriding and 'static' keyword is present, then we are talking about method hiding. However, subclass AND superclass must comply and have 'static' if other method 
-is also having 'static'.
+is also having 'static'. 
 
 Example1:
 
@@ -1047,6 +1047,8 @@ class Beaver extends Rodent {
 		return 2;
 	} 
 }
+
+
 
 
 --------------------------------------
