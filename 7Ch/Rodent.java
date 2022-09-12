@@ -11,3 +11,7 @@ class Beaver extends Rodent {
         return 2;
     }
 }
+
+
+in Test static block upper
+in helper constructor

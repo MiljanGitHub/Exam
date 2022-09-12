@@ -416,7 +416,7 @@ another class in the same package 								 No 				  Yes 				   Yes 					 Yes
 
 a subclass in a different package 								 No 				   No 				   Yes 					 Yes
 
-an unrelated class in a different package 						 No 				   No 					No 					 Yes
+an unrelated class in a different package 						 No 				   No 				   No 					 Yes
 
 
 the same class:
@@ -554,6 +554,7 @@ Five important rules:
 3. Static variable se mogu koristiti i u static i u non-static/instance metodama i u obicni initializer blokovima i u static blokovima
 4. static final variables (konstante) must be initialzed after they are declared OR they must be initialzed in static block
 5. U static metodi ne mozes da koristis this
+6. U non-static metodi mozes na "ne-static" nacin da pozovies static metodu/varaiblu -> this.staticMethod(); //Kompajler daje WARNING
 
 
 

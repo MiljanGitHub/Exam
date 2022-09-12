@@ -81,7 +81,7 @@ short age = 3;
 public void printData() {
  System.out.println(this.label); //Looks in current and within inheritance tree (superclasses); DOES COMPILE
  System.out.println(super.label); //Only looks in superclasses; DOES COMPILE
- System.out.println(this.age); //Finds it in current class;  DOES NOT COMPILE
+ System.out.println(this.age); //Finds it in current class;  DOES  COMPILE
  System.out.println(super.age); //Only looks in superclasses; DOES NOT COMPILE
  System.out.println(numberOfLegs); //DOES COMPILE  //Looks in current and within inheritance tree (superclasses); Java checks outward, starting with the narrowest scope. 
 												  //For this reason, the value of numberOfLegs in the Beetle class is used, and 6 is printed. 
@@ -603,14 +603,14 @@ public class StaticFinalInstanceVariables {
 		//x = 22; //DOES NOT COMPILE
 	}
 	
-	//final variable initialization
+	//final (non-static) variable initialization
 	private final int y = 22;
 	private final int y1;
 	private final int y3;
 	//private final int y4; //final instance variables must be assigned a value If they are not assigned a value
     //when they are declared or in an instance initializer, then they must be assigned a value in
-    //the constructor declaration. Failure to do so will result in a compiler error on the line that
-    //declares the constructor
+    //the constructor declaration. ****** Failure to do so will result in a compiler error on the line that
+    //declares the constructor. ****** Don't forget, constructors, in terms of assigning final fields are reviewed individually.
 	//** by the time the constructor completes, all final instance variables must be assigned a value exactly once.
 	static {
 		//y = 224; //DOES NOT COMPILE; Cannot make a static reference to the non-static field y
@@ -623,30 +623,31 @@ public class StaticFinalInstanceVariables {
 	}
 	
 	
-	//static variable initialization
+	//static (non-final) variable initialization
 	private static int c1; //non initialed at all; takes default value
 	private static int c = 22;
 	private static int c0;
 	static {
 		c = 225; //DOES COMPILE
 		c0 = 22;
-		c0 = 2222; //can be reassigned value
+		c0 = 2222; //can be reassigned value since it is not final
 	}
 	
 	{c = 66; c0 = 22;} {c1 = 6622;} //DOES COMPILE ***Important in non-static block, static variable can be used
 	
 	
 	//static final variable initialization
+	//static-final MUST be initialized in one of two places. Either in static block or in in-line declaration. Failure to do so is one compilation error. Attempt to assign a value in constructor/instance block is another error!
 	private static final int s0;
-	
+	//private static final int s1;
 	static {
 		s0 = 2;
 	}
 	{
 		//s0 = 2; //DOES NOT COMPILE; static-final cannot be initialized in non-static block
+		//s1 = 22; //DOES NOT COMPILE; static-final cannot be initialized in non-static block
 	}
-	//** by the time the constructor completes, all final instance variables must be assigned a value exactly once. 
-	//** 'static final' variables only in static block or in in-line assignment/initialization
+	//** by the time the constructor completes, all final instance variables must be assigned a value exactly once.
 	
 	public StaticFinalInstanceVariables() { 
 		
@@ -866,7 +867,7 @@ Rule3: (examples are stayisfying Rule1, Rule2)
 //   / | \
 //	   |
 //	   |
-//FileNotFoundException (subclass - narrower exception; "more focused/narrowed capabilities) checked
+//FileNotFoundException (subclass - NAROWER exception; "more focused/narrowed capabilities) checked
 
 Example 1:
 
