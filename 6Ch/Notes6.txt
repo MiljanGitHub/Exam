@@ -787,7 +787,7 @@ class Animal{
 }
 
 public class Lion extends Animal{
-	public Object str2(int i, String x) { //DOES COMPILE; doesn't overrides str2; it overloads
+	public Object str2(int i, String x) { //DOES COMPILE; doesn't overrides str2; it OVERLOADS!!!!!!!!!!!!!
 		return null;
 	}
 }
@@ -867,7 +867,7 @@ Rule3: (examples are stayisfying Rule1, Rule2)
 //   / | \
 //	   |
 //	   |
-//FileNotFoundException (subclass - NAROWER exception; "more focused/narrowed capabilities) checked
+//FileNotFoundException (subclass - NAROWER exception; "more focused/narrowed" capabilities) checked
 
 Example 1:
 
@@ -1155,6 +1155,25 @@ abstract class Hippopotamus {
  abstract static void swim(); // DOES NOT COMPILE
 }
 
+
+Example to do: what is output?
+
+4: public abstract class Whale {
+5: public abstract void dive();
+6: public static void main(String[] args) {
+7: 	Whale whale = new Orca();
+8: 	whale.dive(3);
+9: }
+10: }
+11: class Orca extends Whale {
+12: 	static public int MAX = 3;
+13: 	public void dive() {
+14: 		System.out.println("Orca diving");
+15: 	}
+16: 	public void dive(int... depth) {
+17: 		System.out.println("Orca diving deeper "+MAX);
+18: 	} 
+19: }
 
 --------------------------------------
 
