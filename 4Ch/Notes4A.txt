@@ -567,6 +567,11 @@ for (int i=0, int j=3; i<weather.length; ++i) { // DOES NOT COMPILE i and j don'
 	//body
 }
 
+int x = 0;
+for(int y, k = 4; y < 5; x++) { //DOES NOT COMPILE; y might not be initialized; but on its own: int p, l = 3; This DOES COMPILES
+     System.out.print(y + " ");
+ }
+
 Using Loop Variables Outside the Loop
 
 for(long y = 0, x = 4; x < 5 && y < 10; x++, y++) {
