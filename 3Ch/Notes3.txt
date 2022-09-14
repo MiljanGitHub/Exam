@@ -15,7 +15,7 @@ Operators are applied to operands and returns a result
 
 Operator 								Symbols and examples
 Post-unary operators 					expression++, expression--
-Pre-unary 								operators ++expression, --expression
+Pre-unary operators                     ++expression, --expression
 Other unary operators 					-, !, ~, +, (type)
 Multiplication/division/modulus 		*, /, %
 Addition/subtraction 					+, -
@@ -292,7 +292,7 @@ System.out.print(sheep+","+zzz); // 1,2
 
 --------------------------------------
 
-pITANJE 7, 14: Da li radi short circuiting kod logical operators & | ^
+pITANJE 7, 14: Da li radi short circuiting kod logical operators & | ^ - NE RADI!
 
 
 

@@ -1,0 +1,236 @@
+Opcija A
+
+- src
+	Howler.java //no import statement
+	HowlerTest.java //no import statement
+
+//Howler.java
+public class Howler {
+    public void h() {
+        System.out.println("howling");
+    }
+}
+
+//HowlerTest.java
+public class HowlerTest {
+
+    public static void main(String ...args) {
+        Howler h = new Howler();
+        h.h();
+    }
+}
+
+
+Iz src:
+	javac HowlerTest.java
+	javac Howler.java
+	java HowlerTest
+	
+	
+-------------------------------------------------------
+
+Opcija B
+
+- src
+	- p2
+		Howler.java
+	- p1
+		HowlerTest.java
+
+//Howler.java
+package p2;
+public class Howler {
+    public void h() {
+        System.out.println("howling ");
+    }
+}
+	
+
+
+//HowlerTest.java
+package p1;
+import p2.Howler;
+public class HowlerTest {
+
+    public static void main(String ...args) {
+        Howler h = new Howler();
+        h.h();
+    }
+}
+
+Iz src:
+	javac p2/Howler.java 
+	javac p1/HowlerTest.java
+	java p1/HowlerTest
+
+*//We cannot use . instead of / However, we can use \ or /
+
+-------------------------------------------------------
+
+Opcija C
+
+In this example from HowlerTest (which contains main()) reference is made to Howler and in the same time, from Howler reference is made to HowlerTest.
+
+- src
+	- p1
+		- p01
+			HowlerTest.java
+	- p2
+		Howler.java
+
+//Howler.java
+package p2;
+import p1.p01.HowlerTest;
+
+public class Howler {
+    public void h() {
+        System.out.println("howling " + HowlerTest.MAX);
+    }
+}
+
+//HowlerTest.java
+package p1.p01;
+import p2.Howler;
+
+public class HowlerTest {
+
+   public static final int MAX = 5;
+
+    public static void main(String ...args) {
+        Howler h = new Howler();
+        h.h();
+    }
+}
+
+iz src:
+	javac p2/Howler.java
+	javac p1/p01/HowlerTest.java
+	java p1/p01/HowlerTest
+	
+*We could switch order of first and second command and it would still work
+
+-------------------------------------------------------
+
+Opcija D
+
+- src
+	Howler.java
+	- p1
+		HowlerTest.java
+
+//Howler.java
+public class Howler {
+    public void h() {
+        System.out.println("howling ");
+    }
+}
+
+//HowlerTest.java
+package p1;
+
+public class HowlerTest {
+    public static void main(String ...args) {
+        Howler h = new Howler();
+        h.h();
+    }
+}
+
+
+iz src:
+
+javac Howler.java //OK
+javac p1/HowlerTest.java //Error; There is no way how to reference Howler from HowlerTest when compiling
+
+-------------------------------------------------------
+
+Opcija E
+
+- src
+	Howler.java
+	- p1
+		HowlerTest.java
+		
+//Howler.java
+package src;
+public class Howler {
+    public void h() {
+        System.out.println("howling ");
+    }
+}
+
+//HowlerTest.java
+package p1;
+import src.Howler;
+public class HowlerTest {
+    public static void main(String ...args) {
+        Howler h = new Howler();
+        h.h();
+    }
+}
+
+iz src:
+
+javac Howler.java //OK
+javac p1/HowlerTest.java //Error; package src does not exist; cannot find symbol Howler
+
+*Note related with D and E: if in Eclipse you try to make a class in src directory, Eclipse will create a "default_package" where its going to place that .java file. However, that class cannot be
+referenced from any other class in any different subpackages of 'src'. It can only be referenced from other classes which must be in located in 'src' as well.
+
+-------------------------------------------------------
+
+Opcija F
+
+- src
+	Howler.java
+	- p1
+		HowlerTest.java
+
+//Howler.java
+import p1.HowlerTest;
+public class Howler {
+    public void h() {
+        System.out.println("howling ");
+    }
+	
+	public static void main(String ...args) {
+        HowlerTest h = new HowlerTest();
+        h.grouwl();
+    }
+}
+
+//HowlerTest.java
+package p1;
+
+public class HowlerTest {
+	public void grouwl(){
+		 System.out.println("grouwling");
+	}
+}
+
+iz src:
+
+javac p1/HowlerTest.java //OK
+javac Howler.java //OK
+java Howler //OK
+
+-------------------------------------------------------
+
+***MOST IMPOTANT NOTE***
+
+Package names ('package p1.p2...') in .java files must be given that are relative to the position from where we are issuing java/javac commands
+
+Suppose we have the following class in the file /my/directory/named/A/Bird.java. 
+
+Which of the answer options replaces INSERT CODE HERE when added independently if we compile from /my/directory? 
+
+INSERT CODE HERE
+public class Bird { }
+
+Answere is: 'package named.A;'
+
+-------------------------------------------------------
+
+Understanding usage of java and javac commands with -classpath options
+
+Example 1:
+
