@@ -22,8 +22,8 @@ public class HowlerTest {
 
 
 Iz src:
-	javac HowlerTest.java
-	javac Howler.java
+	javac HowlerTest.java //****IMPORTANT: We get two class file HowlerTest.class and Howler.class
+	javac Howler.java //essentially, this is redundant command
 	java HowlerTest
 	
 	
@@ -232,5 +232,163 @@ Answere is: 'package named.A;'
 
 Understanding usage of java and javac commands with -classpath options
 
+-------------------------------------------------------
+
 Example 1:
 
+- src
+	- p2
+		Howler.java
+	- p1
+		HowlerTest.java
+
+
+//Howler.java
+package p2;
+public class Howler {
+    public void h() {
+        System.out.println("howling");
+    }
+}
+
+//HowlerTest.java
+package p1;
+//import p2.Howler; //***IMPORTANT: We are delibertly OMMITING an import statement for a referenced Howler class
+public class HowlerTest {
+
+    public static void main(String ...args) {
+        Howler h = new Howler();
+        h.h();
+    }
+}
+
+
+Iz src:
+	
+	Proces:
+	1. Pokusamo da kompajliramo HowlerTest.java koji sadrzi main() i ima referencu na Howler:
+	
+		javac p1/HowlerTest.java //Error -> 'Error: cannot find symbol Howler h = new Howler();' As you can see, the compiler failed to find the definition for the type "Howler".
+		
+	2. We now have to compile the dependency class 'Howler.java' and tell compiler where that compile .class is, the next time want to compile HowlerTest.java
+		
+		javac p2/Howler.java //OK
+	
+	3. This is just an idea: 
+	   
+	   javac -classpath [location for any relevant class file in order to compile HowlerTest.java] HowlerTest.java //instead of [] we can pass a "." or /relative/folder/from/src or full location on the disk
+	
+		Attempts:
+	
+	   javac -classpath /p2/*.class p1/HowlerTest.java //Error
+	   javac -classpath /p2 p1/HowlerTest.java //Error
+	   javac -classpath ./p2 p1/HowlerTest.java //Error
+	   javac -classpath C:\Users\Miljan.Puletic\Desktop\src\p2 p1/HowlerTest.java  //Error
+	   javac -classpath C:\Users\Miljan.Puletic\Desktop\src\p2\Howler.class p1/HowlerTest.java //Error 
+	   
+	   Same error: 'java:7: error: cannot find symbolHowler h = new Howler();'
+	   
+-------------------------------------------------------	   
+	  
+Example 2:	
+
+- src
+	- p2
+		Howler.java
+	- p1
+		HowlerTest.java
+
+
+//Howler.java
+package p2;
+public class Howler {
+    public void h() {
+        System.out.println("howling");
+    }
+}
+
+//HowlerTest.java
+package p1;
+import p2.Howler; //***IMPORTANT: We are delibertly INCLUDING an import statement for a referenced Howler class
+public class HowlerTest {
+
+    public static void main(String ...args) {
+        Howler h = new Howler();
+        h.h();
+    }
+}
+
+Iz src:
+	
+	Proces:
+	1. Pokusamo da kompajliramo HowlerTest.java koji sadrzi main() i ima referencu na Howler:
+	
+		javac p1/HowlerTest.java //OK
+	
+	2. Pokusamo da pokrenemo HowlerTest 
+		
+		java p1/HowlerTest //OK
+		
+-------------------------------------------------------
+
+Example 3:
+
+- src
+	- p2
+		Howler.java
+	- p1
+		HowlerTest.java
+
+
+//Howler.java
+//package p2;   //***IMPORTANT: We are delibertly OMMITING package statement 
+public class Howler {
+    public void h() {
+        System.out.println("howling");
+    }
+}
+
+//HowlerTest.java
+//package p1;  //***IMPORTANT: We are delibertly OMMITING package statement 
+//import p2.Howler; //***IMPORTANT: We are delibertly OMMITING an import statement for a referenced Howler class
+public class HowlerTest {
+
+    public static void main(String ...args) {
+        Howler h = new Howler();
+        h.h();
+    }
+}
+
+Iz src:
+	
+	1. javac p2/Howler.java
+	
+	2. javac -classpath /p2 p1/HowlerTest.java                                                  //Error: cannot find symbol Howler h = new Howler();
+	   javac -classpath C:\Users\Miljan.Puletic\Desktop\src\p2\Howler.class p1/HowlerTest.java //Error: cannot find symbol Howler h = new Howler();
+	   javac -classpath C:\Users\Miljan.Puletic\Desktop\src\p2 p1/HowlerTest.java				//OK
+	   javac -classpath \p2 p1/HowlerTest.java													//Error: cannot find symbol Howler h = new Howler();
+	   javac -classpath ./p2 p1/HowlerTest.java													//OK 
+	   javac -classpath .\p2 p1/HowlerTest.java													//OK
+	   javac -classpath .\p2 p1\HowlerTest.java													//OK
+	
+	3. java p1/HowlerTest																		// Error: Could not find or load main class p1.HowlerTest; Caused by: java.lang.NoClassDefFoundError: HowlerTest (wrong name: p1/HowlerTest)
+	   java -classpath "./p2" p1/HowlerTest 										            // Error: Could not find or load main class p1.HowlerTest; Caused by: java.lang.NoClassDefFoundError: HowlerTest (wrong name: p1/HowlerTest)
+	   java -classpath "./p2;./p1" p1/HowlerTest 										        // Error: Could not find or load main class p1.HowlerTest; Caused by: java.lang.NoClassDefFoundError: HowlerTest (wrong name: p1/HowlerTest) 
+	   java -classpath "./p2;./p1" HowlerTest													//OK
+	   java -classpath ".\p2;.\p1" HowlerTest													//OK
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   	   javac -classpath /p2/*.class p1/HowlerTest.java //Error
+	   javac -classpath /p2 p1/HowlerTest.java //Error
+	   javac -classpath ./p2 p1/HowlerTest.java //Error
+	   javac -classpath C:\Users\Miljan.Puletic\Desktop\src\p2 p1/HowlerTest.java  //Error
+	   javac -classpath C:\Users\Miljan.Puletic\Desktop\src\p2\Howler.class p1/HowlerTest.java //Error 
+	   
+	   Same error: 'java:7: error: cannot find symbolHowler h = new Howler();'
