@@ -245,12 +245,13 @@ Declaring Multiple Variables
 
 
 void paintFence() {
-int i1 = 33, i2, i3 = 0, i4=i3; //  The initialization of i3 only applies to i3. It doesn’t have anything to do with i1 or i2 despite being in the same statement.
+ int i1 = 33, i2, i3 = 0, i4=i3; // DOES COMPILE  The initialization of i3 only applies to i3. It doesn’t have anything to do with i1 or i2 despite being in the same statement.
+ System.out.println(i2); // DOES NOT COMPILE
 }
 
 int num, String value; // DOES NOT COMPILE
 
-double d1, double d2; // If you want to declare multiple variables in the same statement, they must share the same type declaration and not repeat it. double d1, d2; would have been legal.
+double d1, double d2; //  DOES NOT COMPILE ]; If you want to declare multiple variables in the same statement, they must share the same type declaration and not repeat it. double d1, d2; would have been legal.
 
 ------------------------------------------------
 
@@ -352,7 +353,10 @@ for(var ham : chimpanzees) //var type is Object;  Object o = chimpanzees.get(0);
         for(final var e : Flavors.values()) //DOES COMPILE
             System.out.print(e.ordinal()+" ");
     }
-
+	
+ for (var k = 2; k < 2; k++){} //DOES COMPILE	
+ for (var k = 2, i =22; k < 2; k++){} //DOES NOT COMPILE; 	 //invalid Java does not allow var in multiple variable declarations.
+ for (var k = 2, int l = 22; k < 2; k++){} //DOES NOT COMPILE; //for loop rule -> The variables in the initialization block must all be of the same type.
 ------------------------------------------------
 
 

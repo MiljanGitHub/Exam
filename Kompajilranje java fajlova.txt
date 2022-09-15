@@ -217,7 +217,7 @@ java Howler //OK
 
 ***MOST IMPOTANT NOTE***
 
-Package names ('package p1.p2...') in .java files must be given that are relative to the position from where we are issuing java/javac commands
+Package names ('package p1.p2...') in .java files must be given in such a way that they are relative to the position from where we are issuing java/javac commands
 
 Suppose we have the following class in the file /my/directory/named/A/Bird.java. 
 
@@ -329,7 +329,7 @@ Iz src:
 	Proces 1:
 	1. Pokusamo da kompajliramo HowlerTest.java koji sadrzi main() i ima referencu na Howler:
 	
-		javac p1/HowlerTest.java //OK My explanation: If we do have pacakge and import statement in place and correct; We can directly compile the dependant class (one which contains main()), and then
+		javac p1/HowlerTest.java //OK My explanation: If we do have pacakge and import statement in place and correct; We can directly compile the dependant class (one which contains main()), and that
 								 //will instantly compile the dependency class (Howler.java) as well.
 	
 	2. Pokusamo da pokrenemo HowlerTest 
