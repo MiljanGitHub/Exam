@@ -129,6 +129,7 @@ float y = 2.1;
 var z = x + y;
 
 //digresion float d = 12; float dd = 12.0f; DOES COMPILE
+float x = 12.22; //DOES NOT COMPILE
 
 //What is the data type of z?
 short w = 14;
@@ -178,7 +179,7 @@ short bird = 1921222; // DOES NOT COMPILE
 int mammal = 9f; // DOES NOT COMPILE
 long reptile = 192301398193810323; // DOES NOT COMPILE
 
-Remember, casting primitives is required any time you are going from a larger numerical data type to a smaller numerical
+******************Remember, casting primitives is required any time you are going from a larger numerical data type to a smaller numerical
 data type, or converting from a floating-point number to an integral value.
 int trainer = (int)1.0;
 short ticketTaker = (short)1921222; // Stored as 20678
@@ -247,13 +248,19 @@ Object nullObjectHere = null;
 System.out.print(nullObjectHere instanceof String);
 
 Example does not compile, since null is used on the right side of the instanceof operator:
-System.out.print(null instanceof null); // DOES NOT COMPILE
+System.out.print(null instanceof null); // DOES NOT COMPILE; on the right side it must be placed name of Interface, Class or an Enum
 
+ if (s instanceof String){
+            //DOES NOT COMPILE
+ }
+        
+if (k instanceof String); //DOES COMPILE
 
 
 --------------------------------------
 Logical Operators
 
+*****IMPORTANT
 
 & Logical AND is true only if both values are true.
 | Inclusive OR is true if at least one of the values is true.

@@ -2388,6 +2388,19 @@ type cannot possibly implement the interface, such as if the class is marked fin
 
 Example2:
 
+interface R{}
+class Person implements R{}
+class Dad{}
+
+		Person rp = new Person();
+        R r = rp;
+        Dad d = (Dad) rp; //DOES NOT COMPILE; inconvertible type;
+
+Example3:
+
+
+		
+		
 interface T{}
 interface G{}
 final class Primate implements G{} 
@@ -2399,15 +2412,6 @@ final class Primate implements G{}
 	T t1 = (T) new Primate(); //DOES NOT COMPILE; because of the bad syntax
 
 
-Example3:
-
-interface R{}
-class Person implements R{}
-class Dad{}
-
-		Person rp = new Person();
-        R r = rp;
-        Dad d = (Dad) rp; //DOES NOT COMPILE; inconvertible type;
 
 Example4:
 
@@ -2465,7 +2469,7 @@ Unlike method overriding, hiding members is very sensitive to the reference type
 class Penguin {
  public static int getHeight() { return 3; }
  public void printInfo() {
- System.out.println(this.getHeight()); //in non-static method we can access static methods even by using 'this' //BUT is DOES ISSUES A WARNING 
+ System.out.println(this.getHeight()); //in non-static method we can access static methods even by using 'this' //BUT it DOES ISSUES A WARNING 
  }
 }
 public class CrestedPenguin extends Penguin {

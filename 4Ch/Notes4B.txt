@@ -3,9 +3,9 @@ TODO:
 1. Practice indent(), stripeIndent(), working with textBlocks
 2. Arrays.compare(arr1, arr2) [Nauci kad compare daje pozitivnu, a kad negativnu vrednost]; Arrays.mismatch(arr1, arr2);
 3. Draw Venove dijagrame za metode u String klasi i StringBuilder
-3. Learn Date and Time API
+4. Learn Date and Time API
 
---More practice with string blocks substrings playing with methods from string and string builder. Learn arrays comparing by hearth!!!
+--More practice with string blocks substrings playing with methods from string and string builder. Learn Arrays comparison by hearth!!!
 
 
 Creating and Manipulating Strings
@@ -48,6 +48,9 @@ System.out.println(string.substring(3)); //mals
 System.out.println(string.substring(string.indexOf('m'))); //mals
 System.out.println(string.substring(3, 4)); // m
 System.out.println(string.substring(3, 7)); //mals
+
+String string = "fff";
+System.out.println(string.substring(string.indexOf('m'))); //Exception
 
 System.out.println(string.substring(3, 3)); // empty string
 System.out.println(string.substring(3, 2)); // throws exception
@@ -115,7 +118,7 @@ System.out.println(sb);
 insert()
 StringBuilder insert(int offset, String str)
 StringBuilder sb = new StringBuilder("animals");
-sb.insert(7, "-"); // sb = animals
+sb.insert(7, "-"); // sb = animals- //if sb.insert(8, "-"); Exception
 
 delete() and deleteCharAt()
 StringBuilder sb = new StringBuilder("abcdef");
@@ -196,7 +199,7 @@ Example4:
 		String s15 = new StringBuilder().append("rat").append("pat").toString();
         String s16 = "rat" + "pat";
         System.out.println(s15 == s16); //false
-        System.out.println(s15.intern() == s16); //true
+        System.out.println(s15.intern() == s16); //true OR System.out.println(s15 == s16.intern()); //false
 
 Example5:
 
@@ -310,7 +313,7 @@ https://stackoverflow.com/questions/63252282/why-jvm-is-not-seeing-duplicate-str
 
 String text blocks: *** https://docs.oracle.com/en/java/javase/18/text-blocks/index.html
 
-After adding """, content must gon in new line;
+After adding """, content must go in new line;
 
 14: String pyramid = """
 15:|   *
@@ -336,7 +339,7 @@ String text = """
 			   b
 			  c""";
 
-System.out.println(text); //6
+System.out.println(text.length()); //6
 
 Why 6 is printed? Because text is equivalent with text = "a\n b\nc"; //Implicitly, \n is added on line where 'a' and 'b' are. This is the same string as: "a\n b\nc"
 
@@ -381,7 +384,7 @@ String concat = """
 					
 					
 
-System.out.println(concat.stripeIndent().length()); //Calling stripeIndent makes no effect on text block
+System.out.println(concat.stripeIndent().length()); DOES NOT COMPILE //Calling stripeIndent makes no effect on text block
 
 NEEDS TO BE MORE TESTED AND PRACTICED!!!!!!!
 
@@ -631,68 +634,303 @@ List
 
 Converting from a String to Primitive ---> NameOfTheWrapperClass.parseXXX
 Converting from a String to Wrapper ---> NameOfTheWrapperClass.valueOfXXX
+		
+        //valueOf takse String or int or Integer and returns: int or Integer
+		
+        int primitivea = Integer.valueOf("1"); // DOES COMPILE
+        Integer primitive = Integer.valueOf("1"); // DOES COMPILE
 
-Integer primitivea = Integer.valueOf("1"); // DOES COMPILE
-Integer primitive = Integer.valueOf(1); // DOES COMPILE
+        int x = Integer.valueOf(1);
+        Integer k = Integer.valueOf(1);
 
-int wrapper = Integer.parseInt("123");  // DOES COMPILE
-int wrapper = Integer.parseInt(123);  // DOES NOT COMPILE
+        int x1 = Integer.valueOf(new Integer(1));
+        Integer k2 = Integer.valueOf(new Integer(1));
+
+
+
+        //parseInt(String) //return primitive
+        //parse int only excepts String
+        int primitivea2 = Integer.parseInt("1"); // DOES COMPILE; it IS MEANT FOR THIS to return primitive
+        Integer primitive23 = Integer.parseInt("1"); // DOES COMPILE
+
+        int x2 = Integer.parseInt(1); // DOES NOT COMPILE
+        Integer k22 = Integer.parseInt(1); // DOES NOT COMPILE
+
+        int x5 = Integer.parseInt(new Integer(1)); // DOES NOT COMPILE
+        Integer k5 = Integer.parseInt(new Integer(1)); // DOES NOT COMPILE
+		
+--------------------------------------
+
 
 Converting Between array and List
 
-ArrayList into an array:
+---------------------------list.toArray()---------------------------
 
-        List<Student> students = new ArrayList<>();
-        Student s1 = new Student();
-        Student s2 = new Student();
-        students.add(s1); students.add(s2);
-        Object[] objects = students.toArray(); //returns a new reference to an Object array object which elements are references (all are copies) pointing to same objects
-											   // as references in 'students' list are pointing to
-        students.get(0).id = 5;
-        Student[] students1 = students.toArray(new Student[0]); //or new Student[students.size()]
-        System.out.println(Arrays.toString(students1));
+class Student{
+    public int id;
 
-Array to List
+    public Student(){}
 
-toList(array)
+    public Student(int id) {
+        this.id = id;
+    }
 
-Returns a fixed-size list backed by the specified array. (Changes to the returned list "write through" to the array.) 
-This method acts as bridge between array-based and collection-based APIs, in combination with Collection.toArray.
- The returned list is serializable and implements RandomAccess.
-This method also provides a convenient way to create a fixed-size list initialized to contain several elements:
-      List<String> stooges = Arrays.asList("Larry", "Moe", "Curly");
-  
-Params:
-a – the array by which the list will be backed
-Returns:
-a list view of the specified array
+/*    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return id == student.id;
+    }
 
-		//List koja je kreirana sa .asList(studentsArr); odrazava sve svoje promene i na niz iz kojeg je kreirana; posto je fixna (ali ne i imutabilna) promena u velicini nije dozvoljena
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }*/
 
-		Student[] studentsArr = {new Student(1), new Student(1)};
-        List<Student> studentsList = Arrays.asList(studentsArr); // returns fixed size list; "a list view of the specified array" - This is how we will distinguish/memoize whether is 'Array from List' or 'List from Array' direction
-        System.out.println(studentsList.size()); // 2
-        studentsList.set(1, new Student(12)); //
-        studentsArr[0] = new Student(121);
-        System.out.print(Arrays.toString(studentsArr));//
-        studentsList.remove(1); //Exception
-		//studentsList.clear(); //Exception
+/*    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                '}';
+    }*/
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        //Object[] toArray();
+
+        Student s1 = new Student(1); Student s2 = new Student(2);
+        List<Student> studentList = new ArrayList<>(); studentList.add(s1); studentList.add(s2);
+
+        //Default behaviour of toArray();
+        Object[] studentObjects = studentList.toArray();
+
+
+        // Student[] convertedStudents = (Student[]) studentObjects; //ClassCastException. ********
+        // Let's understand why this happens.
+        // What happens if you modify any original object in 'studentList'?
+        // Does change get reflected on object which is referenced from 'studentObjects'? The answer is YES.
+
+        //Inspecting 'studentList' (List) vs 'studentObjects' (Array)
+
+        //I. Making changes on reference extracted from List
+        Student first = studentList.get(0);
+        Student firstFromArr = (Student) studentObjects[0];
+
+        System.out.println(first); //  Student@65ab7765
+        System.out.println(firstFromArr); //  Student@65ab7765
+                                          // As we can see, in case there is no toString() in Student, these are same copied references.
+                                          // What happened is that, once we did 'studentList.toArray();' we made COPIES of references which are in List and place them in array (Object array)
+                                         // Which means, changes made through any reference will reflect on the same object in Heap
+
+        System.out.println(first == firstFromArr); //true
+
+        //Making change on 'first' and comparing it with object in 'studentObjects'
+        first.id = 55;
+        System.out.println(first == firstFromArr); //true
+        System.out.println(studentList.get(0) == ((Student) studentObjects[0])); //true
+        System.out.println(studentList.get(0).equals(((Student) studentObjects[0]))); //'true' is printed. Value of toString() -> 'Student{id=55}'
+
+        //II. Making changes on reference extracted from Object array
+        Student first1 = studentList.get(0);
+        Student firstFromArr1 = (Student) studentObjects[0];
+
+        System.out.println(first1); //  Student@65ab7765
+        System.out.println(firstFromArr1); //  Student@65ab7765
+
+        System.out.println(first1 == firstFromArr1); //true
+
+        //Making change on 'firstFromArr1' and comparing it with object in 'studentObjects'
+        firstFromArr1.id = 33;
+        System.out.println(first1 == firstFromArr1); //true
+        System.out.println(studentList.get(0) == ((Student) studentObjects[0])); //true
+        System.out.println(studentList.get(0).equals(((Student) studentObjects[0]))); //'true' is printed. Value of toString() -> 'Student{id=33}'
+
+        //III. What will happen if new element is to be added in the original list?
+        //Student newS = new Student(18);
+        //studentList.add(newS);
+        //System.out.println(studentList.size()); //3
+        //System.out.println(studentObjects.length); //2
+
+        //IV. What will happen if first element is removed from list? Will that impact array (and vice-reverse)? Note: Comment section III
+        //System.out.println(studentList.remove(0));
+        //System.out.println(studentList.size()); //1
+        //System.out.println(studentObjects.length); //2
+
+    }
+}
 		
-Immutable list
 
-That means you cannot you cannot change the values or the size of the List. You can change the original
-array, but changes will not be reflected in the immutable List.
+---------------------------list.toArray(arr)---------------------------
+
+class Person{
+    public int id;
+    public Person(){}
+
+    public Person(int id) {
+        this.id = id;
+    }
+
+    /*    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return id == person.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }*/
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                '}';
+    }
+}
+public class TestMain {
+
+
+    public static void main(String[] args) {
+
+        // <T> T[] toArray(T[] a);
+
+        Person p1 = new Person(1);
+        Person p2 = new Person(2);
+        List<Person> personList = new ArrayList<>();
+        personList.add(p1);
+        personList.add(p2);
+
+
+        //Behaviour 1.
+        Person[] dumpArray1 = new Person[]{}; //it could also be:   Object[] dumpArray1 = new Person[]{}; OR  Object[] dumpArray1 = new Object[]{};
+        Person[] personObjects1 = personList.toArray(dumpArray1); //or new Object[0] or new Object[]{} directly into toArray(...)
+        //In my opinion two arrays are created. First one is 'dumpArray1' and
+        // since elements from 'personList' cannot fit in 'dumpArray1' then 'personObjects' is newly created array.
+        System.out.println(personObjects1 == dumpArray1); //false
 		
-		
-		 String[] array = { "hawk", "robin" }; // [hawk, robin]
-         List<String> list = List.of(array); // returns immutabl list
-         System.out.println(list.size()); // 2
-         array[0] = "new";
-         System.out.println(Arrays.toString(array)); // [new, robin]
-         System.out.println(list); // [hawk, robin]
-         list.set(1, "test"); // throws UnsupportedOperationException
-		
-		
+		Person[] dumpArray1a = new Person[]{new Person(0),new Person(90)};
+        Person[] personObjects1a = personList.toArray(dumpArray1a);
+        System.out.println(personObjects1a == dumpArray1a); //true
+        System.out.println(dumpArray1a[1].equals(personList.get(1)));
+
+        //Behaviour 2.
+        Person[] dumpArray2 = new Person[2];
+        Person[] personObjects2 = personList.toArray(dumpArray2);
+        //In my opinion one array is created.
+        // Elements from 'personList' can fit in 'dumpArray'
+        System.out.println(dumpArray2 == personObjects2); //true
+
+
+/*        //Behaviour 3.
+        // Person[] personObjects2 = personList.toArray(dumpArray);
+              .
+             /|\
+              |
+              |
+        This type needs to be
+        a supertype of whatever type is 'personList', otherwise, ArrayStoreException*/
+
+        //Behaviour 4.
+        Person[] dumpArray4 = new Person[4];
+        Person[] personObjects4 = personList.toArray(dumpArray4);
+        System.out.println(dumpArray4 == personObjects4); //true
+        System.out.println(Arrays.toString(personObjects4)); //[Person@65ab7765, Person@1b28cdfa, null, null]
+
+        //Behaviour 5.
+        Person[] dumpArray5 = new Person[]{new Person(552), null, null};
+        Person[] personObjects5 = personList.toArray(dumpArray5);
+        System.out.println(dumpArray5 == personObjects5); //true
+        System.out.println(Arrays.toString(personObjects5)); // [Person@65ab7765, Person@1b28cdfa, null]
+
+        //Behaviour 6.
+        Person[] dumpArray6 = new Person[]{new Person(552), new Person(553), new Person(554)};
+        Person[] personObjects6 = personList.toArray(dumpArray6);
+        System.out.println(dumpArray6 == personObjects6); //true
+        System.out.println(Arrays.toString(personObjects6)); // [Person{id=1}, Person{id=2}, null]  ***IMPORTANT last element from dumpArray6 is changed to null in personObjects6; new Person(554) became null
+
+
+    }
+}
+
+
+---------------------------Arrays.toList(arr)---------------------------
+
+class Animal{
+    public int id;
+    public Animal(){}
+
+    public Animal(int id) {
+        this.id = id;
+    }
+
+    /*    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Animal animal = (Animal) o;
+        return id == animal.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }*/
+
+/*    @Override
+    public String toString() {
+        return "Animal{" +
+                "id=" + id +
+                '}';
+    }*/
+}
+public class MainMethod {
+
+    public static void main(String[] args) {
+
+        Animal a1 = new Animal(1); Animal a2 = new Animal(2);
+        Animal[] animalsArr = new Animal[]{a1, a2};
+
+        //Changes made to the array will be visible in the returned list, and changes made to the list will be visible in the array.
+        //The returned list implements the optional Collection methods, **** EXCEPT THOSE THAT WOULD CHANGE THE SIZE OF THE RETURNED LIST.
+        // **** Those methods leave the list unchanged and throw UnsupportedOperationException
+        List<Animal> animalsList = Arrays.asList(animalsArr); // Arrays.asList(array) -> gives immutable list in terms of size;
+
+        //Behaviour 1. remove from list
+        //Attempt to remove element from list
+        //animalsList.remove(0); //UnsupportedOperationException
+
+        //Behaviour 2. add to list
+        //Attempt to add element to list
+        //animalsList.add(null); //UnsupportedOperationException
+
+        //Behaviour 3. set to list ***IMPORTANT
+        //Attempt to set new element instead of existing element
+        animalsList.set(1, new Animal(888)); //No exception since there is no change size of a list
+        System.out.println(animalsList.get(1).id == animalsArr[1].id); // true
+
+        //Behaviour 4.
+        //Since we cannot add or remove elements to and from array, we can modify elements in array
+
+        //Attempt to modify element 1
+        animalsArr[1] = null;
+        System.out.println(Arrays.toString(animalsArr)); //[Animal@65ab7765, null]
+        System.out.println(animalsList); // [Animal@65ab7765, null]
+
+        //Attempt to modify element 0
+        animalsArr[0].id = 44;
+        System.out.println(animalsArr[0].id == animalsList.get(0).id); //true
+        //Note: in both attempts size of a list was not changed
+
+    }
+}
+
 		
 --------------------------------------
 Multidimensional Array

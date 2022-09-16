@@ -45,6 +45,18 @@ The following is a list of all data types supported by switch statements:
 	-enum values
 	-var (if the type resolves to one of the preceding types)
 
+	
+Example0:
+
+		long k1 = 4;
+        
+        switch (k1){ //DOES NOT COMPILE
+            case 1:
+                System.out.println("a");
+            default:
+                System.out.println("ff");
+        }
+
 Example1:
 
         int dayOfWeek = 5;
@@ -171,6 +183,10 @@ Example9:
 			case 1: 2: System.out.print("January"); // DOES NOT COMPILE; statement does not compile because a comma (,) should be used to separate combined case statements, not a colon (:).
 		}
 		
+		switch(month) {
+			case 5, 6: System.out.print("January"); // DOES  COMPILE;
+		}
+		
 Example10:
 
  printSeason(2) is called?
@@ -213,6 +229,11 @@ Example13:
           default: case 3: System.out.print(5 + " ");
  }
 
+ switch (tailFeathers) {
+            case one: System.out.print(3 + " "); //DOES COMPILE; It is allowed for final var to be in case since it is final and compiler figures it out that is Integer
+             case 3: System.out.print(5 + " "); default:
+           
+        }
 
 		
 Acceptable Case Values for Switch structure
@@ -276,7 +297,7 @@ IMPORTANT for understanding switch structure:
         switch (grade) {
             default:
             case  a:
-            case 'B':  'C': System.out.print("great ");  // DOES NOT COMPILE; missing CASE before 'C'
+			case 'B':  'C': System.out.print("great ");  // DOES NOT COMPILE; missing CASE before 'C', or instead of ":" you can place ","
             case 'D': System.out.print("good "); break;
             case  e:
             case 'F': System.out.print("not good ");
@@ -486,7 +507,7 @@ Example12:
 
 ***the continue statement
 transfers control to the boolean expression that determines if the loop
-should continue. In other words, it ends the current iteration of the
+should continue. In other words, it ends(stops the current iteration of the
 loop. Also, like the break statement, the continue statement is applied
 to the nearest inner loop under execution using optional label
 statements to override this behavior
@@ -504,7 +525,17 @@ The while loop
            iguana--;
            } while (snake <= 5);  // DOES NOT COMPILE; The variable snake is declared within the body of the do/while statement, so it is out of scope for booleanExpression
          System.out.println(iguana);
+		 
+ int y = -2;
+ do System.out.print(++y + " "); 
+ while(y <= 5); //DOES COMPILE
 
+ int y = -2;
+ do 
+	System.out.print(++y + " "); 
+ while(y <= 5); //DOES COMPILE
+ 
+ 
 --------------------------------------
 
 The For loop 
@@ -529,6 +560,13 @@ for (; x < 16; ){
 System.out.println("telo.."); x++;
 }; 
 
+
+int x = 0;
+for (; x < 16; y = 22){ //DOES NOT COMPILE
+    int y = 223;
+    System.out.println("telo.."); x++;
+};
+
 int x = 10;
 int k = 22;
 for (; ; ){
@@ -551,13 +589,13 @@ for(int x = 4; x < 5; x++) { // DOES NOT COMPILE
 }
 
 int x = 0;
-for(x = 0; x < 5; x++) {  // DOES COMPILE
+for(x = 777; x < 5; x++) {  // DOES COMPILE
 	System.out.print(x + " "); 
 
 Using Incompatible Data Types in the Initialization Block
 
 int x = 0;
-for(long y = 0, int z = 4; x < 5; x++) { // DOES NOT COMPILE; and since for( ; ;) is minimum construct for ForLoop, it is not possible to do for(long y = 0; int z = 4; x < 5; x++)
+for(long y = 0, int z = 4; x < 5; x++) { // DOES NOT COMPILE; and since for( ; ;) is required construct for ForLoop, it is not possible to do for(long y = 0; int z = 4; x < 5; x++). we have 3x ;
 	System.out.print(y + " ");
 }
 The variables in the initialization block must all be of the same type. In the multiple terms example, y and z were both long, so the code compiled without issue, but in this example they have
@@ -568,7 +606,7 @@ for (int i=0, int j=3; i<weather.length; ++i) { // DOES NOT COMPILE i and j don'
 }
 
 int x = 0;
-for(int y, k = 4; y < 5; x++) { //DOES NOT COMPILE; y might not be initialized; but on its own: int p, l = 3; This DOES COMPILES
+for(int y, k = 4; y < 5; x++) { //DOES NOT COMPILE; y might not be initialized; but on its own: int p, l = 3; This DOES COMPILES (however, first time 'p' is used, on that line it will be compilatio error)
      System.out.print(y + " ");
  }
 
@@ -590,7 +628,15 @@ for(int j=1; j<10; j++) //infinite
 	
 for(int k=0; k<10; ) //valid with no updateStatment
 	k++;
-
+	
+	
+int[] wolf = {1,23, 22};
+final int r = wolf.length;
+for(int w = r-1; r>-1; w = r-1) //DOES COMPILE: remember, required construct in ForLoop is ( initializationStatement ; booleanExpression ;  updateStatment) updateStatment does not have to have ;
+    ystem.out.print(wolf[w]);
+Also DOES COMPILE
+ for(int w = r-1, k = 22; r>-1; w = r-1, w=2, k=222)
+            System.out.print(wolf[w]);
 
 The for-each Loop
 
@@ -780,7 +826,7 @@ if(number instanceof Integer data) {
  }
 
 to avoid it: 
-if(number instanceof final Integer data) {
+if(number instanceof final Integer data) { // this line DOES COMPILE
  data = 10; // DOES NOT COMPILE
  }
  
@@ -789,8 +835,8 @@ Example3:
 We’re using the pattern variable in an expression in the
 same line in which it is declared.
  void printIntegersGreaterThan5(Number number) {
- if(number instanceof Integer data && data.compareTo(5)>0)
- System.out.print(data);
+	if(number instanceof Integer data && data.compareTo(5)>0)
+	System.out.print(data);
 }
 
 Example4:

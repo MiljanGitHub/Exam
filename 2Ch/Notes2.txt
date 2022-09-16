@@ -187,6 +187,7 @@ int two = 0xab_c;  // DOES COMPILE
 int twoS = 0XabcdH;  // DOES NOT COMPILE
 int two = 0xa0_c; // DOES COMPILE
 int x2 = -0X6BF8;   // DOES COMPILE
+int two = 0xa0_; // DOES NOT COMPILE
 
 *Appending exponent (to ones that do compile) is allowed: E05
 
