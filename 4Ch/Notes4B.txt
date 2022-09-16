@@ -947,7 +947,7 @@ args[1] = new int[3];
 
 int [][] args2 = new int[4][];
 args2[0] = new int[5]; //legal
-args2[1] = {1,2}; //not legal
+args2[1] = {1,2}; //not legal; cannot combine anonymous array with multidimensional arrays
 
 Some examples:
 

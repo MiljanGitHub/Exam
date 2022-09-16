@@ -1952,6 +1952,46 @@ public class Lion {
     }
 }
 
+Example11a:
+
+public class Someone {
+
+   public static class Idiom{}
+    
+    public static void main(String[] args) {
+        
+    }
+}
+
+class Pera{
+
+    public static void main(String[] args) {
+        var x = new Someone.Idiom(); //DOES COMPILE
+		var o = Someone.Idiom(); //DOES NOT COMPILE;
+    }
+}
+
+Example11b:
+
+public class Someone {
+   public static class Idiom{}
+    public class NonStatic{}
+
+    public static void main(String[] args) {
+        final Idiom idiom = new Idiom(); //DOES COMPILE
+        var y = new Someone.Idiom(); //DOES COMPILE
+
+        final NonStatic nonStatic = new Someone().new NonStatic(); //DOES COMPILE
+        var k = Someone.NonStatic();  //DOES NOT COMPILE;
+   }
+}
+
+class Pera{
+    public static void main(String[] args) {
+        var x = new Someone.Idiom(); //DOES COMPILE
+    }
+}
+
 
 3. A Local Classes
 
