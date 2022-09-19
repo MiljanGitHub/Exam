@@ -205,6 +205,7 @@ int anInt2 = 0b101;
 int anInt3 = 0B101; 
 int anInt3 = 0B10_1; //DOES COMPILE
 int anInt3 = 0B_101;  //DOES NOT COMPILE
+int anInt3 = 0B101_; //DOES NOT COMPILE
 Cannot add exponent E05
 
 
@@ -341,6 +342,8 @@ var x = {12,13} //DOES NOT COMPILE (array initializer needs an explicit target-t
 - A var cannot be initialized with a null value without a type.
 
 - A var is not permitted in a multiple-variable declaration.
+
+- A var is not permitted with lambda expressions
 
 - A var is a reserved type name BUT NOT A RESERVED WORD, meaning it can be used as an identifier (method name, variable name) except as a class, interface, or enum name.
 
