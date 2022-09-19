@@ -1,12 +1,154 @@
+Proper lambda syntax
+
+
+I Single parameter FunctionalInterfaces with a return type (examples wihich COMPILE nad DO NOT COMPILE):
+
+        @FunctionalInterface
+        interface SomeFunctionalInterface{
+            int doInt(String s); //s - parameter; //return type 'int'
+        }
+
+        //DO COMPILE EXAMPLES
+		
+        SomeFunctionalInterface sfi0 = stringParam0 -> Math.round(3.4f); //
+        //Left side -> No parenthesis; any name for parameter
+        //Right side -> No parenthesis; no return statement if it is single lint which does return an int. Must return int
+
+
+        SomeFunctionalInterface sf01 = (stringParam01) -> Math.round(3.4f);
+        //Left side -> Parenthesis; any name for parameter
+        //Right side -> No parenthesis; no return statement if it is single lint which does return an int. Must return int
+
+
+        SomeFunctionalInterface sfi1 = stringParam1 -> {return 5;};
+        //Left side -> No parenthesis; any name for parameter
+        //Right side -> Braces; required return statement if curly braces are used, not matter how many lines are give. Must return int
+
+        SomeFunctionalInterface sfi2 = stringParam2 -> (int)5.0;  //DOES COMPILE
+
+        SomeFunctionalInterface sfi3 = (String stringParam3) -> 5; //DOES COMPILE
+        //Left side -> Parenthesis; required if parameter type is used
+
+        SomeFunctionalInterface sfi4 = (String stringParam4) -> {
+            //do something
+            //do something
+            return 555;
+        };
+        //Left side -> Parenthesis; required if parameter type is used
+        //Right side -> Braces; required return statement if curly braces are used, not matter how many lines are give. Must return int
+
+        SomeFunctionalInterface sfi5 = stringParam5 -> stringParam5.length();
+        //Left side -> No parenthesis; any name for parameter
+        //Right side -> No return statement if one line is used which DOES return an int;  
+
+        SomeFunctionalInterface sf6 = stringParam6 -> (5); //DOES COMPILE
+
+        //DO NOT COMPILE EXAMPLES
+        SomeFunctionalInterface x1 = stringParam1 -> return Math.round(3.4f);
+        SomeFunctionalInterface x2 = stringParam2 -> {return Math.round(3.4f)};
+        SomeFunctionalInterface x3 = stringParam3 -> {return Math.round(3.4f);}
+        SomeFunctionalInterface x4 = stringParam4 -> 123L;
+        SomeFunctionalInterface x5 = String stringParam5 -> 5;
+        SomeFunctionalInterface x6 = stringParam6, x -> 5;
+        SomeFunctionalInterface x7 = (stringParam7, x) -> 5;
+        SomeFunctionalInterface x8 = (String stringParam8, int x) -> 5;
+
+II Two-parameters FunctionalInterfaces with a return type (examples wihich COMPILE nad DO NOT COMPILE):
+
+
+        @FunctionalInterface
+        interface MultiParameterInterface{
+           Object  doInt(String s, int x);
+        }
+		
+		//DO COMPILE EXAMPLES
+		
+        MultiParameterInterface mp1 = (x, y) -> new String();
+        //Left side -> Must have parenthesis when there are two or more parameters present; any name for parameters
+        //Right side -> No parenthesis; no return statement if it is single lint which does return a covariant of return value
+
+        MultiParameterInterface mp2 = (String x, int y) -> null;
+        //Left side -> Must have parenthesis when there are two or more parameters present; any name for parameters; Type for parameters may be optional
+        //Right side -> No parenthesis; no return statement if it is single lint which does return a covariant of return value
+
+        MultiParameterInterface mp3 = (x, y) -> { return null;};
+        //Left side -> Must have parenthesis when there are two or more parameters present; any name for parameters
+        //Right side -> If there are curly braces, return must be present with ; after the return value itself and also after ending curly brace
+
+        MultiParameterInterface mp4 = (x, y) -> {
+            //do something
+            //do something
+            //optionally you can use parameters in body, or effectively final variables from outside of lambda body (more on that later)
+            return null;};
+
+
+        //DO NOT COMPILE EXAMPLES
+		
+         MultiParameterInterface x1 = (String x, y) -> null;
+        //Left side -> Must have parenthesis when there are two or more parameters present; any name for parameters; Type for parameters may be optional, but BOTH parameters must have type
+        //Right side -> No parenthesis; no return statement if it is single lint which does return a covariant of return value
+
+        MultiParameterInterface x2 =  x, y -> null;
+        //Left side -> Must have parenthesis
+
+        MultiParameterInterface x3 =  String x, int y -> null;
+        //Left side -> Must have parenthesis
+
+        MultiParameterInterface x4 =  (String x, int y) -> return null;
+        //Right side -> must have curly braces if return statement is included
+
+        MultiParameterInterface x5 =  (String x, int y) -> {return null; }
+        //Right side -> must have ; after {}
+
+Fun fact lambda:
+
+ interface Pera{
+    void perica();
+  }
+
+  public static void main(String[] args) {
+        Pera pera = () -> {};     //DOES COMPILE
+       //Pera pera1 = () -> (); //DOES NOT COMPILE
+       //Pera pera2 =  -> (); //DOES NOT COMPILE
+       //Pera pera3 = () -> ; //DOES NOT COMPILE
+  }
+
+
+You can pretend the compiler turns your method references into lambdas for you.
+
+There are four formats for method references:
+■ 1. static methods
+■ 2. Instance methods on a particular object
+■ 3. Instance methods on a parameter to be determined at runtime
+■ 4. Constructors
+
+Calling static Methods
+
+
+
+
+
+
 TABLE 8.4 Common functional interfaces
 
 Functional interface 						      Return type		 Method name			# of parameters
+
 Supplier<T>                                         T                    get() 				  	0
+
 Consumer<T> 									   void 			   accept(T) 				1 (T)
+
 BiConsumer<T, U> 								   void                accept(T,U)              2 (T, U)
+
 Predicate<T>                                      boolean               test(T)                 1 (T)
+
 BiPredicate<T, U>                                 boolean               test(T,U)               2 (T, U)
+
 Function<T, R>                                      R                   apply(T)                1 (T)
+
 BiFunction<T, U, R>                                 R                   apply(T,U)              2 (T, U)
+
 UnaryOperator<T>                                    T                   apply(T)                1 (T)
+
 BinaryOperator<T>                                   T                   apply(T,T)              2 (T, T)
+
+
