@@ -111,8 +111,107 @@ Fun fact lambda:
        //Pera pera1 = () -> (); //DOES NOT COMPILE
        //Pera pera2 =  -> (); //DOES NOT COMPILE
        //Pera pera3 = () -> ; //DOES NOT COMPILE
+	   //Pera pera4 = () -> {} //DOES NOT COMPILE
+	   
+	   //var x = () -> System.out.println("aa"); //DOES NOT COMPILE
   }
 
+--------------------------------------
+
+Defining a Functional Interface - 
+
+A functional interface is an interface that contains a single
+abstract method. Your friend Sam can help you remember this because it is officially known
+as a single abstract method (SAM) rule.
+
+@FunctionalInterface
+public interface Sprint {
+ public void sprint(int speed);
+}
+
+Given our previous Sprint functional interface, which of the following are functional interfaces?
+
+public interface Dash extends Sprint {}
+
+public interface Skip extends Sprint {
+ void skip();
+}
+
+public interface Sleep {
+ private void snore() {}
+ default int getZzz() { return 1; }
+}
+
+public interface Climb {
+ void reach();
+ default void fall() {}
+ static int getBackUp() { return 100; }
+ private static boolean checkHeight() { return true; }
+}
+
+Dash - e is a functional interface because it extends the Sprint interface and inherits the single abstract method sprint()
+
+Skip - is not a valid functional interface because it has two abstract methods: the inherited sprint() method and the declared skip() method.
+
+Sleep - is not a valid functional interface. Neither snore() nor getZzz() meets the criteria of a single abstract method. Even though 'default' methods operates simmilar like
+	    abstract methods, in that they can be overridden in a class implementing the interface, they are insufficient for satisfying the single abstract method requirement
+
+Climb - e is a functional interface. Despite defining a slew of methods, it contains only one abstract method: reach().		
+
+
+--------------------------------------
+
+Exception to SAM (single abstract method) rule for determining if it is a valid Functional Interface
+
+■ public String toString()
+■ public boolean equals(Object)
+■ public int hashCode()
+
+If a functional interface includes an abstract method with the same signature as a public method found in Object, those methods do not count
+toward the single abstract method test. The motivation behind this rule is that any class that
+implements the interface will inherit from Object, as all classes do, and therefore always
+implement these methods.
+
+public interface Soar { //IS NOT a FunctionalInterface
+ abstract String toString();
+}
+
+public interface Dive { //IS a FunctionalInterface
+ String toString();
+ public boolean equals(Object o);
+ public abstract int hashCode();
+ public void dive();
+}
+
+public interface Hibernate { //IS NOT a FunctionalInterface
+ String toString();
+ public boolean equals(Hibernate o);
+ public abstract int hashCode();
+ public void rest();
+}
+
+
+--------------------------------------
+
+Defining a Functional Interface - The @FunctionalInterface Annotation
+
+The @FunctionalInterface annotation tells the compiler that you intend for the code to
+be a functional interface. If the interface does not follow the rules for a functional interface, the compiler will give you an error.
+
+@FunctionalInterface
+public interface Dance { // DOES NOT COMPILE
+ void move();
+ void rest();
+}
+
+Java includes @FunctionalInterface on some, but not all, functional interfaces. This
+annotation means the authors of the interface promise it will be safe to use in a lambda
+in the future. However, just because you don’t see the annotation doesn’t mean it’s not a
+functional interface. Remember that having exactly one abstract method is what makes it a
+functional interface, not the annotation.
+--------------------------------------
+
+Using Method References
 
 You can pretend the compiler turns your method references into lambdas for you.
 
@@ -152,3 +251,4 @@ UnaryOperator<T>                                    T                   apply(T)
 BinaryOperator<T>                                   T                   apply(T,T)              2 (T, T)
 
 
+--------------------------------------
