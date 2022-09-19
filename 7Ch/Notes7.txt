@@ -1871,6 +1871,9 @@ public class Enclosing {
             m5(); //DOES NOT COMPILE
             m5static();  //DOES  COMPILE
         }
+		static void t(){ 
+			 m5(); //DOES NOT COMPILE
+		}
     }
     public static void m5static(){
         
@@ -1888,7 +1891,7 @@ public class Enclosing {
         new D().m(); //DOES COMPILE
 		new D().t(); //DOES COMPILE; warning is given, since we are accessing static member via instance of a class
         D.t(); //DOES COMPILE; no warning
-		
+		 new Enclosing.D(); //DOES COMPILE
     }
 }
 
@@ -2011,7 +2014,7 @@ public class Local {
         static class F{} //DOES NOT COMPILE
     }
 	
-	public Local{
+	public Local(){
 		class T{ }  //DOES  OMPILE
 	
 	}
@@ -2434,12 +2437,9 @@ class Dad{}
 
 		Person rp = new Person();
         R r = rp;
-        Dad d = (Dad) rp; //DOES NOT COMPILE; inconvertible type;
+        Dad d = (Dad) rp; //DOES NOT COMPILE; inconvertible type; //Unrelated classes
 
 Example3:
-
-
-		
 		
 interface T{}
 interface G{}
