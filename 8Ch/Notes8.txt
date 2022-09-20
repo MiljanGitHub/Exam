@@ -613,7 +613,8 @@ public class BuiltInFunctionalInterfaces {
         bifi.BiConsumer();
         bifi.Predicate();
         bifi.BiPredicate();
-        
+        bifi.Function();
+		bifi.BiFunction();
     }
     public void Supplier(){
         //SAM
@@ -753,6 +754,38 @@ public class BuiltInFunctionalInterfaces {
 
 
     }
+	
+    public void Function(){
+        /*
+        @FunctionalInterface
+        public interface Function<T, R> {
+             R apply(T t);
+        }
+        */
+
+        ArrayList<Object> s = new ArrayList<>();
+        Function<List, Boolean> ex1 = s::add; //DOES COMPILE
+        //Translated to: Function<List, Boolean> ex1 = list -> s.add(list);
+
+        Function<String, Boolean> ex2 = String::isEmpty;
+        //Translated to: Function<String, Boolean> ex2 = stringParam -> stringParam.isEmpty()
+        ex2.apply("asb");
+
+
+        //Function<String, String> ex3 = String::concat; // DOES NOT COMPILE
+        //Translated to: Function<String, Boolean> ex3 = stringParam -> stringParam.concat(): DOES NOT COMPILE
+        //ex3.apply("asb");
+
+        var x = "asd";
+        Function<String, String> ex4 = x::concat; // DOES COMPILE
+        //Translated to: Function<String, Boolean> ex4 = stringParamFromRuntime -> x.concat(stringParamFromRuntime): DOES COMPILE
+        ex4.apply("asb");
+
+        Function<Integer, String> ex5 = String::valueOf;
+        //Translated to: Function<Integer, String> ex4 = intParamFromRuntime -> String.valueOf(1);
+        ex5.apply(1);
+		
+	}
 }
 
 
