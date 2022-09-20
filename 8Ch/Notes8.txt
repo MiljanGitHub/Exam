@@ -610,8 +610,10 @@ public class BuiltInFunctionalInterfaces {
 
         bifi.Supplier();
         bifi.Consumer();
+        bifi.BiConsumer();
         bifi.Predicate();
         bifi.BiPredicate();
+        
     }
     public void Supplier(){
         //SAM
@@ -724,6 +726,14 @@ public class BuiltInFunctionalInterfaces {
         //BiPredicate<String, String> predicate22 = (stringParamFromRunTime, intParamFromRuntime) -> x.startsWith(stringParamFromRunTime, IntParamFromRuntime);
         //x - is the instance which we used in method reference
         System.out.println( predicate2.test("a", 0));
+
+        var z = "abc";
+        BiPredicate<String, String> predicate22 = z::startsWith;
+        //What happens when we attempt to translate:
+        //BiPredicate<String, String> predicate22 = (stringParamFromRunTime1, stringParamFromRunTime1) -> z.startsWith(stringParamFromRunTime, stringParamFromRunTime1);
+        //The above line DOES NOT COMPILE since there is not startsWith(String s, String s1) in String class
+        //z - is the instance which we used in method reference
+        System.out.println( predicate22.test("a", "A"));
 
         var y = "aaa";
         //BiPredicate<String, String> predicate3 = y::startsWith; //DOES NOT COMPILE
