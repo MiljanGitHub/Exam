@@ -618,6 +618,7 @@ public class BuiltInFunctionalInterfaces {
         bifi.Function();
         bifi.BiFunction();
         bifi.UnaryOperator();
+        bifi.BinaryOperator();
 
 
     }
@@ -705,7 +706,7 @@ public class BuiltInFunctionalInterfaces {
 
 
         var x = "abc";
-        //Predicate predicate2 = x::startsWith; ////DOES NOT COMPILE; Reference to 'startsWith' is ambiguous, both 'startsWith(String, int)' and 'startsWith(String)' match
+        //Predicate predicate2 = x::startsWith; //DOES NOT COMPILE; Reference to 'startsWith' is ambiguous, both 'startsWith(String, int)' and 'startsWith(String)' match
         //Predicate predicate = x -> x.startsWith(whateverIsPassedDuringRuntime);  //DOES NOT COMPILE
 
         Predicate<String> predicate3 = x::startsWith;  //DOES COMPILE
@@ -729,17 +730,17 @@ public class BuiltInFunctionalInterfaces {
         var x = "abc";
         BiPredicate<String, Integer> predicate2 = x::startsWith;
         //What happens when we attempt to translate:
-        //BiPredicate<String, String> predicate22 = (stringParamFromRunTime, intParamFromRuntime) -> x.startsWith(stringParamFromRunTime, IntParamFromRuntime);
+        //BiPredicate<String, Integer> predicate22 = (stringParamFromRunTime, intParamFromRuntime) -> x.startsWith(stringParamFromRunTime, intParamFromRuntime);
         //x - is the instance which we used in method reference
         System.out.println( predicate2.test("a", 0));
 
         var z = "abc";
-       // BiPredicate<String, String> predicate22 = z::startsWith;
+        //BiPredicate<String, String> predicate22 = z::startsWith; //DOES NOT COMPILE
         //What happens when we attempt to translate:
-        //BiPredicate<String, String> predicate22 = (stringParamFromRunTime1, stringParamFromRunTime1) -> z.startsWith(stringParamFromRunTime, stringParamFromRunTime1);
-        //The above line DOES NOT COMPILE since there is not startsWith(String s, String s1) in String class
+        //BiPredicate<String, String> predicate22 = (stringParamFromRunTime1, stringParamFromRunTime2) -> z.startsWith(stringParamFromRunTime1, stringParamFromRunTime2); // DOES NOT COMPILE
+        //The above line DOES NOT COMPILE since there is no 'startsWith(String s1, String s2)' in String class
         //z - is the instance which we used in method reference
-      //  System.out.println( predicate22.test("a", "A"));
+        //System.out.println( predicate22.test("a", "A"));
 
         var y = "aaa";
         //BiPredicate<String, String> predicate3 = y::startsWith; //DOES NOT COMPILE
@@ -810,13 +811,12 @@ public class BuiltInFunctionalInterfaces {
 
         BiFunction<List<String>, Integer, String> ex1 = List::get; //DOES COMPILE
         //Translated to:  BiFunction<List, Boolean, String>  ex1 = (list, intParam) -> list.get(intParam);
-        ex1.apply(new ArrayList<String>(), 2);
+        ex1.apply(new ArrayList<String>(), 21);
 
         ArrayList<String> s = new ArrayList<>();
         //BiFunction<List<String>, Integer, String> ex2 = s::get; //DOES NOT COMPILE
         //Ambiguity?? Doesn't know which method to reference
-        //Translated to: (listParam, intParam) -> s.get(listParam); NOT OK
-        //Translated to: (listParam, intParam) -> s.get(intParam); OK
+        //Translated to: (listParam, intParam) -> s.get(listParam, intParam); NOT OK, there is not such method in List nor in its implementations
         //ex2.apply(new ArrayList<>(), 2);
 
         //BiFunction<String, CharSequence, Integer> ex3 = String::indexOf; //DOES NOT COMPILE
@@ -887,6 +887,8 @@ public class BuiltInFunctionalInterfaces {
 
         UnaryOperator<StringBuilder> stringUnaryOperator6 = StringBuilder::new;  //DOES  COMPILE
         //Translated to: UnaryOperator<StringBuilder> stringUnaryOperator6 = str -> new StringBuilder(str);   //DOES  COMPILE
+        stringUnaryOperator6.apply(new StringBuilder(new StringBuilder("A")));
+        stringUnaryOperator6.apply(new StringBuilder("ASD"));
 
         String x = "aa";
         UnaryOperator<String> stringUnaryOperator7 = x::concat;
@@ -904,11 +906,36 @@ public class BuiltInFunctionalInterfaces {
             // omitted static methods
         }
          */
+        BinaryOperator<Integer> ex1 = Math::min;//DOES COMPILE
+        //Translated to: BinaryOperator<Integer> ex1 = (param1, param2) -> Math.min(parm1, param2);
 
-        BinaryOperator<Integer> ex1 = Math::min;
+        BinaryOperator<String> ex2 = String::concat; //DOES COMPILE
+        //Translated to:  BinaryOperator<String> ex2 = (instanceOnWhichTheConcatMethodWillBeCalled, param) -> instanceOnWhichTheConcatMethodWillBeCalled.concat(param);
+        ex2.apply("instanceOnWhichTheConcatMethodWillBeCalled", "param");
+
+        var x = "abc";
+        BinaryOperator<String> ex3 = x::replace; //DOES COMPILE
+        //Translated to: BinaryOperator<String> ex3 = (param1OfTypeString, param2OfTypeString) -> x.replace(param1OfTypeString, param2OfTypeString);
+        ex3.apply("target", "replacement");
+
+
+        //BinaryOperator<StringBuilder> ex4 = StringBuilder::replace; //DOES NOT COMPILE
+        //Translated to:  BinaryOperator<StringBuilder> ex4 = (stringBuilder1, stringBuilder2) -> stringBuilder1.replace(stringBuilder2); //DOES NOT COMPILE
+        //Actual method replace() from StringBuilder 'StringBuilder replace(int start, int end, String str){...}'
+        //And we have 'stringBuilder1.replace(stringBuilder2);' which is not correct;
+        //ex4.apply(new StringBuilder("A"), new StringBuilder("B"));
+
+        //var y = new StringBuilder("A");
+        //BinaryOperator<StringBuilder> ex5 = y::replace; //DOES NOT COMPILE
+        //Translated to:  BinaryOperator<StringBuilder> ex5 = (stringBuilder1, stringBuilder2) -> y.replace(stringBuilder1, stringBuilder2)   //DOES NOT COMPILE
+        //Actual method replace() from StringBuilder 'StringBuilder replace(int start, int end, String str){...}'
+        //ex5.apply(new StringBuilder("A"), new StringBuilder("B"));
+
     }
 
 }
+
+
 
 
 
