@@ -42,6 +42,7 @@ I Single parameter FunctionalInterfaces with a return type (examples wihich COMP
         //Right side -> No return statement if one line is used which DOES return an int;  
 
         SomeFunctionalInterface sf6 = stringParam6 -> (5); //DOES COMPILE
+		SomeFunctionalInterface sf7 = (stringParam7) -> (5123); //DOES COMPILE
 
         //DO NOT COMPILE EXAMPLES
         SomeFunctionalInterface x1 = stringParam1 -> return Math.round(3.4f);
@@ -345,6 +346,8 @@ public class InstanceMethodsOnParticularObject {
 
 }
 
+Another example:
+
 interface StringChecker {
  boolean check();
 }
@@ -368,8 +371,189 @@ variableFromSomeClass::itsInstanceMethod
 
 3. Instance methods on a parameter to be determined at runtime
 
+public class InstanceMethodsOnParameter {
+   interface Checker{
+        boolean check(MyPersonChecker p);
+    }
+     class MyPersonChecker {
+        public boolean myCheckerImpl(){
+            //TODO some implementation
+            return false;
+        }
+
+         public boolean myCheckerImpl(int x){
+             //TODO some implementation
+             return true;
+         }
+    }
+
+    interface StringParameterChecker {
+        boolean check(String text);
+    }
+
+    public static void main(String ...arg) {
+
+        Checker checker = MyPersonChecker::myCheckerImpl;
+        Checker ch = (myCheckerImpl) -> myCheckerImpl.myCheckerImpl();
+
+        //The expression 'Checker checker = MyPersonChecker::myCheckerImpl;' gets translated to 'Checker ch = (myCheckerImpl) -> myCheckerImpl.myCheckerImpl();'
+
+        /*
+            Explanation:
+
+            We are referencing a method 'myCheckerImpl' from MyPersonChecker class but this method is not static. Instead,
+            Java sees that 'myCheckerImpl' takes no arguments and returns boolean. That is almoooost what is the signature of 'Checker'
+            functional interface, namely its SAM.  ****Java uses the parameter supplied at runtime, when calling SAM, as the instance on
+            which the method is called.
+
+            Actually, type parameter in SAM and type in method reference and parameter supplied at runtime must be of the same type.
+            and parameter passed will be the instance on which the method is called!!!!
+
+         */
+
+        //Calling
+        checker.check(new InstanceMethodsOnParameter().new MyPersonChecker());
+
+        StringParameterChecker methodRef = String::isEmpty; // StringParameterChecker lambda = s -> s.isEmpty();
 
 
+        //Multi parameter example
+
+
+
+        interface CheckerTwoParameter{
+            boolean check(MyPersonChecker p, int x);
+        }
+
+        CheckerTwoParameter checker2 = MyPersonChecker::myCheckerImpl;
+		//Wehen looking at the line above I have to make sure that:
+		1. In MyPersonChecker there is a method which takse a single int as parameter and returns boolean.
+			Why so? Because even tho signature of SAM is   'boolean check(MyPersonChecker p, int x);' the first argument, when calling SAM must be supplied at runtime and it has got to be of type MyPersonChecker,
+			that will be the instance on which will the appropriate method be called, in this case a method with single int parameter as show in: '-> myCheckerImpl.myCheckerImpl(x);'
+     
+		2. 'MyPersonChecker::myCheckerImpl;' look like a static method, but it is really a method reference declaring that the instance of the object will be specified later.
+		
+		CheckerTwoParameter ch2 = (myCheckerImplFirstParam, x) -> myCheckerImpl.myCheckerImpl(x); //'myCheckerImplFirstParam' will always be the instance of the object for instance methods.!!!!!
+
+
+
+        //Calling
+        checker2.check(new InstanceMethodsOnParameter().new MyPersonChecker(), 2);
+        ch2.check(new InstanceMethodsOnParameter().new MyPersonChecker(), 2222);
+		
+		Since the functional interface takes two parameters, Java has to figure out what they
+		represent. The first one will always be the instance of the object for instance methods. Any
+		others are to be method parameters.
+		
+		
+
+    }
+}
+
+Example which DOES NOT COMPILE:
+
+public static void main(String[] args) {
+        interface StringConcater { 
+            String concatMe(String valueToConcat);
+        }
+        StringConcater stringAppender = String::concat; //Correct example of calling 'concate(String x)' from String class: 'var x = "asdasd".concat("asd");'
+        
+		The proper question I need to ask myself is:
+		
+		Is there a 'concat' method in Strnig class which takse no parameters?? I have to realize that in SAM the 'String valueToConcat' will be the instance on which 'concat' from 'String::concat'
+		will be called upon. So when method reference 'String::concat' gets translated to real and proper lambda, I have to ask myself is this regular:
+		
+		StringConcater stringAppenderTranslatedToLambda = valueToConcat -> valueToConcat.concat(); ??? DOES NOT COMPILE
+		
+		Instead the FunctionalInterface should be defined as:
+		
+		interface StringConcater { 
+            String concatMe(String instanceToCallConcatMethodOn, String valueToConcat);
+        }
+		Then we can write: StringConcater stringAppender2 = String::concat
+        stringAppender2.concatMe(null, null);
+		
+		OR
+		
+		If we decide to stay with original SAM signature, the we can write:
+		
+		1.
+		StringConcater creator4 = String::new; //constructor method reference
+		
+		2.
+		var x1 = "asd";
+		StringConcater ref = x1::concat;
+		
+       
+        
+    }
+
+
+--------------------------------------
+
+4. Constructors
+
+class Employee{
+    public int age;
+    public Employee() {}
+    public Employee(int age) {
+        this.age = age;
+    }
+}
+public class ConstructorsMethodReferences {
+    
+    interface EmployeeCreator{
+        Employee create();
+    }
+
+    interface EmployeeCreatorWithParams{
+        Employee create(int x);
+    }
+
+    public static void main(String[] args) {
+        EmployeeCreator ec = Employee::new;
+        final Employee employee = ec.create();
+        
+        EmployeeCreatorWithParams ecp = Employee::new;
+        final Employee employee1 = ecp.create(2);
+        
+    }
+}
+
+
+--------------------------------------
+
+        /*  Subtle differences on how to distinguish between InstanceMethodsOnParameter(1.) method references and Constructor(2.) method references:
+
+            (1.)
+
+            interface Checker{
+                    boolean check(MyPersonChecker p);
+            }
+
+
+             Checker checker = MyPersonChecker::myCheckerImpl;
+             Checker ch = (myCheckerImpl) -> myCheckerImpl.myCheckerImpl(); //This "translating" part is important
+			 
+             //Here you need to make sure that instance, actually, its class, must provide a no arg ins method, since first
+             parameter is "spent" as an instance on which method is called
+
+
+             (2.)
+
+              interface StringCopier {
+                String copy(String value);
+              }
+
+              StringCopier methodRef = String::new;
+              StringCopier lambda = x -> new String(x); //This "translating" part is important
+              
+              With constructor method references, there is no instance on which anything is called in lambda,
+              since we are talking about constructors. Input parameters from left side of an arrow can only be used as
+              constructor arguments, if that overloaded constructor do exist, that means that given constructor method reference DOES COMPILE
+
+
+         */
 --------------------------------------
 
 TABLE 8.4 Common functional interfaces
