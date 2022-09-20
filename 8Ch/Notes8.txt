@@ -221,12 +221,155 @@ There are four formats for method references:
 ■ 3. Instance methods on a parameter to be determined at runtime
 ■ 4. Constructors
 
-Calling static Methods
+1. Calling static Methods
+
+public class StaticMethodReferences {
+
+    interface Converter {
+        long round(double num);
+    }
+
+    interface StringConverter {
+        String print(double num, boolean negative);
+    }
+
+    static class MyConverterHelperClass{
+        public static long zaokruzi(double d){
+            return (long)d;
+        }
+
+        public static int zaokruzi(float f){
+            return (int)f;
+        }
+    }
+
+    static class MyConverterHelperToStringClassWithTwoParameters{
+        public static String print(double d, boolean negative){
+            if (negative) System.out.println("I print only positive Doubles");
+            return Double.toString(d);
+        }
+
+        public static String print(float f, boolean negative){
+            if (negative) System.out.println("I print only positive Floats");
+            return Float.toString(f);
+        }
+    }
+
+    public static void main(String[] args) {
+
+        //Case I (single parameter method)
+
+        Converter methodRef1 = MyConverterHelperClass::zaokruzi;
+        Converter methodRef2 = Math::round;
+
+        //methodRef1 and methodRef2 are same as if we would write, respectively
+        Converter lambda1 = parameter -> MyConverterHelperClass.zaokruzi(parameter);
+        Converter lambda2 = parameter -> Math.round(parameter);
+		
+		//Calling
+        methodRef1.round(2.0);
+        methodRef2.round(2.3);
+        lambda1.round(2.3);
+        lambda2.round(22.2);
+
+
+        //My prevod za (methodRef1 i lambda1):
+        /*
+            - Metoda 'zaokruzi' koju referenciramo preko klase MyConverterHelperClass, ima istu deklaraciju (tip i redosled paramatara koje ocekuje kao i povratan tip)
+              kao i SAM metoda 'round' iz funkcionalnog interfejsa Converter
+         */
+
+        //We have referenced a method using method references. Java compiler knows three things:
+        /*
+            1. Java knows that in a lambda we are referencing a particular method with one parameter.
+            2. Java knows to pass that parameter to the method
+            3. In case of overloaded method we are referencing, Java infers information from the CONTEXT and uses that information to call appropriate method
+                Information from the context which are used by the compiler:
+                    -We said that we were declaring a Converter, which has a method taking a double parameter.
+                    -Java looks (within MyConverterHelperClass class) for a method that matches that description. If it can’t find it or finds multiple matches, then the compiler will report an error.
+            4. My addition: Java know that 'round' and 'zaokruzi' are expecting sam type of parameters in the sam order and are returning same type.
+         */
+
+
+        //Case II (multi parameter method)
+
+        StringConverter methodRefe1 = MyConverterHelperToStringClassWithTwoParameters::print; //it is working same as in Case I
+        StringConverter lamb1 = (x, y) -> new String("some random string");
+
+    }
+}
+
+--------------------------------------
+
+2. Instance methods on a particular object
+
+
+class Student{}
+
+public class InstanceMethodsOnParticularObject {
+
+    interface Checker{
+        boolean check(Student s, int year);
+    }
+
+    class MyHelperChecker{
+
+        public boolean myCheckerImpl(Student person, int order){ //adding static makes 'Checker metRef1 = myHelperChecker::myCheckerImpl' DOES NOT COMPILE //it expects StaticMethodReference
+            if (person == null) return false;
+            return order > 10;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        MyHelperChecker myHelperChecker = new InstanceMethodsOnParticularObject().new MyHelperChecker();
+
+        if (true) myHelperChecker = null;
+
+        Checker metRef1 = myHelperChecker::myCheckerImpl; //'myHelperChecker' variable doesn't have to be final or effectively final; NPE is obvious
+        Checker lam1 = (student, years) -> false;
+
+        //Checker ref = MyHelperChecker::myCheckerImpl; //DOES NOT COMPILE; it is not static, even tho "signature" are Correct
+
+        /*
+            Explanation for 'Checker metRef1 = myHelperChecker::myCheckerImpl;':
+            We are using a reference variable whose class contains particular method ('myCheckerImpl') whose "declaration" is same as in Checker's SAM 'check'.
+            So we are using Instance Method ('myCheckerImpl') on Particular Object ('myHelperChecker') to use it implementation for 'check' method.
+            It is its implementation (implementation of 'myCheckerImpl') which we are assigning to functional interface type 'Checker'.
+         */
+
+        //Calling
+        metRef1.check(null, -1);
+        lam1.check(null, -2);
+    }
+
+}
+
+interface StringChecker {
+ boolean check();
+}
+We implement it by checking if the String is empty:
+18: var str = "";
+19: StringChecker methodRef = str::isEmpty; //We are providing implementation for SAM 'check()' by utilizing instance method 'isEmpty()' from a String class via particular instance object 'str'
+20: StringChecker lambda = () -> str.isEmpty(); //the gets to be translated from methodRef
+21:
+22: System.out.print(methodRef.check()); // true
 
 
 
+--------------------------------------
+
+Difference between StaticMethodReferences and InstanceMethodsOnParticularObject is that actually method signatures must be same (parameter types and return type)
+but in first we are referencing implementation (method) using Class::method and in second case we are referencing implementation (method) using
+variableFromSomeClass::itsInstanceMethod
 
 
+--------------------------------------
+
+3. Instance methods on a parameter to be determined at runtime
+
+
+--------------------------------------
 
 TABLE 8.4 Common functional interfaces
 
