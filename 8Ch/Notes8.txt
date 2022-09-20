@@ -596,4 +596,154 @@ UnaryOperator<T>                                    T                   apply(T)
 BinaryOperator<T>                                   T                   apply(T,T)              2 (T, T)
 
 
+import java.util.function.*;
+
+public class BuiltInFunctionalInterfaces {
+
+    public static void print(Object ... args){
+        System.out.println("print args...");
+    }
+
+    public static void main(String[] args) {
+
+        BuiltInFunctionalInterfaces bifi = new BuiltInFunctionalInterfaces();
+
+        bifi.Supplier();
+        bifi.Consumer();
+        bifi.Predicate();
+        bifi.BiPredicate();
+    }
+    public void Supplier(){
+        //SAM
+        /*
+        @FunctionalInterface
+        public interface Supplier<T> {
+            T get();
+         }
+         */
+
+        //Example 1.
+        Supplier<String> supplier = String::new; //() -> new String(); it matches with SAM
+        supplier.get();
+    }
+
+    public void Consumer(){
+        //SAM
+        /*
+                @FunctionalInterface
+                public interface Consumer<T> {
+                    void accept(T t);
+                 }
+         */
+
+        //Example 1.
+        Consumer<String> consumer = System.out::println; //x -> System.out.println(x);
+        consumer.accept("aaa");
+    }
+
+    public void BiConsumer(){
+        /*
+        @FunctionalInterface
+        public interface BiConsumer<T, U> {
+            void accept(T t, U u);
+         }
+         */
+
+        BiConsumer<String, Integer> consumer = BuiltInFunctionalInterfaces::print;
+        consumer.accept("a", 12);
+
+        class Helper{
+
+            public void test(int x){
+                System.out.println("do smtg");
+            }
+        }
+        BiConsumer<Helper, Integer> consumer2 = Helper::test;
+        consumer2.accept(new Helper(), 2);
+
+
+    }
+
+    public void Predicate(){
+        //SAM
+        /*
+        @FunctionalInterface
+        public interface Predicate<T> {
+            boolean test(T t);
+        }
+         */
+
+        //Predicate<String> predicate1 = String::startsWith;  //DOES NOT COMPILE
+        //Predicate<String> predicate = x -> x.startsWith();  //When trying to do 'Instance method on parameters' mechanism, we get DOES NOT COMPILE
+        //The 'x -> x.startsWith();' is important since there is no method in String class "x.startsWith();" then the method references DOES NOT COMPILE
+        //and also there is no static method startsWith() in String class
+        //However if we had this functional interface:
+
+       /*
+        @FunctionalInterface
+        public interface MyPredicate<T, X> {
+            boolean test(T t, X x);
+        }
+        class HelperDemo{
+            public boolean someM(int x){
+                return false;
+            }
+         }
+         MyPredicate<HelperDemo, Integer> myPredicate = HelperDemo::someM; //DOES COMPILE
+         myPredicate.test(new Demo().new HelperDemo(), 9);
+         //translation:
+          MyPredicate<HelperDemo, Integer> translated = (helperDemo, parameter) -> helperDemo.someM(parameter);  //DOES COMPILE
+         */
+
+
+        var x = "abc";
+        //Predicate predicate2 = x::startsWith; ////DOES NOT COMPILE; Reference to 'startsWith' is ambiguous, both 'startsWith(String, int)' and 'startsWith(String)' match
+        //Predicate predicate = x -> x.startsWith(whateverIsPassedDuringRuntime);  //DOES NOT COMPILE
+
+        Predicate<String> predicate3 = x::startsWith;  //DOES COMPILE
+        //Translating: Predicate<String> predicate3 = (x, param1) -> x.startsWith(param1) //DOES COMPILE; Java knows in the above line exactly which method we are referencing
+        predicate3.test("a");
+    }
+
+    public void BiPredicate(){
+        /*
+            @FunctionalInterface
+            public interface BiPredicate<T t, U u>{
+                boolean test(T t, U u);
+            }
+         */
+
+        BiPredicate<String, String> predicate = String::startsWith;
+        //What happens when we attempt to translate:
+        //BiPredicate<String, String> predicate = (instanceForMethodToBeCalledOn, param) -> instanceForMethodToBeCalledOn.startsWith(param); //DOES COMPILE so does and method reference
+        predicate.test("abc", "a0");
+
+        var x = "abc";
+        BiPredicate<String, Integer> predicate2 = x::startsWith;
+        //What happens when we attempt to translate:
+        //BiPredicate<String, String> predicate22 = (stringParamFromRunTime, intParamFromRuntime) -> x.startsWith(stringParamFromRunTime, IntParamFromRuntime);
+        //x - is the instance which we used in method reference
+        System.out.println( predicate2.test("a", 0));
+
+        var y = "aaa";
+        //BiPredicate<String, String> predicate3 = y::startsWith; //DOES NOT COMPILE
+        //What happens when we attempt to translate:
+        //It can be all this:
+        //BiPredicate<String, String> predicate3 = (stringParam1, stringParam2) -> y.startsWith(stringParam1);
+        //BiPredicate<String, String> predicate3 = (stringParam1, stringParam2) -> y.startsWith(stringParam2);
+        //BiPredicate<String, String> predicate3 = (stringParam1, stringParam2) -> y.startsWith(stringParam1,anInt?);
+        //BiPredicate<String, String> predicate3 = (stringParam1, stringParam2) -> y.startsWith(stringParam2,anInt?);
+
+
+        //BiPredicate<String, Integer> predicate4 = String::startsWith;  //DOES NOT COMPILE,
+        //What happens when we attempt to translate:
+        // (stringParamFromRuntime, intParam) -> stringParamFromRuntime.startsWith(intParam); //DOES NOT COMPILE, since there is not startsWith(int intParam); in String class
+
+
+
+
+    }
+}
+
+
 --------------------------------------
