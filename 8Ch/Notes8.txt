@@ -616,6 +616,8 @@ public class BuiltInFunctionalInterfaces {
         bifi.Predicate();
         bifi.BiPredicate();
         bifi.Function();
+        bifi.BiFunction();
+        bifi.UnaryOperator();
 
 
     }
@@ -857,6 +859,54 @@ public class BuiltInFunctionalInterfaces {
 
     }
 
+    public void UnaryOperator(){
+        /*
+        @FunctionalInterface
+        public interface UnaryOperator<T> extends Function<T, T> {
+            T apply(T t); !!!!!!!!!!!!!!!!
+            // omitted static method
+        }
+         */
+
+        UnaryOperator<String> stringUnaryOperator = String::new; //DOES COMPILE
+        //Translated to:  UnaryOperator<String> stringUnaryOperator = stringParam -> new String(stringParam); //DOES COMPILE
+        stringUnaryOperator.apply("asb");
+
+        UnaryOperator<String> stringUnaryOperator2 = String::translateEscapes; //DOES COMPILE
+        //Translated to:  UnaryOperator<String> stringUnaryOperator2 = stringParam -> stringParam.translateEscapes(); //DOES COMPILE
+        stringUnaryOperator2.apply("asb");
+
+        //UnaryOperator<Integer> stringUnaryOperator3 = Integer::toString; //DOES NOT COMPILE
+        //We know that by looking at SAM we need to pass an Int and return an Int, and since toString() always returns String this example DOES NOT COMPILE
+
+        UnaryOperator<String> stringUnaryOperator4 = String::toString; //DOES  COMPILE
+        stringUnaryOperator4.apply("asd");
+
+        UnaryOperator<Integer> stringUnaryOperator5 = Integer::valueOf; //DOES  COMPILE
+        //Translated to: UnaryOperator<Integer> stringUnaryOperator5 = intp1 -> Integer.valueOf(intp1);
+
+        UnaryOperator<StringBuilder> stringUnaryOperator6 = StringBuilder::new;  //DOES  COMPILE
+        //Translated to: UnaryOperator<StringBuilder> stringUnaryOperator6 = str -> new StringBuilder(str);   //DOES  COMPILE
+
+        String x = "aa";
+        UnaryOperator<String> stringUnaryOperator7 = x::concat;
+        //Translated to: UnaryOperator<String> stringUnaryOperator7 = str -> x.concat(str);
+
+        //UnaryOperator<String> stringUnaryOperator8 = String::concat; //DOES NOT COMPILE
+        //Translated to: UnaryOperator<String> stringUnaryOperator8 = strFromRuntime -> strFromRuntime.concat();  //DOES NOT COMPILE
+    }
+
+    public void BinaryOperator(){
+        /*
+        @FunctionalInterface
+        public interface BinaryOperator<T> extends BiFunction<T, T, T> {
+            T apply(T t1, T t2);
+            // omitted static methods
+        }
+         */
+
+        BinaryOperator<Integer> ex1 = Math::min;
+    }
 
 }
 
