@@ -556,6 +556,23 @@ public class ConstructorsMethodReferences {
          */
 --------------------------------------
 
+
+TABLE 8.3 Method references. ********
+
+Type 										             Before colon 				    After colon 					Example                            						Example SAM
+
+static methods 								              Class name 			        Method name 				  Math::round                    							long convert(double d)
+
+Instance methods on a particular object             Instance variable name              Method name                  str::startsWith                 					boolean beginningCheck(String prefix);
+
+Instance methods on a parameter                         Class name                      Method name					 String::isEmpty / String::startsWith;             boolean check(String text); / boolean check(String text, String prefix);
+
+Constructor 											Class name 						   new 						   String::new                                           String create(); / String copy(String value);
+
+
+
+--------------------------------------
+
 TABLE 8.4 Common functional interfaces
 
 Functional interface 						      Return type		 Method name			# of parameters
