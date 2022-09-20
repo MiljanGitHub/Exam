@@ -369,6 +369,7 @@ variableFromSomeClass::itsInstanceMethod
 3. Instance methods on a parameter to be determined at runtime
 
 
+
 --------------------------------------
 
 TABLE 8.4 Common functional interfaces
