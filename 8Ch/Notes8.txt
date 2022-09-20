@@ -596,6 +596,8 @@ UnaryOperator<T>                                    T                   apply(T)
 BinaryOperator<T>                                   T                   apply(T,T)              2 (T, T)
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.*;
 
 public class BuiltInFunctionalInterfaces {
@@ -614,7 +616,8 @@ public class BuiltInFunctionalInterfaces {
         bifi.Predicate();
         bifi.BiPredicate();
         bifi.Function();
-		bifi.BiFunction();
+
+
     }
     public void Supplier(){
         //SAM
@@ -729,12 +732,12 @@ public class BuiltInFunctionalInterfaces {
         System.out.println( predicate2.test("a", 0));
 
         var z = "abc";
-        BiPredicate<String, String> predicate22 = z::startsWith;
+       // BiPredicate<String, String> predicate22 = z::startsWith;
         //What happens when we attempt to translate:
         //BiPredicate<String, String> predicate22 = (stringParamFromRunTime1, stringParamFromRunTime1) -> z.startsWith(stringParamFromRunTime, stringParamFromRunTime1);
         //The above line DOES NOT COMPILE since there is not startsWith(String s, String s1) in String class
         //z - is the instance which we used in method reference
-        System.out.println( predicate22.test("a", "A"));
+      //  System.out.println( predicate22.test("a", "A"));
 
         var y = "aaa";
         //BiPredicate<String, String> predicate3 = y::startsWith; //DOES NOT COMPILE
@@ -750,11 +753,8 @@ public class BuiltInFunctionalInterfaces {
         //What happens when we attempt to translate:
         // (stringParamFromRuntime, intParam) -> stringParamFromRuntime.startsWith(intParam); //DOES NOT COMPILE, since there is not startsWith(int intParam); in String class
 
-
-
-
     }
-	
+
     public void Function(){
         /*
         @FunctionalInterface
@@ -766,11 +766,11 @@ public class BuiltInFunctionalInterfaces {
         ArrayList<Object> s = new ArrayList<>();
         Function<List, Boolean> ex1 = s::add; //DOES COMPILE
         //Translated to: Function<List, Boolean> ex1 = list -> s.add(list);
+        ex1.apply(new ArrayList());
 
         Function<String, Boolean> ex2 = String::isEmpty;
         //Translated to: Function<String, Boolean> ex2 = stringParam -> stringParam.isEmpty()
         ex2.apply("asb");
-
 
         //Function<String, String> ex3 = String::concat; // DOES NOT COMPILE
         //Translated to: Function<String, Boolean> ex3 = stringParam -> stringParam.concat(): DOES NOT COMPILE
@@ -784,9 +784,82 @@ public class BuiltInFunctionalInterfaces {
         Function<Integer, String> ex5 = String::valueOf;
         //Translated to: Function<Integer, String> ex4 = intParamFromRuntime -> String.valueOf(1);
         ex5.apply(1);
-		
-	}
+
+        Function<List, List> ex6 = ArrayList::new;
+        //Translated to: Function<List, List> exA6 = (list) -> new ArrayList(list);
+        ex6.apply(new ArrayList());
+
+        //Function<List, List> e66 = List::new; //DOES NOT COMPILE
+
+        ArrayList<String> s1 = new ArrayList<>();
+        //Function<List<String>,  String> ex22 = s1::get; //DOES NOT COMPILE
+        //Translated to: Function<List<String>, String> ex22 = list -> s1.get(list); //DOES NOT COMPILE
+        //ex22.apply(new ArrayList<>());
+    }
+
+    public void BiFunction(){
+        /*
+          @FunctionalInterface
+        public interface BiFunction<T, U, R> {
+            R apply(T t, U u);
+         }
+        */
+
+
+        BiFunction<List<String>, Integer, String> ex1 = List::get; //DOES COMPILE
+        //Translated to:  BiFunction<List, Boolean, String>  ex1 = (list, intParam) -> list.get(intParam);
+        ex1.apply(new ArrayList<String>(), 2);
+
+        ArrayList<String> s = new ArrayList<>();
+        //BiFunction<List<String>, Integer, String> ex2 = s::get; //DOES NOT COMPILE
+        //Ambiguity?? Doesn't know which method to reference
+        //Translated to: (listParam, intParam) -> s.get(listParam); NOT OK
+        //Translated to: (listParam, intParam) -> s.get(intParam); OK
+        //ex2.apply(new ArrayList<>(), 2);
+
+        //BiFunction<String, CharSequence, Integer> ex3 = String::indexOf; //DOES NOT COMPILE
+        //Translated to:   BiFunction<String, CharSequence, Integer> ex3 = (StringParam1, charSequenceParam1) -> StringParam1.indexOf(charSequenceParam1):;
+        //As we can see bellow, indexOf() method DOES NOT HAVE signature as in translated lambda.
+        //ex3.apply("asd", "asd");
+/*      indexOf()
+        The following code shows how to use indexOf():
+        String string = "animals"; string.length() -> 7
+        System.out.println(string.indexOf('a')); // 0
+        System.out.println(string.indexOf("al")); // 4
+        System.out.println(string.indexOf('a', 4)); // 4
+        System.out.println(string.indexOf("al", 5)); // -1*/
+
+        BiFunction<String, String, Integer> ex4 = String::indexOf; //DOES COMPILE
+        //Translated to:   BiFunction<String, String, Integer> ex3 = (string1, string2) -> string1.indexOf(string2); //DOES COMPILE
+        //'string1.indexOf(string2)' This signature DOES EXIST in indexOf overloaded methods
+
+        //BiFunction<StringBuilder, Integer, Integer> ex5 = StringBuilder::replace; //DOES NOT COMPILE
+        //Translated to:  BiFunction<StringBuilder, Integer, Integer> ex5 = (stringBuild1, intParam1) -> stringBuild1.replace(intParam1); //DOES NOT COMPILE
+        //Actual signature 'StringBuilder replace(int start, int end, String str){...}' but 'stringBuild1.replace(intParam1);' DOES NOT EXIST in StringBuilder class
+        //ex5.apply(new StringBuilder("Aa"), 2);
+
+        //StringBuilder sb = new StringBuilder("ABC");
+        //BiFunction<Integer, Integer, StringBuilder> ex6 = sb::replace; //DOES NOT COMPILE
+        //Translated to: BiFunction<Integer, Integer, StringBuilder> ex6 = (int1, int2) -> sb.replace(int1, int2);   //DOES NOT COMPILE
+        //There is no 'sb.replace(int1, int2);' within StringBuilder class
+
+        //BiFunction<Integer, Integer, String> ex7 = String::substring;  //DOES NOT COMPILE
+        //Translated to: BiFunction<Integer, Integer, String> ex7 = (intP1, intp2) -> intP1.substring(intp2); //DOES NOT COMPILE
+        //Integer class DOES NOT HAVE a 'substring()';
+
+        BiFunction<String, Integer, String> ex8 = String::substring; //DOES COMPILE
+        //Translated to: BiFunction<String, Integer, String> ex8 = (str, intparam) -> str.substring(intparam);    //DOES COMPILE
+
+        var x = "abc";
+        BiFunction<Integer, Integer, String> ex9 = x::substring; //DOES COMPILE
+        //Translated to: BiFunction<Integer, Integer, String> ex9 =  (int1, int2) -> x.substring(int1, int2); //DOES COMPILE
+
+
+    }
+
+
 }
+
 
 
 --------------------------------------
