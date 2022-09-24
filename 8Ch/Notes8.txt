@@ -1102,5 +1102,202 @@ Example2:
         }
     }	
 			
+Example3:
+
+    public class Crow {
+        public void caw() {
+            int x = 22;
+            Consumer<String> consumer = s ->
+                    System.out.println(x + " says "); //DOES NOT COMPILE; Compilation error here
+            x = 55;
+        }
+    }	
+	
+Example4:
+    public class Crow {
+        public void caw() {
+            int s = 22;
+            Consumer<String> consumer = s -> //DOES NOT COMPILE; Compilation error here; 's' already used
+                    System.out.println("test");
+        }
+    }
+	
+Example5:
+
+Which of the following can be inserted without causing a compilation error? (Choose all that apply.)
+
+    public void remove(List<Character> chars) {
+        char end = 'z';
+
+        Predicate<Character> predicate = c -> {
+            char start = 'a'; return start <= c && c <= end; };
+
+        // INSERT LINE HERE
+    }
+	
+A. char start = 'a';
+B. char c = 'x';
+C. chars = null;
+D. end = '1';
+E. None of the above
+
+Answer to Example5:
+
+A.
+
+    public void remove(List<Character> chars) {
+        char end = 'z';
+
+        Predicate<Character> predicate = c -> {
+            char start = 'a'; return start <= c && c <= end; };
+
+        char start = 'a';
+    } //DOES COMPILE
+
+B.
+
+    public void remove(List<Character> chars) {
+        char end = 'z';
+
+        Predicate<Character> predicate = c -> {
+            char start = 'a'; return start <= c && c <= end; };
+
+        char c = 'x';
+    }  //DOES COMPILE
+
+C.
+
+    public void remove(List<Character> chars) {
+        char end = 'z';
+
+        Predicate<Character> predicate = c -> {
+            char start = 'a'; return start <= c && c <= end; };
+
+        chars = null;
+    } //DOES COMPILE
+	
+D. 
+
+    public void remove(List<Character> chars) {
+        char end = 'z';
+
+        Predicate<Character> predicate = c -> {
+            char start = 'a'; return start <= c && c <= end; };
+
+        end = '1';
+    } //DOES NOT COMPILE
+
+
+
+Example6:
+
+In connection with Example5: Which of the following can be inserted without causing a compilation error? (Choose all that apply.)
+
+    public void remove(List<Character> chars) {
+        char end = 'z';
+
+        // INSERT LINE HERE
+
+        Predicate<Character> predicate = c -> {
+            char start = 'a'; return start <= c && c <= end; };
+    }
+	
+A. char start = 'a';
+B. char c = 'x';
+C. chars = null;
+D. end = '1';
+E. None of the above
+
+AnswerS to Example6:
+
+A.
+
+    public void remove(List<Character> chars) {
+        char end = 'z';
+
+        char start = 'a';
+
+        Predicate<Character> predicate = c -> {
+            char start = 'a'; return start <= c && c <= end; };
+    } //DOES NOT COMPILE
+	
+B.
+
+    public void remove(List<Character> chars) {
+        char end = 'z';
+
+        char c = 'x';
+
+        Predicate<Character> predicate = c -> { //DOES NOT COMPILE
+            char start = 'a'; return start <= c && c <= end; };
+    } 
+	
+C.
+
+    public void remove(List<Character> chars) {
+        char end = 'z';
+
+        chars = null;
+
+        Predicate<Character> predicate = c -> { //DOES NOT COMPILE
+            char start = 'a'; return start <= c && c <= end; };
+    } //DOES COMPILE
+	
+D. 
+
+    public void remove(List<Character> chars) {
+        char end = 'z';
+
+        end = '1';
+
+        Predicate<Character> predicate = c -> { //DOES NOT COMPILE
+            char start = 'a'; return start <= c && c <= end; }; //DOES NOT COMPILE
+    } 
+	
+Example7:
+
+public static void scary(String animal) {
+        var dino = s -> "dino".equals(animal); //DOES NOT COMPILE
+}
+	
+Example8:	
+
+(final Camel c) -> {} //DOES COMPILE
+
+(a,b,c) -> {int b = 3; return 2;} //DOES NOT COMPILE !!! Look closely
+
+ interface Ex{
+        RuntimeException t(String x, String y);
+ }
+ Ex x = (x1,y) -> new RuntimeException(); //DOES COMPILE
+ Ex x2 = (x1,y) -> throw new  RuntimeException(); //DOES NOT COMPILE !!!
+ 
+ 
+  Consumer<Integer> c = (x22) -> {float r;};  //DOES COMPILE
+  Consumer<Integer> c = (x22) -> {float r}; //DOES NOT COMPILE
+  
+  
+  int k;
+  Consumer<Integer> c = (x22) -> {float r;
+           k = 0; //DOES NOT COMPILE
+  };
 	
 	
+	
+	
+	
+	
+--------------------------------------
+	
+	
+	
+	
+Some trick questions:
+
+Q1:
+
+Which of the following lambda expressions can be passed to a function of Predicate<String> type? (Choose all that apply.)
+
+(StringBuilder s) -> s.isEmpty()
+(Student s) -> s != null
+(String s) -> s.isEmpty()
