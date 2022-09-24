@@ -343,7 +343,12 @@ var x = {12,13} //DOES NOT COMPILE (array initializer needs an explicit target-t
 
 - A var is not permitted in a multiple-variable declaration.
 
-- A var is not permitted with lambda expressions
+- A var is not permitted with lambda expressions:
+	var lambda = () -> return 5; //DOES NOT COMPILE; it cannot recognize and identify with any built-in interface nor with any custom interface,
+	However, this is ok:
+	public void counts(List<Integer> list) {
+        list.sort((var x, var y) -> x.compareTo(y));
+    }
 
 - A var is a reserved type name BUT NOT A RESERVED WORD, meaning it can be used as an identifier (method name, variable name) except as a class, interface, or enum name.
 

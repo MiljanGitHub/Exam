@@ -116,6 +116,20 @@ Fun fact lambda:
 	   
 	   //var x = () -> System.out.println("aa"); //DOES NOT COMPILE
   }
+  
+  
+--------------------------------------
+
+Parameter List Formats:
+
+You have three formats for specifying parameter types within a lambda: without types, with
+types, and with var. The compiler requires all parameters in the lambda to use the same
+format. Can you see why the following are not valid?
+5: (var x, y) -> "Hello" // DOES NOT COMPILE
+6: (var x, Integer y) -> true // DOES NOT COMPILE
+7: (String x, var y, Integer z) -> true // DOES NOT COMPILE
+8: (Integer x, y) -> "goodbye" // DOES NOT COMPILE
+
 
 --------------------------------------
 
@@ -940,3 +954,153 @@ public class BuiltInFunctionalInterfaces {
 
 
 --------------------------------------
+
+Convenience Methods on Functional Interfaces
+
+public class ConvenienceMethods {
+
+    public static void main(String[] args) {
+
+        ConvenienceMethods cm = new ConvenienceMethods();
+        cm.Supplier(); //doesn't have
+        cm.Consumer(); //andThen; Consumer convenience methods needs to be known for the exam
+        cm.BiConsumer(); //and negate or (static)not
+        cm.Predicate(); //and negate or; Predicate convenience methods needs to be known for the exam
+        cm.Function(); //and negate or; Function convenience methods needs to be known for the exam
+
+    }
+
+    public void Supplier(){
+        //no convenience
+    }
+    public void Consumer(){
+        Consumer<String> c1 = str1 -> System.out.println(str1);
+        Consumer<String> c2 = str2 -> System.out.println("b");
+        final Consumer<String> consumer = c1.andThen(c2);
+        consumer.accept("g");
+    }
+    public void BiConsumer(){
+        BiConsumer<String, String> b1 = (str1, str2) -> System.out.println("a");
+        BiConsumer<String, String> b2 = (str2, str3) -> System.out.println("b");
+        final BiConsumer<String, String> stringStringBiConsumer = b1.andThen(b2);
+        stringStringBiConsumer.accept("", "");
+
+    }
+    public void Predicate(){
+        //and
+        Predicate<String> p1 = str1 -> str1.isEmpty();
+
+        Predicate<String> p2 = str2 -> {
+            System.out.println("ne bi trebalo");
+            return str2.isEmpty();
+        };
+        final Predicate<String> and = p1.and(p2);
+        System.out.println(and.test("a"));
+
+        //negate
+        Predicate<String> p3 = str3 -> str3.isEmpty();
+        final Predicate<String> negate = p3.negate();
+        System.out.println(negate.test("a"));
+
+        Predicate<String> p4 = str4 -> str4.isEmpty();
+        Predicate<String> p5 = str5 -> str5.isEmpty();
+        final Predicate<String> or = p4.or(p5);
+        System.out.println(or.test(""));
+
+        Predicate<String> p6 = str6 -> str6.isEmpty();
+        final Predicate<String> not = Predicate.not(p6);
+        System.out.println(not.test("A"));
+
+
+    }
+    public void BiPredicate(){
+        //same as in Predicate only accepting two parameters
+    }
+    public void Function(){
+        //andThen; prvo izvodi ovu nad kojom je pozvana tj. 'f1', pa onda ovu prosledjenu kao parametar 'f2'
+        Function<String, String> f1 = str1 -> str1.toUpperCase();
+        Function<String, String> f2 = str2 -> str2.substring(1, 2);
+        final Function<String, String> stringStringFunction = f1.andThen(f2);
+        System.out.println(stringStringFunction.apply("abc"));
+
+        //compose; obrnuto od andThen
+        Function<String, String> f3 = str3 -> {
+            System.out.println("dobio sam od f3: abc. A vrati cu: sio mi ga djura");
+            return "sio mi ga djura";};
+        Function<String, String> f4 = str4 -> str4.substring(1, 2);
+        final Function<String, String> stringStringFunction2 = f3.compose(f4);
+        System.out.println(stringStringFunction2.apply("abc"));
+
+    }
+    
+}
+
+--------------------------------------
+
+Functional Interfaces for primitives
+
+//TODO
+
+
+--------------------------------------
+
+Using Local Variables Inside a Lambda Body
+
+(a, b) -> { int a = 0; return 5; } // DOES NOT COMPILE; 'a'
+
+Find errors:
+
+public void variables(int a) {
+         int b = 1;
+         Predicate<Integer> p1 = a -> {
+             int b = 0;
+             int c = 0;
+             return b == c; }
+}
+
+--------------------------------------
+
+Referencing Variables from the Lambda Body
+
+
+    public class Crow {
+        private String color;
+        public void caw(String name) {
+            String volume = "loudly";
+            Consumer<String> consumer = s ->
+                    System.out.println(name + " says "
+                            + volume + " that she is " + color);
+        }
+    } //DOES COMPILE; using instance variable, method param and local variable
+	
+	-Instance variables (and class variables(static)) are always allowed.
+	- ***** The only thing lambdas cannot access are variables that are not final or effectively final. (It is interesting when you look at where the compiler errors occur when the
+			variables are not effectively final.)
+			
+Example1:
+
+    public class Crow {
+       
+        public void caw(String name) {
+			//or if we place here:  name = "bbc";
+            Consumer<String> consumer = s ->
+                    System.out.println(name + " says "); //DOES NOT COMPILE; Compilation error here
+            
+            name = "a";
+        }
+    }
+
+Example2:
+
+    public class Crow {
+        private int x = 2;
+        public void caw() {
+            x= 22;
+            Consumer<String> consumer = s ->
+                    System.out.println(x + " says "); //DOES COMPILE;
+            x = 22;
+        }
+    }	
+			
+	
+	
