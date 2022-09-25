@@ -1,7 +1,7 @@
 Proper lambda syntax
 
 
-I Single parameter FunctionalInterfaces with a return type (examples wihich COMPILE nad DO NOT COMPILE):
+I Single parameter FunctionalInterfaces with a return type (examples wihich COMPILE and DO NOT COMPILE):
 
         @FunctionalInterface
         interface SomeFunctionalInterface{
@@ -12,17 +12,17 @@ I Single parameter FunctionalInterfaces with a return type (examples wihich COMP
 		
         SomeFunctionalInterface sfi0 = stringParam0 -> Math.round(3.4f); //
         //Left side -> No parenthesis; any name for parameter
-        //Right side -> No parenthesis; no return statement if it is single lint which does return an int. Must return int
+        //Right side -> No parenthesis; no return statement if it is single line which does return an int. Must return int!
 
 
         SomeFunctionalInterface sf01 = (stringParam01) -> Math.round(3.4f);
         //Left side -> Parenthesis; any name for parameter
-        //Right side -> No parenthesis; no return statement if it is single lint which does return an int. Must return int
+        //Right side -> No parenthesis; no return statement if it is single line which does return an int. Must return int!
 
 
         SomeFunctionalInterface sfi1 = stringParam1 -> {return 5;};
         //Left side -> No parenthesis; any name for parameter
-        //Right side -> Braces; required return statement if curly braces are used, not matter how many lines are give. Must return int
+        //Right side -> Braces; required return statement if curly braces are used, not matter how many lines are given. Must return int. ; on line where return statement is and ; on {...};
 
         SomeFunctionalInterface sfi2 = stringParam2 -> (int)5.0;  //DOES COMPILE
 
@@ -53,6 +53,12 @@ I Single parameter FunctionalInterfaces with a return type (examples wihich COMP
         SomeFunctionalInterface x6 = stringParam6, x -> 5;
         SomeFunctionalInterface x7 = (stringParam7, x) -> 5;
         SomeFunctionalInterface x8 = (String stringParam8, int x) -> 5;
+		
+		@FunctionalInterface
+        interface SomeFunctionalInterface2{
+            int doInt2(String s, String s2);
+        }
+		SomeFunctionalInterface2 x9 = String stringParam91, String stringParam92 -> 5; 
 
 II Two-parameters FunctionalInterfaces with a return type (examples wihich COMPILE nad DO NOT COMPILE):
 
@@ -66,15 +72,15 @@ II Two-parameters FunctionalInterfaces with a return type (examples wihich COMPI
 		
         MultiParameterInterface mp1 = (x, y) -> new String();
         //Left side -> Must have parenthesis when there are two or more parameters present; any name for parameters
-        //Right side -> No parenthesis; no return statement if it is single lint which does return a covariant of return value
+        //Right side -> No parenthesis; no return statement if it is single line which does return a covariant of return value
 
         MultiParameterInterface mp2 = (String x, int y) -> null;
-        //Left side -> Must have parenthesis when there are two or more parameters present; any name for parameters; Type for parameters may be optional
-        //Right side -> No parenthesis; no return statement if it is single lint which does return a covariant of return value
+        //Left side -> Must have parenthesis when there are two or more parameters present with their types; any name for parameters; Type for parameters may be optional
+        //Right side -> No parenthesis; no return statement if it is single lint which does return a covariant of return value or null (if return type in SAM is not a primitive);
 
         MultiParameterInterface mp3 = (x, y) -> { return null;};
         //Left side -> Must have parenthesis when there are two or more parameters present; any name for parameters
-        //Right side -> If there are curly braces, return must be present with ; after the return value itself and also after ending curly brace
+        //Right side -> If there are curly braces, return must be present with ; after the return value itself and also after ending curly brace };
 
         MultiParameterInterface mp4 = (x, y) -> {
             //do something
@@ -86,7 +92,7 @@ II Two-parameters FunctionalInterfaces with a return type (examples wihich COMPI
         //DO NOT COMPILE EXAMPLES
 		
          MultiParameterInterface x1 = (String x, y) -> null;
-        //Left side -> Must have parenthesis when there are two or more parameters present; any name for parameters; Type for parameters may be optional, but BOTH parameters must have type
+        //Left side -> Must have parenthesis when there are two or more parameters present; any name for parameters; Type for parameters may be optional, but BOTH or NONE parameters must have type (they both can have VAR as types)
         //Right side -> No parenthesis; no return statement if it is single lint which does return a covariant of return value
 
         MultiParameterInterface x2 =  x, y -> null;
@@ -99,7 +105,7 @@ II Two-parameters FunctionalInterfaces with a return type (examples wihich COMPI
         //Right side -> must have curly braces if return statement is included
 
         MultiParameterInterface x5 =  (String x, int y) -> {return null; }
-        //Right side -> must have ; after {}
+        //Right side -> must have ; after {};
 
 Fun fact lambda:
 
@@ -108,13 +114,13 @@ Fun fact lambda:
   }
 
   public static void main(String[] args) {
-        Pera pera = () -> {};     //DOES COMPILE
-       //Pera pera1 = () -> (); //DOES NOT COMPILE
-       //Pera pera2 =  -> (); //DOES NOT COMPILE
-       //Pera pera3 = () -> ; //DOES NOT COMPILE
-	   //Pera pera4 = () -> {} //DOES NOT COMPILE
+        Pera pera = () -> {};     //DOES COMPILE ------------------------------> OK
+       //Pera pera1 = () -> (); //DOES NOT COMPILE ------------------------------> Cannot place regular paranthasis as a right side of lambda
+       //Pera pera2 =  -> (); //DOES NOT COMPILE ------------------------------> if SAM takse no param/args then left side of -> must be marked as ()
+       //Pera pera3 = () -> ; //DOES NOT COMPILE ------------------------------> Obvious
+	   //Pera pera4 = () -> {} //DOES NOT COMPILE ------------------------------> No ; after }
 	   
-	   //var x = () -> System.out.println("aa"); //DOES NOT COMPILE
+	   //var x = () -> System.out.println("aa"); //DOES NOT COMPILE ------------------------------> 'var' DOES NOT know which type of functional interface we want whethere its a custom one or built-in one
   }
   
   
@@ -123,14 +129,14 @@ Fun fact lambda:
 Parameter List Formats:
 
 You have three formats for specifying parameter types within a lambda: without types, with
-types, and with var. The compiler requires all parameters in the lambda to use the same
+types, and with var. ***************** The compiler requires all parameters in the lambda to use the same
 format. Can you see why the following are not valid?
 5: (var x, y) -> "Hello" // DOES NOT COMPILE
 6: (var x, Integer y) -> true // DOES NOT COMPILE
 7: (String x, var y, Integer z) -> true // DOES NOT COMPILE
 8: (Integer x, y) -> "goodbye" // DOES NOT COMPILE
 
-
+One or the other or third, no mixing vars and types and no vars and types at the parameter list of lambda
 --------------------------------------
 
 Defining a Functional Interface - 
@@ -169,9 +175,9 @@ Dash - e is a functional interface because it extends the Sprint interface and i
 Skip - is not a valid functional interface because it has two abstract methods: the inherited sprint() method and the declared skip() method.
 
 Sleep - is not a valid functional interface. Neither snore() nor getZzz() meets the criteria of a single abstract method. Even though 'default' methods operates simmilar like
-	    abstract methods, in that they can be overridden in a class implementing the interface, they are insufficient for satisfying the single abstract method requirement
+	    abstract methods, in that they can be overridden in a class implementing the interface, they are insufficient for satisfying the single abstract method requirement!!!!!!!!
 
-Climb - e is a functional interface. Despite defining a slew of methods, it contains only one abstract method: reach().		
+Climb - e is a functional interface. Despite defining a slew of methods, it contains only (one) single abstract method: reach().		
 
 
 --------------------------------------
@@ -182,10 +188,8 @@ Exception to SAM (single abstract method) rule for determining if it is a valid 
 ■ public boolean equals(Object)
 ■ public int hashCode()
 
-If a functional interface includes an abstract method with the same signature as a public method found in Object, those methods do not count
-toward the single abstract method test. The motivation behind this rule is that any class that
-implements the interface will inherit from Object, as all classes do, and therefore always
-implement these methods.
+If a functional interface includes an abstract method with the same signature as a public method found in Object, THOSE METHODS DO NOT COUNT TOWARD THE SINGLE ABSTRACT METHOD TEST. 
+The motivation behind this rule is that any class that implements the interface will inherit from Object, as all classes do, and therefore always implement these methods.
 
 public interface Soar { //IS NOT a FunctionalInterface
  abstract String toString();
@@ -226,7 +230,7 @@ functional interface. Remember that having exactly one abstract method is what m
 functional interface, not the annotation.
 --------------------------------------
 
-Using Method References
+Using Method References ---> My post: https://coderanch.com/t/753585/certification/Custom-Functional-interface-creation#3501809
 
 You can pretend the compiler turns your method references into lambdas for you.
 
@@ -300,7 +304,7 @@ public class StaticMethodReferences {
             2. Java knows to pass that parameter to the method
             3. In case of overloaded method we are referencing, Java infers information from the CONTEXT and uses that information to call appropriate method
                 Information from the context which are used by the compiler:
-                    -We said that we were declaring a Converter, which has a method taking a double parameter.
+                    -We said that we were declaring a Converter, which has a method taking a 'double' as parameter.
                     -Java looks (within MyConverterHelperClass class) for a method that matches that description. If it can’t find it or finds multiple matches, then the compiler will report an error.
             4. My addition: Java know that 'round' and 'zaokruzi' are expecting sam type of parameters in the sam order and are returning same type.
          */
@@ -349,7 +353,7 @@ public class InstanceMethodsOnParticularObject {
         /*
             Explanation for 'Checker metRef1 = myHelperChecker::myCheckerImpl;':
             We are using a reference variable whose class contains particular method ('myCheckerImpl') whose "declaration" is same as in Checker's SAM 'check'.
-            So we are using Instance Method ('myCheckerImpl') on Particular Object ('myHelperChecker') to use it implementation for 'check' method.
+            So we are using Instance Method ('myCheckerImpl') on Particular Object ('myHelperChecker') to use it implementation for 'check' method of Checker interface.
             It is its implementation (implementation of 'myCheckerImpl') which we are assigning to functional interface type 'Checker'.
          */
 
@@ -368,7 +372,7 @@ interface StringChecker {
 We implement it by checking if the String is empty:
 18: var str = "";
 19: StringChecker methodRef = str::isEmpty; //We are providing implementation for SAM 'check()' by utilizing instance method 'isEmpty()' from a String class via particular instance object 'str'
-20: StringChecker lambda = () -> str.isEmpty(); //the gets to be translated from methodRef
+20: StringChecker lambda = () -> str.isEmpty(); //this gets to be translated from methodRef
 21:
 22: System.out.print(methodRef.check()); // true
 
@@ -376,7 +380,7 @@ We implement it by checking if the String is empty:
 
 --------------------------------------
 
-Difference between StaticMethodReferences and InstanceMethodsOnParticularObject is that actually method signatures must be same (parameter types and return type)
+Difference between StaticMethodReferences and InstanceMethodsOnParticularObject is that actuall method signatures must be same (parameter types and return type)
 but in first we are referencing implementation (method) using Class::method and in second case we are referencing implementation (method) using
 variableFromSomeClass::itsInstanceMethod
 
@@ -420,7 +424,7 @@ public class InstanceMethodsOnParameter {
             functional interface, namely its SAM.  ****Java uses the parameter supplied at runtime, when calling SAM, as the instance on
             which the method is called.
 
-            Actually, type parameter in SAM and type in method reference and parameter supplied at runtime must be of the same type.
+            Actually, first type parameter in SAM and type in method reference and parameter supplied at runtime must be of the same type.
             and parameter passed will be the instance on which the method is called!!!!
 
          */
@@ -447,8 +451,8 @@ public class InstanceMethodsOnParameter {
      
 		2. 'MyPersonChecker::myCheckerImpl;' look like a static method, but it is really a method reference declaring that the instance of the object will be specified later.
 		
-		CheckerTwoParameter ch2 = (myCheckerImplFirstParam, x) -> myCheckerImpl.myCheckerImpl(x); //'myCheckerImplFirstParam' will always be the instance of the object for instance methods.!!!!!
-
+		CheckerTwoParameter ch2 = (myCheckerImplFirstParam, x) -> myCheckerImpl.myCheckerImpl(x); //'myCheckerImplFirstParam' will always be the instance of the object 
+																								 //for instance methods to be called on the right side of -> !!!!!
 
 
         //Calling
@@ -549,8 +553,8 @@ public class ConstructorsMethodReferences {
              Checker checker = MyPersonChecker::myCheckerImpl;
              Checker ch = (myCheckerImpl) -> myCheckerImpl.myCheckerImpl(); //This "translating" part is important
 			 
-             //Here you need to make sure that instance, actually, its class, must provide a no arg ins method, since first
-             parameter is "spent" as an instance on which method is called
+             //Here you need to make sure that instance, actually, its class, must provide to a no-arg instance method, since first
+             parameter is "spent" as an instance on which method is called, and other are arguments to that methods call
 
 
              (2.)
@@ -578,8 +582,10 @@ Type 										             Before colon 				    After colon 					Example       
 static methods 								              Class name 			        Method name 				  Math::round                    							long convert(double d)
 
 Instance methods on a particular object             Instance variable name              Method name                  str::startsWith                 					boolean beginningCheck(String prefix);
+													  (actaual variable)
 
-Instance methods on a parameter                         Class name                      Method name					 String::isEmpty / String::startsWith;             boolean check(String text); / boolean check(String text, String prefix);
+
+Instance methods on a parameter                         Class name                      Method name					 String::isEmpty / String::startsWith;             boolean check(String text); / boolean check(String text, String prefix); //Important to NOT FORGET to subtract first parameter from SAM signature whene comparing with instance methods in a given class, since that first parmeter will be used as an instance and second as argument to method call.
 
 Constructor 											Class name 						   new 						   String::new                                           String create(); / String copy(String value);
 
@@ -704,7 +710,7 @@ public class BuiltInFunctionalInterfaces {
 
        /*
         @FunctionalInterface
-        public interface MyPredicate<T, X> {
+        public interface MyPredicate<T, X> { //which in fact we do have, its called BiPredicate<T,V>
             boolean test(T t, X x);
         }
         class HelperDemo{
@@ -724,7 +730,7 @@ public class BuiltInFunctionalInterfaces {
         //Predicate predicate = x -> x.startsWith(whateverIsPassedDuringRuntime);  //DOES NOT COMPILE
 
         Predicate<String> predicate3 = x::startsWith;  //DOES COMPILE
-        //Translating: Predicate<String> predicate3 = (x, param1) -> x.startsWith(param1) //DOES COMPILE; Java knows in the above line exactly which method we are referencing
+        //Translating: Predicate<String> predicate3 = (param1) -> x.startsWith(param1) //DOES COMPILE; Java knows in the above line exactly which method we are referencing
         predicate3.test("a");
     }
 
@@ -790,20 +796,20 @@ public class BuiltInFunctionalInterfaces {
         ex2.apply("asb");
 
         //Function<String, String> ex3 = String::concat; // DOES NOT COMPILE
-        //Translated to: Function<String, Boolean> ex3 = stringParam -> stringParam.concat(): DOES NOT COMPILE
+        //Translated to: Function<String, String> ex3 = stringParam -> stringParam.concat(); //DOES NOT COMPILE
         //ex3.apply("asb");
 
         var x = "asd";
         Function<String, String> ex4 = x::concat; // DOES COMPILE
-        //Translated to: Function<String, Boolean> ex4 = stringParamFromRuntime -> x.concat(stringParamFromRuntime): DOES COMPILE
+        //Translated to: Function<String, String> ex4 = stringParamFromRuntime -> x.concat(stringParamFromRuntime); // DOES COMPILE
         ex4.apply("asb");
 
         Function<Integer, String> ex5 = String::valueOf;
-        //Translated to: Function<Integer, String> ex4 = intParamFromRuntime -> String.valueOf(1);
+        //Translated to: Function<Integer, String> ex4 = intParamFromRuntime -> String.valueOf(intParamFromRuntime);
         ex5.apply(1);
 
         Function<List, List> ex6 = ArrayList::new;
-        //Translated to: Function<List, List> exA6 = (list) -> new ArrayList(list);
+        //Translated to: Function<List, List> exA6 = (list) -> new ArrayList(list); // DOES COMPILE
         ex6.apply(new ArrayList());
 
         //Function<List, List> e66 = List::new; //DOES NOT COMPILE
@@ -957,6 +963,18 @@ public class BuiltInFunctionalInterfaces {
 
 Convenience Methods on Functional Interfaces
 
+
+
+TABLE 8.5 Convenience methods
+
+Interface instance			 	   return type				 Method name			 Method parameters
+Consumer							Consumer                  andThen()                  Consumer
+Function                            Function                  andThen()                  Function
+Function                            Function                  compose()                  Function
+Predicate                           Predicate                   and()                    Predicate
+Predicate                           Predicate                    or()                    Predicate
+Predicate                           Predicate                  negate()                   no param
+
 public class ConvenienceMethods {
 
     public static void main(String[] args) {
@@ -1039,7 +1057,54 @@ public class ConvenienceMethods {
 
 Functional Interfaces for primitives
 
+******The single abstract method is often renamed when a primitive type is returned.******
+In other words if SAM return type is int/long/dobule then appropriate SAM's name shall be getAsInt()/getAsLong()/getAsDouble() !!!!!!!!!
+Znaci ako "Primitive""BuiltInInterface" vraca primitive, int/long/dobule, tada je ime single abstrakt metoda, dato u formi getAsXXXX()!!!!!!!!!
+U svim ostalim slucajevima, koa sto je da vraca void ili
+
+- IntConsumer/LongConsumer/DoubleConsumer returns void som the SAM's name remains the sam as in built-in interface
+- IntPredicate/LongPredicate/DoublePredicate DO NOT RETURN int/long/dobule but boolean. So the name for SAM remains same (test()) as in built-in interface
+- As IntFunction<T>/LongFunction<T>/DoubleFunction<T> they are al parametarized with a obligatory/mandatory RETURN type 
+
 //TODO
+Functional Interface			return type					Method name 						parameters
+
+*
+BooleanSupplier					boolean						getAsBoolean()						    -
+
+IntSupplier						int						    getAsInt                                -
+LongSupplier					long						getAsLong								-
+DoubleSupplier					double						getAsDouble								-
+
+IntConsumer						void						accept									int
+LongConsumer					void						accept									long
+DoubleConsumer					void         				accept									double
+
+*
+There is no BiConsumer for primitives
+
+IntPredicate					boolean						test									int
+LongPredicate					boolean						test									long
+DoublePredicate					boolean						test									double
+
+*There is no BiPredicate
+
+IntFunction<R>                    R							apply									int
+LongFunction<R>					  R						    apply									long
+DoubleFunction<R>			      R 					    apply									double
+
+*There is no BiFunction
+
+IntUnaryOperator				 int					    getAsInt								int
+LongUnaryOperator				 long					    getAsLong								long
+DoubleUnaryOperator				 double						getAsDouble								double
+
+
+
+
+
+
+
 
 
 --------------------------------------

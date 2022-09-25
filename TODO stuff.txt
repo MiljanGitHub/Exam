@@ -8,3 +8,6 @@
 - Arrays.mismatch(arr1, arr2)
 - Math API methods
 - Date and Time API
+- Instantiating inner and static classes
+- sealed classes assignements and rules
+- java and jar commands; with arguments
