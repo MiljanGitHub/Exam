@@ -1099,12 +1099,9 @@ IntUnaryOperator				 int					    getAsInt								int
 LongUnaryOperator				 long					    getAsLong								long
 DoubleUnaryOperator				 double						getAsDouble								double
 
-
-
-
-
-
-
+IntBinaryOperator				 int					    getAsInt								int, int
+LongBinaryOperator				 long					    getAsLong								long, long
+DoubleBinaryOperator			 double						getAsDouble								double, long
 
 
 --------------------------------------
@@ -1132,14 +1129,16 @@ Referencing Variables from the Lambda Body
         private String color;
         public void caw(String name) {
             String volume = "loudly";
+            if (true) color = null;
+            color = ""; //
             Consumer<String> consumer = s ->
                     System.out.println(name + " says "
-                            + volume + " that she is " + color);
+                            + volume + " that she is " + color); //instance varaibles are allowed even if not effectivly final
         }
     } //DOES COMPILE; using instance variable, method param and local variable
 	
 	-Instance variables (and class variables(static)) are always allowed.
-	- ***** The only thing lambdas cannot access are variables that are not final or effectively final. (It is interesting when you look at where the compiler errors occur when the
+	- ***** The only thing lambdas cannot access are local variables that are not final or effectively final. (It is interesting when you look at where the compiler errors occur when the
 			variables are not effectively final.)
 			
 Example1:
@@ -1162,8 +1161,8 @@ Example2:
         public void caw() {
             x= 22;
             Consumer<String> consumer = s ->
-                    System.out.println(x + " says "); //DOES COMPILE;
-            x = 22;
+                    System.out.println(x + " says "); //DOES COMPILE; instance vars DON'T HAVE to be effectively final
+            x = 52;
         }
     }	
 			
@@ -1187,7 +1186,7 @@ Example4:
         }
     }
 	
-Example5:
+Example5 (compare with Example6):
 
 Which of the following can be inserted without causing a compilation error? (Choose all that apply.)
 
@@ -1247,14 +1246,14 @@ D.
         char end = 'z';
 
         Predicate<Character> predicate = c -> {
-            char start = 'a'; return start <= c && c <= end; };
+            char start = 'a'; return start <= c && c <= end; }; //DOES NOT COMPILE
 
         end = '1';
-    } //DOES NOT COMPILE
+    } 
 
 
 
-Example6:
+Example6 (compare with Example5):
 
 In connection with Example5: Which of the following can be inserted without causing a compilation error? (Choose all that apply.)
 
@@ -1283,8 +1282,8 @@ A.
         char start = 'a';
 
         Predicate<Character> predicate = c -> {
-            char start = 'a'; return start <= c && c <= end; };
-    } //DOES NOT COMPILE
+            char start = 'a'; return start <= c && c <= end; }; //DOES NOT COMPILE
+    } 
 	
 B.
 
@@ -1304,7 +1303,7 @@ C.
 
         chars = null;
 
-        Predicate<Character> predicate = c -> { //DOES NOT COMPILE
+        Predicate<Character> predicate = c -> { 
             char start = 'a'; return start <= c && c <= end; };
     } //DOES COMPILE
 	
@@ -1315,7 +1314,7 @@ D.
 
         end = '1';
 
-        Predicate<Character> predicate = c -> { //DOES NOT COMPILE
+        Predicate<Character> predicate = c -> { 
             char start = 'a'; return start <= c && c <= end; }; //DOES NOT COMPILE
     } 
 	
@@ -1329,7 +1328,7 @@ Example8:
 
 (final Camel c) -> {} //DOES COMPILE
 
-(a,b,c) -> {int b = 3; return 2;} //DOES NOT COMPILE !!! Look closely
+(a,b,c) -> {int b = 3; return 2;} //DOES NOT COMPILE !!! Look closely!!!!!!!!!!!!!!!!!! TRICK QUESTIONS
 
  interface Ex{
         RuntimeException t(String x, String y);
@@ -1347,11 +1346,7 @@ Example8:
            k = 0; //DOES NOT COMPILE
   };
 	
-	
-	
-	
-	
-	
+
 --------------------------------------
 	
 	
