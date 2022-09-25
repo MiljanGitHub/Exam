@@ -11,3 +11,4 @@
 - Instantiating inner and static classes
 - sealed classes assignements and rules
 - java and jar commands; with arguments
+- Memorize built-in functiona interfaces (their SAMs), convinence methods as well as functional interfaces for prmitives (...getAsMethods() )
