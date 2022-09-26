@@ -36,7 +36,7 @@ class InvalidUse {
 Methods available in Collection interface 
 
 - public boolean add(E element)
-- public boolean remove(Object object) //Be careful this is overloaded in ArrayList...
+- public boolean remove(Object object) //Be careful this is overloaded in List, Queue...
 - public boolean isEmpty()
 - public int size()
 - public void clear() 
@@ -101,7 +101,7 @@ Examples:
 
 !!! List.of(varargs); !!!		
 		
-List.of(varargs); ---> returns FULL IMMUTABLE LIST
+List.of(varargs/array); ---> returns FULL IMMUTABLE LIST
 						- no adding of elements -> UnsupportedOperationException
 						- no removing -> UnsupportedOperationException
 						- no replacing (i.e. using set(int, E e) from List); -> UnsupportedOperationException
@@ -128,13 +128,13 @@ Examples:
 
 Method Description 			Can add elements?		Can delete elements?		Can replace elements?
 
-Arrays.asList(varargs)			NO							NO							YES
+Arrays.asList(varargs/array)    NO							NO							YES
 
 List.of(varargs);				NO 						 	NO							NO
 
 List.copyOf(collection);  		NO 						 	NO							NO
 
-**At this point it would be good to repeat following methods from Array (not Arrays): array.toList(); array.toList(someOtherArr); **
+**At this point it would be good to repeat following methods: list.toArray(); list.toArray(someOtherArr); **
 --------------------------------------
 
 Creating a List with a Constructor
@@ -143,7 +143,7 @@ var linked1 = new LinkedList<String>();
 var linked2 = new LinkedList<String>(linked1);
 var list1 = new ArrayList<String>();
 var list2 = new ArrayList<String>(list1);
-var list3 = new ArrayList<String>(10);
+var list3 = new ArrayList<String>(10); //ArrayList has this constructor not LinkedList
 var linked2 = new LinkedList<Integer>(100); //DOES NOT COMPILE
 --------------------------------------
 
@@ -191,12 +191,159 @@ Beside methods in Collection, here are methods from List interface:
 	
  - public E get(int index) //Explained above
  - public E remove(int index) //Explained above
- - public E set(int index, E e)  // Explained above: Think of it as 'set' is doing 'replacing'
+ - public E set(int index, E e)  // Explained above: Think of it as 'set' as doing 'replacing'
  
  - public default void replaceAll(UnaryOperator<E> op)
-	//TODO
+	    String x = "aaf";
+        list.replaceAll(String::new); //DOES COMPILE
+        list.replaceAll(x::concat); //DOES COMPILE
+        list.replaceAll(String::concat); //DOES NOT COMPILE
+        list.replaceAll(el -> el.replace("a", "b"));
  
  - public default void sort(Comparator<? super E> c)
 	
 	//TODO
  
+--------------------------------------
+
+Set Methods 
+
+Set<Character> letters = Set.of('z', 'o', 'o'); //Set.of(varargs/array); IMMUTABLE
+Set<Character> copy = Set.copyOf(letters); //Set.copyOf(Collection<? extends E> coll); IMMUTABLE
+
+3: Set<Integer> set = new HashSet<>();
+4: boolean b1 = set.add(66); // true
+5: boolean b2 = set.add(10); // true
+6: boolean b3 = set.add(66); // false
+7: boolean b4 = set.add(8); // true
+8: set.forEach(System.out::println);
+This code prints three lines:
+66
+8
+10
+
+--------------------------------------
+
+Queue and Deque Interfaces
+
+	 Queue (FIFO)
+	  /|\
+	   |
+	   |
+     Deque (FIFO) //*it may use LIFO methods pop()/push(E e)
+	  /|\
+	   |
+	   |	    
+   LinkedList + (it should be obvious that LinkedList implements List)
+   
+--------------------------------------
+   
+Queue<String> queue = new LinkedList<>();//DOES COMPILE
+Deque<String> deque =  new LinkedList<>(); //DOES COMPILE
+LinkedList<String> linkedList =  new LinkedList<>(); //DOES COMPILE
+List<String> list = new LinkedList<>();    //DOES COMPILE
+
+--------------------------------------
+Queue Methods
+
+ - public boolean add(E e) //Adding; From Collection
+
+	Example1:
+	
+	Queue<String> queue = new LinkedList<>();
+	queue.add("a");  queue.add("b");  //it adds elements to the end
+	System.out.println(queue); [a,b]
+	queue.add(null); //DOES NOT THROW EXCEPTION
+	
+ - public boolean offer(E e) //Adding; From Queue
+
+	Example1:
+
+    queue.add("a");  queue.add("b");  queue.add("c");
+    queue.offer("a");
+    System.out.println(queue);  // [a, b, c, a]
+
+**add(E e) and offer(E e) are very simmilar in whihc that both are adding elements to the back of the list.	
+
+ - public E remove() //Removing; It MAY throw Exception
+ 
+Note: there is a 'public boolean remove(Object object)' from Collections which returns 'boolean' and remove() from Queue returns which returns first inserted element from Queue removes it
+	  With remove() from Queue, we got no parameters to pass to the method, which means that it returns removed element, and in accordance with FIFO, it will return "first out", that is, first inserted element
+	  
+	  Example1:
+	  
+	    queue.add("a");  queue.add("b");  queue.add("c");
+        boolean isRemovedElementByUsingCollectionRemoveMethod = queue.remove("a"); //true
+        String removedElementByUsingDequeRemoveMethod = queue.remove(); 
+        System.out.println(removedElementByUsingDequeRemoveMethod); //b
+        System.out.println(queue); //[c]
+	 
+	  Example2:
+	  
+	  Queue<String> queue = new LinkedList<>();
+	  String removedElementByUsingDequeRemoveMethod = queue.remove(); // !!! Throws exception if Queue is empty; 
+																	 //It should be obvious that remove(Object o) from Collection returns boolean, 
+																	//so no Exception will be throw if element we are trying to remove is not present
+		
+		
+ - public E poll() //Removing; It DOES NOT throw Exception
+		
+	  Example1:
+	  
+        Queue<String> queue = new LinkedList<>();
+        queue.add("a");  queue.add("b");  queue.add("c");
+        final String poll = queue.poll();
+        System.out.println(poll); //a
+        System.out.println(queue); //[b, c]	  
+
+	  Example2:		
+		
+		Queue<String> queue = new LinkedList<>();
+        final String poll = queue.poll(); // null
+		
+	
+ - public E element()
+
+	Example1:
+	
+	    Queue<String> queue = new LinkedList<>();
+        queue.add("a");  queue.add("b");  queue.add("c");
+        final String element = queue.element();
+        System.out.println(element); //gets it 'a'
+        System.out.println(queue); //[a, b, c]
+
+	Example2:
+	
+	    Queue<String> queue = new LinkedList<>();
+        final String element = queue.element(); //Throws Exception
+
+ - public E peek()
+
+	Example1:
+	
+	    Queue<String> queue = new LinkedList<>();
+        queue.add("a");  queue.add("b");  queue.add("c");
+        final String peek = queue.peek();
+        System.out.println(peek); //gets it 'a'
+        System.out.println(queue); //[a, b, c]
+
+	Example2:
+	
+	    Queue<String> queue = new LinkedList<>();
+        final String peek = queue.peek();
+        System.out.println(peek); // null
+
+   
+   
+--------------------------------------
+
+Deque Methods (FIFO)
+
+
+--------------------------------------
+
+Mixing FIFO and LIFO methods over a Deque's LinkedList
+
+
+
+--------------------------------------
