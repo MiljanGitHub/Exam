@@ -366,6 +366,8 @@ for(var ham : chimpanzees) //var type is Object;  Object o = chimpanzees.get(0);
  for (var k = 2; k < 2; k++){} //DOES COMPILE	
  for (var k = 2, i =22; k < 2; k++){} //DOES NOT COMPILE; 	 //invalid Java does not allow var in multiple variable declarations.
  for (var k = 2, int l = 22; k < 2; k++){} //DOES NOT COMPILE; //for loop rule -> The variables in the initialization block must all be of the same type.
+ 
+ var list = new ArrayList<>(); //DOES COMPILES; //ArrayList<Object>
 ------------------------------------------------
 
 
