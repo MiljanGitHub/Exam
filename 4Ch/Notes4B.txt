@@ -860,7 +860,7 @@ public class TestMain {
 }
 
 
----------------------------Arrays.toList(arr)---------------------------
+---------------------------Arrays.asList(arr)---------------------------
 
 class Animal{
     public int id;

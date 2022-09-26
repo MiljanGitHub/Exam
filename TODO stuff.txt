@@ -1,3 +1,5 @@
+*** For all these points, try to write custom notes and examples (with different colors) in your notebook ***
+
 - Different types of integers (hex, octal, binary)
 - Objects eligibility for GC
 - Strings assignments

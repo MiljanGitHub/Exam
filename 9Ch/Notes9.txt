@@ -1,11 +1,202 @@
+Collections
+                 __________         _________
+                /          Collection        \
+               /               |              \
+              /                |               \
+             /                 |                \
+             |                 |                 |
+             |                 |                 |
+             |                 |                 |
+             |                 |                 |
+             |                 |                 |
+            List             Queue              Set                                     Map
+            /   \              |                /\                                      /\
+           /     \             |               /  \                                    /  \
+          /       \            |              /    \                                  /    \
+       ArrayList   \         Deque         HashSet TreeSet                       HashMap  TreeMap
+                    \         /
+                     \       /
+                    LinkedList
+
+--------------------------------------
+
+Diamond operator
+
+
+List<Integer> list = new ArrayList<>(); //DOES COMPILE
+Map<Long,List<Integer>> mapOfLists = new HashMap<>(); //DOES COMPILE
+
+List<> list = new ArrayList<Integer>(); // DOES NOT COMPILE
+class InvalidUse {
+ void use(List<> data) {} // DOES NOT COMPILE
+}
+
+--------------------------------------
+
 Methods available in Collection interface 
 
+- public boolean add(E element)
+- public boolean remove(Object object) //Be careful this is overloaded in ArrayList...
+- public boolean isEmpty()
+- public int size()
+- public void clear() 
+- public boolean contains(Object object)
+- public boolean removeIf(Predicate<? super E> filter)
+- public void forEach(Consumer<? super T> action)
+- public boolean equals(Object object)
 
 --------------------------------------
 
+The List Interface
 
+- ordered
+- allows duplicates
+- index based
+
+Comparing ArrayList and LinkedList
+
+ArrayList:
+
+Good at: getting objects / accessing / reading(in constant time) (i.e. Good at READING)
+Bad at: adding and removing (i.e. Bad at WRITING)
+
+LinkedList
+* additional methods to facilitate adding or removing from the beginning and/or end of the list
+
+Good at: adding and removing (i.e. Bad at WRITING
+Bad at:  getting objects / accessing / reading / *dealing with an arbitrary index takes linear time
 
 --------------------------------------
 
+Factory methods
+
+Factory methods to create a List: Arrays.asList(varargs); | List.of(varargs); | List.copyOf(collection);
+
+!!! Arrays.asList(varargs); !!! ---> So called "List view";
+
+"List view" -> - If SIZE is changed either to array (although this is not possible) or to the list (this is possible) then UnsupportedOperationException is thrown!!!
+			   - Gives immutable list in terms of size;
+			   - *** Since it is so called "List view", we can modify and replace elements in an array or in a list, those changes will automatically be reflected on the other collection. ***
+
+Examples:
+	- calling: 'public boolean add(E element)' from Collection -> UnsupportedOperationException
+	- calling: 'public boolean remove(Object object)' from Collection -> UnsupportedOperationException
+    - calling: 'public E set(int index, E e) [Replaces element at index and returns original. May throw IndexOutOfBoundsException if index is invalid.]' from List -> UnsupportedOperationException
+
+Examples:
+		Replacing using set():
+		
+	    String[] arr1 = {"a", "b"};
+        List<String> stringList = Arrays.asList(arr1);
+        String oldValueAtIndex1Unused = stringList.set(1, null); //replacing here
+        System.out.println(Arrays.toString(arr1)); //[a, null]
+		
+		Modifyig via array:
+		
+		String[] arr1 = {"a", "b"};
+        List<String> stringList = Arrays.asList(arr1);
+        arr1[0] = "c  //modifying here
+        System.out.println(stringList);// [c, b]
+
+
+!!! List.of(varargs); !!!		
+		
+List.of(varargs); ---> returns FULL IMMUTABLE LIST
+						- no adding of elements -> UnsupportedOperationException
+						- no removing -> UnsupportedOperationException
+						- no replacing (i.e. using set(int, E e) from List); -> UnsupportedOperationException
+
+Examples:
+	    Person p1 = new Person(1); Person p2 = new Person(2);
+        final List<Person> of = List.of(p1, p2); // The 'of' list contains identical copies of references 'p1' and 'p2'; i.e. References from 'of' and ('p1' and 'p2') are pointing to same objects, respectivly
+        System.out.println(p2 == of.get(1)); //true
+        of.get(1).id = 22;
+        System.out.println(p2); //Person{id=22}
+Examples:
+		List.of(); //DOES COMPILE
+		List.of(1, null); //Exception
+
+!!! List.copyOf(collection); !!!			
+
+Examples:
+        final List<Person> copyOf = List.copyOf(personList);
+        System.out.println(personList.get(0) == copyOf.get(0)); //true
+
+		personList.remove(p1);
+        System.out.println(personList.size()); //1
+        System.out.println(copyOf.size()); //2
+
+Method Description 			Can add elements?		Can delete elements?		Can replace elements?
+
+Arrays.asList(varargs)			NO							NO							YES
+
+List.of(varargs);				NO 						 	NO							NO
+
+List.copyOf(collection);  		NO 						 	NO							NO
+
+**At this point it would be good to repeat following methods from Array (not Arrays): array.toList(); array.toList(someOtherArr); **
+--------------------------------------
+
+Creating a List with a Constructor
+
+var linked1 = new LinkedList<String>();
+var linked2 = new LinkedList<String>(linked1);
+var list1 = new ArrayList<String>();
+var list2 = new ArrayList<String>(list1);
+var list3 = new ArrayList<String>(10);
+var linked2 = new LinkedList<Integer>(100); //DOES NOT COMPILE
+--------------------------------------
+
+Using var with ArrayList
+
+var list = new ArrayList<>();
+list.add("a");
+for (String s: list) { } // DOES NOT COMPILE; The type of var is ArrayList<Object>
 
 --------------------------------------
+
+Working with List Methods
+
+Beside methods in Collection, here are methods from List interface:
+
+ - public void add(int index, E element) //its not like add(E e) from Collection; this one is void and from Collection is boolean return type
+		
+		Example1:
+		Person p1 = new Person(1); Person p2 = new Person(2);
+        List<Person> personList =  new ArrayList<>();
+        personList.add(p1); personList.add(p2);
+        personList.add(3, new Person(3)); //IndexOutOfBoundsException: Index: 3, Size: 2
+        System.out.println(personList);
+		
+		Example2:
+		
+		String a = "a"; String b = "b"; String c = "c";  String d = "d"; String e = "e";
+        List<String> list =  new ArrayList<>();
+        list.add(a); list.add(b); list.add(c);
+
+        String removedEl = list.remove(1); //list: [a, c]
+        String oldReplacedElement = list.set(1, d); //removedEl: c; list: [a, d]
+        if (list.add(e)) System.out.println(list); //list: [a, d, e]
+
+		Example3:
+        String a = "a"; String b = "b"; String c = "c";  String d = "d"; String e = "e";
+        List<String> list =  new ArrayList<>();
+        list.add(a); list.add(b); list.add(c);
+
+        System.out.println(list); //[a, b, c]
+        list.add(2, d); //shifts
+        System.out.println(list); // [a, b, d, c]
+        list.add(3, e);
+        System.out.println(list); //[a, b, d, e, c]
+	
+ - public E get(int index) //Explained above
+ - public E remove(int index) //Explained above
+ - public E set(int index, E e)  // Explained above: Think of it as 'set' is doing 'replacing'
+ 
+ - public default void replaceAll(UnaryOperator<E> op)
+	//TODO
+ 
+ - public default void sort(Comparator<? super E> c)
+	
+	//TODO
+ 
