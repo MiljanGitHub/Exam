@@ -339,11 +339,59 @@ Note: there is a 'public boolean remove(Object object)' from Collections which r
 
 Deque Methods (FIFO)
 
+        //Single deque methods; regular deque
 
+        //Don't forget Deque is "double-ended" Queue; it has: 
+		
+		
+				*******************************************************
+Front ->		* HEAD--element1---element2--- ... ---elementN---TAIL *			<- End/Back
+				*******************************************************
+		
+		
+        //Methods inherited from Queue [remove() and poll()] and [element() and peek()] are head-oriented.
+        //Methods from Deque class can still use those and have its own for head (suffixed "First") and for tail (suffixed "Last")
+		
+         Deque<Integer> deque = new LinkedList<>(); //This is FIFO, but if used Stack's methods like pop() and push(E e), then its LIFO
+        
+		//add
+        deque.add(1); //[1]
+        deque.addFirst(0); //[0, 1]
+        deque.addLast(2); //[0, 1, 2]
+
+        deque.offer(3); //[0,1,2,3]
+        deque.offerFirst(-1); //[-1, 0,1,2,3]
+        deque.offerLast(4); //[-1, 0, 1, 2, 3, 4]
+
+        //remove
+        Integer minusOne = deque.remove(); // -1; [0, 1, 2, 3, 4]
+        Integer zero = deque.removeFirst(); // 0; [1, 2, 3, 4]
+        Integer four = deque.removeLast(); // 4; [1, 2, 3]
+
+        // poll(); pollFirst(); pollLast(); Operates same as respective remove() methods
+
+        //gets
+        Integer one = deque.element(); //1; [1, 2, 3]
+        Integer three = deque.getLast(); // 3; [1, 2, 3] getLast() is supposed to be equivalent with "elementFirst()";
+        Integer oneAgain = deque.getFirst(); //1; [1, 2, 3]
+
+        //peek(); peekFirst(); peekLast(); ; Operates same as respective element()/get() methods
 --------------------------------------
 
 Mixing FIFO and LIFO methods over a Deque's LinkedList
 
+        Deque<Integer> deque = new LinkedList<>();
 
+        deque.add(1); //[1]
+        deque.add(2); //
+        deque.addFirst(3);
+
+        deque.push(-1);
+        deque.push(-2); // -2,-1,3,1,2
+        System.out.println(deque.remove()); //-2
+        System.out.println(deque.pop()); //-1
+		
+Add to the front/top 'public void push(E e)'
+Remove from the front/top 'public E pop()'
 
 --------------------------------------
