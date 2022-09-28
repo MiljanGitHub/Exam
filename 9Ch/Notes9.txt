@@ -607,7 +607,7 @@ Example1:
         System.out.println("Updated HashMap: " + prices); //{Pant=150, Shirt=100, Bag=300, Shoes=200} //newValue provided will be taken as a value for a key
 
         
-        //There is existing key mapping to non-null value -> recomputing Function has been applied (in it we are using new value)
+        //There is existing key mapping to non-null value -> recomputing Function has been applied (in it, we are using new value)
        HashMap<String, Integer> prices = new HashMap<>();
         // insert entries to the HashMap
         prices.put("Shoes", 200);
@@ -631,3 +631,97 @@ Example1:
         System.out.println("Price of Pant: " + returnedValue); //75
         // print updated HashMap
         System.out.println("Updated HashMap: " + prices); //{Pant=225, Bag=300, Shoes=200} //recomputing Function takes precedence over newValue
+		
+		newValue ** must not be null
+		
+		merge returns computed or passed value
+
+11. V put(K key)
+
+Example1:
+
+        Map<Integer, String> map = new HashMap<>();
+        var x = map.put(1, "a"); // "a"
+        String y = map.put(2, "b"); // "b"
+        Object u = map.put(123, "asdasdaff"); //DOES COMPILE
+
+        map.put(2, "g"); // {1=a, 2=g, 123=asdasdaff}
+        map.put(null, null); // {null=null, 1=a, 2=g, 123=asdasdaff}
+
+12. V putIfAbsent(K key, V value)
+
+Example1:
+	    
+		class Student{}
+        Map<Integer, String> map = new HashMap<>();
+        var x = map.put(1, "a"); // "a"
+        String y = map.putIfAbsent(2, "b"); // "b"
+       // Object u = map.putIfAbsent(123, new Student()); //DOES NOT COMPILE
+
+        map.putIfAbsent(null, null); //{null=null, 1=a, 2=b}
+        String x1 = map.putIfAbsent(2, "bB"); // "b" // {null=null, 1=a, 2=b}
+		
+13.  V remove(Object key)
+
+Example1:
+
+        class Student{}
+        Map<Integer, String> map = new HashMap<>();
+        var x = map.put(1, "a"); // "a"
+
+        String val = map.remove(1);// "a"
+        var x1 = map.put(2, "b");
+        System.out.println(map.remove(new Student())); //null
+
+14. V replace(K key, V value)
+
+Example1:
+
+        class Student{}
+        Map<Integer, String> map = new HashMap<>();
+        var x = map.put(1, "a"); // "a"
+        var x1 = map.put(2, "b"); //"b"
+
+        var x2 = map.replace(4, null);
+        System.out.println(x2); //null
+        System.out.println(map); //{1=a, 2=b}
+
+        final String c = map.replace(2, "c");
+        System.out.println(map); //{1=a, 2=c}
+
+        var x3 = map.replace(null, null);
+        System.out.println(x3); //null
+        System.out.println(map); //{1=a, 2=c}
+        
+        map.replace(55, new Student()); //DOES NOT COMPILE
+        map.replace(new Student(), 55 ); //DOES NOT COMPILE
+		
+15. void replaceAll(BiFunction<? super K, ? super V, ? extends V> function)
+
+Example1:
+
+        Map<Integer, String> map = new HashMap<>();
+        var x = map.put(1, "a"); // "a"
+        var x1 = map.put(2, "b"); //"b"
+
+        map.replaceAll( (key, val) -> val + key); //DOES COMPILE
+        //Object res = map.replaceAll( (key, val) -> val + key); //DOES NOT COMPILE
+		
+16. int size()
+
+Example1:
+	
+	    Map<Integer, String> map = new HashMap<>();
+        var x = map.put(1, "a"); // "a"
+        var x1 = map.put(2, "b"); //"b"
+        System.out.println(map.size()); //2
+
+17. Collection<V> values()
+
+Example1:
+
+        Map<Integer, String> map = new HashMap<>();
+        var x = map.put(1, "a"); // "a"
+        var x1 = map.put(2, "b");
+        System.out.println(map.values()); //[a, b]
+		for (Object o : map.values()){} //DOES COMPILE
