@@ -411,8 +411,7 @@ Factory Methods
 
 --------------------------------------
 
-- A TreeMap stores the keys in a sorted tree structure. The main benefit is that the keys are
-always in sorted order. Like a TreeSet
+- A TreeMap stores the keys in a sorted tree structure. The main benefit is that the keys are always in sorted order. Like a TreeSet. No null
 
 --------------------------------------
 
@@ -520,6 +519,8 @@ Example1:
         map.put(1, "a"); map.put(2, "b");
         Set<Map.Entry<Integer, String>> entrySet = map.entrySet();
         System.out.println(entrySet);
+		
+		map.entrySet().forEach(e ->	System.out.println(e.getKey() + " " + e.getValue()));
 
 5. void forEach(BiConsumer<K key, V value> biconsumer)
 
@@ -651,15 +652,39 @@ Example1:
 12. V putIfAbsent(K key, V value)
 
 Example1:
-	    
-		class Student{}
+        class Student{}
         Map<Integer, String> map = new HashMap<>();
         var x = map.put(1, "a"); // "a"
-        String y = map.putIfAbsent(2, "b"); // "b"
-       // Object u = map.putIfAbsent(123, new Student()); //DOES NOT COMPILE
+		
+        String y = map.putIfAbsent(2, "b");
+        System.out.println(y); //null
+        System.out.println(map); //{1=a, 2=b}
+		
+        // Object u = map.putIfAbsent(123, new Student()); //DOES NOT COMPILE
 
-        map.putIfAbsent(null, null); //{null=null, 1=a, 2=b}
-        String x1 = map.putIfAbsent(2, "bB"); // "b" // {null=null, 1=a, 2=b}
+        var x12 = map.putIfAbsent(null, null); 
+        System.out.println(x12); //null
+        System.out.println(map); // {null=null, 1=a, 2=b}
+
+        var xd = map.putIfAbsent(1, "c");
+        System.out.println(xd); // "a" OLD VALUE RETURNED
+        System.out.println(map); //{null=null, 1=a, 2=b}
+
+        var k = map.putIfAbsent(4, null);
+        System.out.println(k); //null
+        System.out.println(map); //{null=null, 1=a, 2=b, 4=null}
+
+        var t = map.putIfAbsent(4, "h"); //**** IMPORTANT EXAMPLE
+        System.out.println(t); //null
+        System.out.println(map); //{null=null, 1=a, 2=b, 4=h} //**** IMPORTANT EXAMPLE
+		
+		Map<String, String> favorites = new HashMap<>();
+		favorites.put("Jenny", "Bus Tour");
+		favorites.put("Tom", null);
+		favorites.putIfAbsent("Jenny", "Tram");
+		favorites.putIfAbsent("Sam", "Tram");
+		favorites.putIfAbsent("Tom", "Tram");
+		System.out.println(favorites); // {Tom=Tram, Jenny=Bus Tour, Sam=Tram}
 		
 13.  V remove(Object key)
 
@@ -676,8 +701,8 @@ Example1:
 14. V replace(K key, V value)
 
 Example1:
-
-        class Student{}
+		
+		class Student{}
         Map<Integer, String> map = new HashMap<>();
         var x = map.put(1, "a"); // "a"
         var x1 = map.put(2, "b"); //"b"
@@ -686,13 +711,14 @@ Example1:
         System.out.println(x2); //null
         System.out.println(map); //{1=a, 2=b}
 
-        final String c = map.replace(2, "c");
+        final String b = map.replace(2, "c");
+        System.out.println(b); //b
         System.out.println(map); //{1=a, 2=c}
 
-        var x3 = map.replace(null, null);
-        System.out.println(x3); //null
-        System.out.println(map); //{1=a, 2=c}
-        
+        map.put(5, null); //Important example; 'replace(K key, V value)' behaves similar to 'V putIfAbsent(K key, V defaultValue)' when it comes to mapping which contains 'null' as value for given key
+        String var = map.replace(5, "d");
+        System.out.println(var); //null
+        System.out.println(map); //{1=a, 2=c, 5=d}
         map.replace(55, new Student()); //DOES NOT COMPILE
         map.replace(new Student(), 55 ); //DOES NOT COMPILE
 		
