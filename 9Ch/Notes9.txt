@@ -395,3 +395,239 @@ Add to the front/top 'public void push(E e)'
 Remove from the front/top 'public E pop()'
 
 --------------------------------------
+
+Map Interface
+
+
+Factory Methods
+
+- Map.of("key1", "value1", "key2", "value2");
+
+- Map.ofEntries(
+	Map.entry("key1", "value1"),
+	Map.entry("key2", "value2"));
+
+- Map.copyOf(anotherMap);
+
+--------------------------------------
+
+- A TreeMap stores the keys in a sorted tree structure. The main benefit is that the keys are
+always in sorted order. Like a TreeSet
+
+--------------------------------------
+
+Working with Map Methods
+
+ 
+ Given that Map doesn’t extend Collection, more methods are specified on the Map interface. 
+ 
+ Mnemonics for Map methods
+ 
+				 J L
+	CEFG		I K M 
+	3112		1 1 1
+ 
+ 
+"O" PRS			V
+	231			1
+	
+
+********
+* CEFG *
+* 3112 *
+********
+
+
+C - boolean containsKey(Object key) 
+C - boolean containsValue(Object value)
+C - void 	clear()
+
+E - Set<Map.Entry<K,V>> entrySet()
+
+F - void forEach(BiConsumer<K key, V value> biconsumer)
+
+G - V get(Object key)
+G - V getOrDefault(Object key, V value)
+
+*********
+*  J L  *
+* I K M *
+* 1 1 1 *
+*********
+
+I - boolean isEmpty()
+
+K - Set<K> keySet()
+
+M - V merge(K key, V value, Function(<V, V, V> func)) //Sets value if key not set. Runs function if key is set, to determine new value. Removes if value is null.
+
+	*******
+"O" * PRS *
+	* 231 *
+	*******
+
+P - V put(K key)
+P - V putIfAbsent(K key, V defaultValue)
+
+R - V    remove(Object key)
+R - V 	 replace(K key, V value)
+R - void replaceAll(BiFunction<K, V, V> func)
+
+S - int size()
+
+*****
+* V *
+* 1 * 
+*****
+
+V - Collection<V> values()
+
+Example Methods for Each method:
+
+
+1. boolean containsKey(Object key) 
+
+Example1:
+
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "a"); map.put(2, "b");
+        System.out.println(map.containsKey(1)); //true
+        System.out.println(map.containsKey("b")); //false
+        System.out.println(map.containsKey(new Student())); //false
+
+2. boolean containsValue(Object value)
+
+Example1:
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "a"); map.put(2, "b");
+        System.out.println(map.containsValue(1)); //false
+        System.out.println(map.containsValue("b")); //true
+        System.out.println(map.containsValue(new Student())); //false
+
+3. void clear()
+
+Example1:
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "a"); map.put(2, "b");
+		map.clear();
+		System.out.println(map.size()); //0
+
+4. Set<Map.Entry<K,V>> entrySet()
+
+Example1:
+
+	    Map<Integer, String> map = new HashMap<>();
+        map.put(1, "a"); map.put(2, "b");
+        Set<Map.Entry<Integer, String>> entrySet = map.entrySet();
+        System.out.println(entrySet);
+
+5. void forEach(BiConsumer<K key, V value> biconsumer)
+
+Example1:
+
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "a"); map.put(2, "b");
+        
+        map.forEach((var key, var val) -> {}); //DOES COMPILE 
+        map.forEach((var key, var val) -> {
+            System.out.println(key + " " + val);
+        }); //DOES COMPILE 
+        
+        class Printer{
+             void print(Object o1, Object o2){
+                System.out.println(o1 + " " + o2);
+            }
+        }
+        Printer p = new Printer();
+        map.forEach(p::print); //DOES COMPILE 
+
+6. V get(Object key)
+
+Example1:
+
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "a"); map.put(2, "b");
+        String v1 = map.get(1); // "a"
+        CharSequence v2 = map.get(2); //DOES COMPILE   
+        class Student{};       
+        Student x = map.get(1); //DOES NOT COMPILE       
+        StringBuilder x1 = map.get(1); //DOES NOT COMPILE       
+        Object x2 = map.get(new Student()); //DOES COMPILE
+		System.out.println(map.get(new Student())); // null
+
+
+7. V getOrDefault(Object key, V defaultValue)
+
+Example1:
+
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "a"); map.put(2, "b");
+        class Student{};
+        System.out.println(map.getOrDefault(1, "c")); // "a"
+        System.out.println(map.getOrDefault(1, new Student())); // DOES NOT COMPILE
+        System.out.println(map.getOrDefault(5, "c")); // "c"
+        System.out.println(map.getOrDefault(new Student(), "f")); // "f"
+		System.out.println(map.getOrDefault(3, "d")); //null
+
+8. boolean isEmpty()
+
+Example1:
+
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "a"); map.put(2, "b");
+        System.out.println(map.isEmpty()); //false
+        map.clear();
+        System.out.println(map.isEmpty()); //true
+
+9. Set<K> keySet()
+
+Example1:
+
+		Map<Integer, String> map = new HashMap<>();
+        map.put(1, "a"); map.put(2, "b");
+        Set<Integer> s = map.keySet(); //DOES COMPILE
+        Set<Object> s1 = map.keySet(); //DOES NOT COMPILE
+
+10. V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction)
+
+Example1:
+        //There is no key mapping
+        HashMap<String, Integer> prices = new HashMap<>();
+        // insert entries to the HashMap
+        prices.put("Shoes", 200);
+        prices.put("Bag", 300);
+        prices.put("Pant", 150);
+        System.out.println("HashMap: " + prices); //{Pant=150, Bag=300, Shoes=200}
+        int returnedValue = prices.merge("Shirt", 100, (oldValue, newValue) -> {
+            System.out.println("never gets executed");
+            return oldValue + newValue;
+        }); //Integer::sum
+        System.out.println("Price of Shirt: " + returnedValue);//100
+        // print updated HashMap
+        System.out.println("Updated HashMap: " + prices); //{Pant=150, Shirt=100, Bag=300, Shoes=200} //newValue provided will be taken as a value for a key
+
+        
+        //There is existing key mapping to non-null value -> recomputing Function has been applied (in it we are using new value)
+       HashMap<String, Integer> prices = new HashMap<>();
+        // insert entries to the HashMap
+        prices.put("Shoes", 200);
+        prices.put("Bag", 300);
+        prices.put("Pant", 150);
+        System.out.println("HashMap: " + prices); //{Pant=150, Bag=300, Shoes=200}
+        int returnedValue = prices.merge("Pant", 75, (oldValue, newValue) ->  oldValue + newValue); //Integer::sum
+        System.out.println("Price of Pant: " + returnedValue); //225
+        // print updated HashMap
+        System.out.println("Updated HashMap: " + prices); //{Pant=225, Bag=300, Shoes=200} //recomputing Function takes precedence over newValue
+
+
+        //There is existing key mapping to null value -> so newValue provided will be mapped to existing key; recomputing Function not called
+        HashMap<String, Integer> prices = new HashMap<>();
+        // insert entries to the HashMap
+        prices.put("Shoes", 200);
+        prices.put("Bag", 300);
+        prices.put("Pant", null);
+        System.out.println("HashMap: " + prices); //{Pant=150, Bag=300, Shoes=200}
+        int returnedValue = prices.merge("Pant", 75, (oldValue, newValue) ->  oldValue + newValue); //Integer::sum
+        System.out.println("Price of Pant: " + returnedValue); //75
+        // print updated HashMap
+        System.out.println("Updated HashMap: " + prices); //{Pant=225, Bag=300, Shoes=200} //recomputing Function takes precedence over newValue

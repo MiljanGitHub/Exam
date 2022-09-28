@@ -17,3 +17,18 @@
 - Memorize built-in functiona interfaces (their SAMs), convinence methods as well as functional interfaces for prmitives (...getAsMethods() )
 - Enum (simple/complex) structure
 - Interface edge cases
+
+
+
+
+
+
+
+** Write daily API methods from:
+	
+	- Built-in and primitive Functional Interfaces
+	- Convenience methods for Built-in Functional Interfaces
+	- Collections API
+	- Queue and Deque methods (with Stack methods)
+	- Map methods
+	- Factory/Methods for List, Set and Map

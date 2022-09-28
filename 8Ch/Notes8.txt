@@ -1057,7 +1057,7 @@ public class ConvenienceMethods {
 
 Functional Interfaces for primitives
 
-******The single abstract method is often renamed when a primitive type is returned.******
+******The single abstract method is often renamed when a primitive type is returned.****** ***** returning int/long/dobule -> getAsInLongDouble
 In other words if SAM return type is int/long/dobule then appropriate SAM's name shall be getAsInt()/getAsLong()/getAsDouble() !!!!!!!!!
 Znaci ako "Primitive""BuiltInInterface" vraca primitive, int/long/dobule, tada je ime single abstrakt metoda, dato u formi getAsXXXX()!!!!!!!!!
 U svim ostalim slucajevima, koa sto je da vraca void ili
