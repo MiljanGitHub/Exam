@@ -31,4 +31,4 @@
 	- Collections API
 	- Queue and Deque methods (with Stack methods)
 	- Map methods
-	- Factory/Methods for List, Set and Map
+	- Factory methods for List, Set and Map

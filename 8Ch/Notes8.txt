@@ -820,7 +820,7 @@ public class BuiltInFunctionalInterfaces {
         //ex22.apply(new ArrayList<>());
     }
 
-    public void BiFunction(){
+		public void BiFunction(){
         /*
           @FunctionalInterface
         public interface BiFunction<T, U, R> {

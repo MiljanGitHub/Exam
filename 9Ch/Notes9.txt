@@ -33,7 +33,7 @@ class InvalidUse {
 
 --------------------------------------
 
-Methods available in Collection interface 
+Methods available in Collection interface (9)
 
 - public boolean add(E element)
 - public boolean remove(Object object) //Be careful this is overloaded in List, Queue...
@@ -44,6 +44,18 @@ Methods available in Collection interface
 - public boolean removeIf(Predicate<? super E> filter)
 - public void forEach(Consumer<? super T> action)
 - public boolean equals(Object object)
+
+		(1)												   (2)													  (3)	
+	    add							|			          remove								| 			  convenience 
+									|															|	
+public boolean add(E element)		|	public boolean remove(Object object)					|		public boolean isEmpty()
+									|	public void clear()										|		public int size()
+									|	public boolean removeIf(Predicate<? super E> filter)	|		public boolean contains(Object object)
+									|														    |       public void forEach(Consumer<? super T> action)
+									|															|		public boolean equals(Object object)
+	
+
+
 
 --------------------------------------
 
@@ -458,7 +470,7 @@ I - boolean isEmpty()
 
 K - Set<K> keySet()
 
-M - V merge(K key, V value, Function(<V, V, V> func)) //Sets value if key not set. Runs function if key is set, to determine new value. Removes if value is null.
+M - V merge(K key, V value, Function(<V oldValue, V newValue, V returnTypeOfValue> func)) //Sets value if key not set. Runs function if key is set, to determine new value. Removes if value is null.
 
 	*******
 "O" * PRS *
@@ -631,11 +643,21 @@ Example1:
         int returnedValue = prices.merge("Pant", 75, (oldValue, newValue) ->  oldValue + newValue); //Integer::sum
         System.out.println("Price of Pant: " + returnedValue); //75
         // print updated HashMap
-        System.out.println("Updated HashMap: " + prices); //{Pant=225, Bag=300, Shoes=200} //recomputing Function takes precedence over newValue
+        System.out.println("Updated HashMap: " + prices); //{Pant=75, Bag=300, Shoes=200} //recomputing Function takes precedence over newValue
 		
 		newValue ** must not be null
 		
 		merge returns computed or passed value
+		
+		What happens when the mapping function is called and returns null. The key is removed from the map when this happens:
+		
+		BiFunction<String, String, String> mapper = (v1, v2) -> null;
+		Map<String, String> favorites = new HashMap<>();
+		favorites.put("Jenny", "Bus Tour");
+		favorites.put("Tom", "Bus Tour");
+		favorites.merge("Jenny", "Skyride", mapper);
+		favorites.merge("Sam", "Skyride", mapper);
+		System.out.println(favorites); // {Tom=Bus Tour, Sam=Skyride}
 
 11. V put(K key)
 
