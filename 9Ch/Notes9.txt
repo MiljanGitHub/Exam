@@ -75,7 +75,7 @@ Bad at: adding and removing (i.e. Bad at WRITING)
 LinkedList
 * additional methods to facilitate adding or removing from the beginning and/or end of the list
 
-Good at: adding and removing (i.e. Bad at WRITING
+Good at: adding and removing 
 Bad at:  getting objects / accessing / reading / *dealing with an arbitrary index takes linear time
 
 --------------------------------------
@@ -203,8 +203,7 @@ Beside methods in Collection, here are methods from List interface:
 	
  - public E get(int index) //Explained above
  - public E remove(int index) //Explained above
- - public E set(int index, E e)  // Explained above: Think of it as 'set' as doing 'replacing'
- 
+ - public E set(int index, E e)  // Explained above: Think of it as 'set' as doing 'replacing' //THERE IS NO replace(1, E e) method!!!
  - public default void replaceAll(UnaryOperator<E> op)
 	    String x = "aaf";
         list.replaceAll(String::new); //DOES COMPILE
@@ -773,3 +772,227 @@ Example1:
         var x1 = map.put(2, "b");
         System.out.println(map.values()); //[a, b]
 		for (Object o : map.values()){} //DOES COMPILE
+
+--------------------------------------
+
+Type	Can contain duplicate elements?		 Elements always ordered? 			Has keys and values? 			Must add/remove in specific order?
+
+List 			Yes 								Yes (by index) 						No 										No
+Map 			Yes (for values) 					No 									Yes 									No
+Queue 			Yes	 								Yes (retrieved in defined order) 	No 										Yes
+Set 			No 									No 									No 										No
+
+
+Type			Java Collections Framework interface 		 Sorted? 		Calls hashCode? 		Calls compareTo?
+
+ArrayDeque 					Deque 							   No 				No 						 No
+ArrayList 				    List 							   No 				No 						 No
+HashMap 					Map 							   No 				Yes 					 No
+HashSet 				    Set 							   No 				Yes 					 No
+LinkedList					List, Deque 					   No 				No 						 No
+TreeMap 					Map 							   Yes              No 						 Yes
+TreeSet 				    Set 							   Yes 				No 						 Yes
+
+
+
+--------------------------------------
+
+
+Comparable Interface -> the interface which is directly implemented by the class; it DOES NOT NEED an import since it is in java.lang; package
+
+
+public interface Comparable<T> {
+ int compareTo(T o);
+}
+
+
+
+import java.lang.*; //COMPAREBLE -> is from java.lang.*!!!!!
+public class Duck implements Comparable<Duck> {
+
+ private String name;
+ 
+ public Duck(String name) {
+	this.name = name;
+ }
+ 
+ public String toString() { // use readable output
+	return name;
+ }
+ 
+ public int compareTo(Duck d) {
+	//IF -1: Current object is "lesser"
+	//IF 1: Current object is "greater"
+	//IF 0: objects are equal in tersm of compareTo
+	return name.compareTo(d.name); // sorts ascendingly by name
+ }
+ public static void main(String[] args) {
+	var ducks = new ArrayList<Duck>();
+	ducks.add(new Duck("Quack"));
+	ducks.add(new Duck("Puddles"));
+	Collections.sort(ducks); // sort by name
+	System.out.println(ducks); // [Puddles, Quack]
+ }
+}
+
+
+There are three rules to know:
+■ The number 0 is returned when the current object is equivalent to the argument to compareTo().
+■ A negative number (less than 0) is returned when the current object is smaller than the argument to compareTo().
+■ A positive number (greater than 0) is returned when the current object is larger than the argument to compareTo().
+
+public int compareTo(Animal otherAnimal) {
+	return id - otherAnimal.id; // ******** sorts ascending by id
+}
+ // x.apply(null, null); //BiFunction<Duck, Duck, Integer> x = (d1, d2) -> d1.compareTo(d2); //DOES COMPILE
+//Ako od "this" objekta uzimamo properti i njega koristimo sa desne strane znaka "-" odnosno poredjanja sa argumentom "otherAnimal" znaci da je ascending order /|\
+						
+
+Legacy
+
+public class LegacyDuck implements Comparable {
+ private String name;
+ public int compareTo(Object obj) {
+ LegacyDuck d = (LegacyDuck) obj; // cast because no generics
+ return name.compareTo(d.name);
+ }
+}						|
+																																								
+Keeping compareTo() and equals() Consistent
+
+A natural ordering that uses compareTo() is said to be consistent with equals if, and only if, x.equals(y) is true whenever x.compareTo(y) equals 0.																																							
+
+For example, the following Product class defines a compareTo() method that is not consistent with equals:
+
+public class Product implements Comparable<Product> {
+ private int id;
+ private String name;
+ public int hashCode() { return id; }
+ public boolean equals(Object obj) {
+	if(!(obj instanceof Product)) return false;
+	var other = (Product) obj;
+	return this.id == other.id;
+ }
+ public int compareTo(Product obj) {
+	return this.name.compareTo(obj.name);
+ }
+}
+
+//For instance, Product={id=1, name="pera"} and Product={id=2, name="pera"}
+
+equals => false 
+compareTo => 0 
+
+
+Comparable - Important stuff:
+
+1. java.lang
+2. Implemented by a class
+3. Generic <T>
+4. int compareTo(T t)
+5. -1 this is lesser; 1 this is greater; 0 equal
+6. Used by TreeMap and TreeSet
+
+
+Comparator -> the interface which is supposed to be instantiated like a class (that is, NOT to be implemented by a domain class/entity); it DOES NEED an import since it is in java.util.Comparator; package
+			  cannot use Comparator without an import statement
+
+
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+public class Duck implements Comparable<Duck> {
+private String name;
+private int weight;
+
+// Assume getters/setters/constructors provided
+
+ public String toString() { return name; }
+
+ public int compareTo(Duck d) {
+ return name.compareTo(d.name);
+ }
+
+ public static void main(String[] args) {
+	Comparator<Duck> byWeight = new Comparator<Duck>() {
+	public int compare(Duck d1, Duck d2) {
+		return d1.getWeight()-d2.getWeight();
+	}};
+	var ducks = new ArrayList<Duck>();
+	ducks.add(new Duck("Quack", 7));
+	ducks.add(new Duck("Puddles", 10));
+	Collections.sort(ducks);
+	System.out.println(ducks); // [Puddles, Quack]
+	Collections.sort(ducks, byWeight);
+	System.out.println(ducks); // [Quack, Puddles]
+ }
+}
+
+
+@FunctionalInterface
+public interface Comparator<T> {
+    int compare(T o1, T o2);
+}
+	
+Comparator is a functional interface, so this is ok:
+
+1. Comparator<Duck> byWeight = (d1, d2) -> d1.getWeight()-d2.getWeight();
+OR
+2. Comparator<Duck> byWeight = Comparator.comparing(Duck::getWeight);
+
+//Comparator.comparing ->  Comparator<T> comparing(Function<? super T, ? extends U> keyExtractor)
+
+
+Comparison of Comparable and Comparator
+
+Difference 											Comparable 								Comparator				 
+Package name 										 java.lang 								 java.util
+Interface must be implemented by class comparing?	   Yes 										No
+Method name in interface 							 compareTo()							 compare()
+Number of parameters									 1 										2
+Common to declare using a lambda 						No									   Yes
+
+The exam will try to trick you by mixing up the two (Comparable and Comparator) and seeing if you can catch it. Do you see why this doesn’t compile?
+
+var byWeight = new Comparator<Duck>() { // DOES NOT COMPILE
+ public int compareTo(Duck d1, Duck d2) {
+ return d1.getWeight()-d2.getWeight();
+ }
+};
+
+My mnemonic for memorizing SAM methods of Comparable and Comparator:
+
+Comparable -> int compareTo(T other); must remember that is inside DOMAIN class and it expects one parameter; So: 'compare TO, compare TO something (single) other'
+Comparator -> not meant to be implemented by domain class it is an outside object (by that I mean "MyComparator implements Comparator<T>" and it expects two object so: compare(Object o1, Object o2) 
+
+
+
+Exploring Comparator's convenience methods and Comparing Domain Class by Multiple Fields
+Domain classes:
+
+class Student{}
+public class Duck {
+    private int weight;
+    private String species;
+	private Student student;
+	private long width;
+    private double height;
+	//ommited getters/setters/constructors
+}
+
+1. Creating Comparator
+Comparator<Duck> comparator = Comparator.comparing(Duck::getSpecies); //DOES  COMPILE
+Comparator<Duck> comparator = Comparator.comparing(Duck::getStudent);  //DOES NOT COMPILE; if Student implemented Comparable<Student> then this line would compile
+Comparator<Duck> comparator1 = Comparator.comparingInt(Duck::getWeight); 
+Comparator<Duck> comparator2 = Comparator.comparingLong(Duck::getWidth);
+Comparator<Duck> comparator3 = Comparator.comparingDouble(Duck::getHeight); //We could pass getWidth or getWeight, "numeric type promotion"
+
+
+
+
+
+
+
+--------------------------------------
