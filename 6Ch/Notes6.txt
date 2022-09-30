@@ -980,7 +980,8 @@ public  class Lion extends Animal{
 }
 **An overridden method may declare a new exception, provided it is not checked.
 
-Hiding Static Methods
+
+ Static Methods
 
 If we have 4 rules in place for method overriding and 'static' keyword is present, then we are talking about method hiding. However, subclass AND superclass must comply and have 'static' if other method 
 is also having 'static'. 
@@ -1050,7 +1051,9 @@ class Beaver extends Rodent {
 }
 
 
+Working with overridden methods which return generics (also in Notes 9):
 
+Example1:
 
 --------------------------------------
 

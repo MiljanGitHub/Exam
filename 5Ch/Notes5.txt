@@ -675,11 +675,10 @@ char badElephant = elephant; //DOES COMPILE; NPE
 
 Overloading methods
 
-Method overloading occurs when methods in the same class have the same name but different method signatures, which means they use different parameter lists.
+Method overloading occurs when methods in the same class (only in the same class?) have the same name but different method signatures, which means they use different parameter lists.
 
-Everything other than the method name can vary for overloading methods. This means
-there can be different access modifiers, optional specifiers (like static), return types, and
-exception lists.
+****** Everything other than the method name can vary for overloading methods. ******
+This means there can be different access modifiers, optional specifiers (like static), return types, and exception lists.
 
 The following shows five overloaded versions of the fly() method:
 public class Falcon {
@@ -708,6 +707,24 @@ public class OverloadingExample {
 		System.out.println("Student");
 	}
 	static class Student{}
+}
+
+public class OverloadingExample2 {
+	public static void main(String[] args) {
+		m(1); //d
+	}
+	
+	static void m(Object o) {
+		System.out.println("o");
+	}
+	
+	static void m(Integer i) {
+		System.out.println("i");
+	}
+	static void m(double d) {
+		System.out.println("d"); 
+	}
+
 }
 
 

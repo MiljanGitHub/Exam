@@ -1046,7 +1046,7 @@ public class RabbitDemo {
 
     public static void main(String[] args) {
         Comparator<RabbitRun> c = Comparator.comparingInt(RabbitRun::id);
-        Collections.reverse(List.of(new RabbitRun(1))); 
+        Collections.reverse(List.of(new RabbitRun(1))); //DOES COMPILE when using Non-Comparable with reverese()
     }
 }
 
@@ -1065,7 +1065,7 @@ Collections.reverse(rabbits); //Reverses the order of the elements in the specif
 
 Example4:
 List<Integer> list = Arrays.asList(6,9,1,8);
-Collections.sort(list); //DOES COMPILE since implements Comparable<Integer>
+Collections.sort(list); //DOES COMPILE since Integer implements Comparable<Integer>
 
 
 Searching
@@ -1093,13 +1093,89 @@ Going back to our Rabbit that does not implement Comparable, we try to add it to
 6: ducks.add(new Duck("Puddles"));
 7:
 8: Set<Rabbit> rabbits = new TreeSet<>();
-9: rabbits.add(new Rabbit()); // ClassCastException; but it does compile; Exception in thread "main" java.lang.ClassCastException: class Rabbit cannot be cast to class java.lang.Comparable
+9: rabbits.add(new Rabbit()); // ClassCastException; but it DOES COMPILE; Exception in thread "main" java.lang.ClassCastException: class Rabbit cannot be cast to class java.lang.Comparable
 10: } }
 
 Example3:
 
 Instantiating TreeSet which with comparator
 8: Set<Rabbit> rabbits = new TreeSet<>((r1, r2) -> r1.id - r2.id);
-9: rabbits.add(new Rabbit());
+9: rabbits.add(new Rabbit()); //No ClassCastException; since we provided Comparator
 
 --------------------------------------
+
+Generics
+
+Type Erasure - 
+
+public class Crate<T> {
+ private T contents;
+ public T lookInCrate() {
+ return contents;
+ }
+ public void packCrate(T contents) {
+ this.contents = contents;
+ }
+}
+
+After the code compiles, your generics are just Object types:
+
+public class Crate {
+ private Object contents;
+ public Object lookInCrate() {
+ return contents;
+ }
+ public void packCrate(Object contents) {
+ this.contents = contents;
+ }
+ }
+ 
+ 
+
+This process of removing the generics syntax from your code is referred to as type erasure.
+
+Example1:
+
+public class A {
+ protected void chew(List<Object> input) {} //After compilation, translated to: "protected void chew(List input) {}"
+ protected void chew(List<Double> input) {} //After compilation, translated to: "protected void chew(List input) {}", this line DOES NOT COMPILE
+}
+
+Nor does this goes through:
+
+public class LongTailAnimal2 {
+ protected void chew(List<StringBuilder> input) {} //After compilation, translated to: "protected void chew(List input) {}"
+ protected void chew(List<Double> input) {} //After compilation, translated to: "protected void chew(List input) {}", this line DOES NOT COMPILE
+}
+
+Example2:
+
+You can’t overload a generic method from a parent class
+
+public class LongTailAnimal {
+ protected void chew(List<Object> input) {}
+}
+public class Anteater extends LongTailAnimal {
+ protected void chew(List<Double> input) {} // DOES NOT COMPILE
+}
+
+Translation for classes above: NOT GOOD!!! This does compile
+
+class LongTailAnimal {
+ protected void chew(List input) {}
+}
+public class Anteater extends LongTailAnimal {
+ protected void chew(List input) {} // DOES NOT COMPILE
+ //In the compiled form (this form), the generic type is dropped, and it appears as an invalid overloaded method, such as the ones in LongTailAnimal class.
+}
+
+Example3:
+
+class LongTailAnimal {
+ protected void chew(List<Object> input) {} //DOES COMPILE
+}
+
+public class Anteater extends LongTailAnimal {
+ protected void chew(List<Object> input) {} //DOES COMPILE
+ protected void chew(ArrayList<Double> input) {} //DOES COMPILE
+}
