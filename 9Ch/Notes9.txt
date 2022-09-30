@@ -213,7 +213,13 @@ Beside methods in Collection, here are methods from List interface:
  
  - public default void sort(Comparator<? super E> c)
 	
-	//TODO
+	3: List<String> bunnies = new ArrayList<>();
+	4: bunnies.add("long ear");
+	5: bunnies.add("floppy");
+	6: bunnies.add("hoppy");
+	7: System.out.println(bunnies); // [long ear, floppy, hoppy]
+	8: bunnies.sort((b1, b2) -> b1.compareTo(b2));
+	9: System.out.println(bunnies); // [floppy, hoppy, long ear]
  
 --------------------------------------
 
@@ -982,17 +988,118 @@ public class Duck {
 	//ommited getters/setters/constructors
 }
 
-1. Creating Comparator
+1. Creating Comparator (Static methods)
 Comparator<Duck> comparator = Comparator.comparing(Duck::getSpecies); //DOES  COMPILE
 Comparator<Duck> comparator = Comparator.comparing(Duck::getStudent);  //DOES NOT COMPILE; if Student implemented Comparable<Student> then this line would compile
 Comparator<Duck> comparator1 = Comparator.comparingInt(Duck::getWeight); 
 Comparator<Duck> comparator2 = Comparator.comparingLong(Duck::getWidth);
 Comparator<Duck> comparator3 = Comparator.comparingDouble(Duck::getHeight); //We could pass getWidth or getWeight, "numeric type promotion"
 
+ final Comparator<Duck> tComparator = Comparator.naturalOrder(); //DOES NOT COMPILE; if Duck  were to implemented Comparable<Duck> then this line would compile
+ Comparator<Duck> cc = comparator1.naturalOrder();  //DOES NOT COMPILE; Even if the Duck implemented Comparable<Duck> this would not compile since naturalOrder() is STATIC!!!!!!!!!!
+ 
+ Comparator<Duck> cc = Comparator.reverseOrder(); //sam goes as for naturalOrder(); Must implemente Comparable
+ 
+ 
+2. Chaining methods (need an instance) for Comparator (Default methods)
+
+Comparator<Duck> comp = Comparator.comparing(Duck::getWidth);
+final Comparator comparator = Comparator.thenComparing(comp); //DOES NOT COMPILE; thenComparingXYZ(Comparator other) are DEFAULT (not static) methods so they need an instance
+final Comparator comparator1 = comp.thenComparing(Duck::getSpecies);
+
+Comparator<Duck> compX = Comparator.thenComparingDouble(function); //DOES NOT COMPILE;
+final Comparator comparatorY = comp.thenComparingDouble(Duck::getWidth);    //DOES COMPILE;
+
+**  Comparator<Duck> cc = comparator1.reversed(); //DOES COMPILE;
+
+--------------------------------------
+
+Sorting ascending and descending
+
+class Rabbit{
+	public id;
+}
+
+MyRabbitSorter implementes Comparator<Rabbit>{
+	@Override
+	public int compare(Rabbit r1, Rabbit r2){
+		return r2.id - r1.id;  //DSC
+		//return r1.id - r2.id;  //ASC
+	}
+}
+
+Comparator<Rabbit> c = (r1, r2) -> r1.id - r2.id; //ASC
+Comparator<Rabbit> c = (r1, r2) -> r2.id - r1.id; //DSC
+
+--------------------------------------
+
+Sorting ( Collections.sort() ) and Searching ( Collections.binarySearch() )
 
 
+Sorting
+
+*** The Collections.sort() method uses the compareTo() method to sort. It expects the objects to be sorted to be Comparable.
+
+Example1:
+public class RabbitDemo {
+    static record RabbitRun(int id) { }
+
+    public static void main(String[] args) {
+        Comparator<RabbitRun> c = Comparator.comparingInt(RabbitRun::id);
+        Collections.reverse(List.of(new RabbitRun(1))); 
+    }
+}
+
+Example2:
+class Rabbit{}
+var list = new ArrayList<Rabbit>();
+Collections.sort(list); //DOES NOT COMPILE; Rabbit must be instance of Comparable
+
+Or, using another way:
+
+Comparator<Rabbit> c = (r1, r2) -> r1.id - r2.id;
+Collections.sort(rabbits, c); //Rabbit DOES NOT need to be Comparable
+
+Example3:
+Collections.reverse(rabbits); //Reverses the order of the elements in the specified list. No need for Comparable nor Comparator it just swap places in a list
+
+Example4:
+List<Integer> list = Arrays.asList(6,9,1,8);
+Collections.sort(list); //DOES COMPILE since implements Comparable<Integer>
 
 
+Searching
 
+//just review
+11: List<Integer> list = Arrays.asList(6,9,1,8);
+12: Collections.sort(list); // [1, 6, 8, 9]
+13: System.out.println(Collections.binarySearch(list, 6)); // 1
+14: System.out.println(Collections.binarySearch(list, 3)); // -2
+
+Example1:
+
+        var names = Arrays.asList("Zrx", "Fluffy",  "Aoppy"); //While the result of calling binarySearch() on an improperly sorted list is undefined;
+		//No sorting here
+        Comparator<String> c = Comparator.reverseOrder();
+        System.out.println(Collections.binarySearch(names, "Koppy", c)); //undefined number
+
+Example2:
+
+Going back to our Rabbit that does not implement Comparable, we try to add it to a TreeSet:
+2: public class UseTreeSet {
+3: static class Rabbit{ int id; }
+4: public static void main(String[] args) {
+5: Set<Duck> ducks = new TreeSet<>(); //Duck implements Comparable
+6: ducks.add(new Duck("Puddles"));
+7:
+8: Set<Rabbit> rabbits = new TreeSet<>();
+9: rabbits.add(new Rabbit()); // ClassCastException; but it does compile; Exception in thread "main" java.lang.ClassCastException: class Rabbit cannot be cast to class java.lang.Comparable
+10: } }
+
+Example3:
+
+Instantiating TreeSet which with comparator
+8: Set<Rabbit> rabbits = new TreeSet<>((r1, r2) -> r1.id - r2.id);
+9: rabbits.add(new Rabbit());
 
 --------------------------------------

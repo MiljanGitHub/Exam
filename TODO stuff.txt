@@ -17,7 +17,7 @@
 - Memorize built-in functiona interfaces (their SAMs), convinence methods as well as functional interfaces for prmitives (...getAsMethods() )
 - Enum (simple/complex) structure
 - Interface edge cases
-
+- Pattern matching with instanceOf
 
 
 
