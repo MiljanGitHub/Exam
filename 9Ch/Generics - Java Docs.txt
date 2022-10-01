@@ -1,0 +1,337 @@
+
+Linke: https://docs.oracle.com/javase/tutorial/java/generics/index.html
+
+--------------------------------------
+
+Terminology
+
+
+Type Parameter and Type Argument Terminology: Many developers use the terms "type parameter" and "type argument" interchangeably, but these terms are not the same. 
+When coding, one provides type arguments in order to create a parameterized type. Therefore, the T in Foo<T> is a type parameter and the String in Foo<String> f is a type argument. 
+This lesson observes this definition when using these terms.
+				 
+			type parameter 
+				 |
+				 |
+				\|/
+public class Box<T> {
+    public void set(T t) { /* ... */ }
+    // ...
+}
+
+
+	type argument 
+		 |
+		 |
+		\|/
+Box<Integer> intBox = new Box<>(); //Box is the raw type of the generic type Box<T>. 
+
+
+--------------------------------------
+
+Working with Raw types
+
+Example1:
+
+For backward compatibility, assigning a parameterized type to its raw type is allowed:
+
+class Box<T> {
+    // T stands for "Type"
+    private T t;
+
+    public void set(T t) { this.t = t; }
+    public T get() { return t; }
+}
+
+       //assigning a parameterized type to its raw type is allowed:
+        Box<String> stringBox = new Box<String>();
+        Box rawBox = stringBox;
+        rawBox.set(1); //-> set() method is translated to: " public void set(Object t) { ... }"
+
+        //Assigning raw type to parameterized type
+        Box<Integer> intBox ;
+        Box raw = new Box();
+        intBox = raw;
+        intBox.set("a"); //DOES NOT COMPILE -> set() method is translated to: " public void set(Integer t) { ... }"
+
+        //Java still looks at type of reference variable and brings decisions if it is a raw type variable or a parameterized type variable:
+
+        /*
+            1. If variable (stringBox) is raw (no matter if it is assigned a parameterized instance):
+                - it will behave like it is working with Object
+
+            2. If variable (intBox) is parameterized (no matter if it is assigned a raw type):
+                - It will behave like it is only working with data parameterized type
+         */
+
+Example2:
+
+    public class WarningDemo {
+        public static void main(String[] args){
+            Box<Integer> bi;
+            bi = createBox(); //DOES COMPILE
+        }
+        static Box createBox(){return new Box();}
+    }
+
+--------------------------------------
+
+Generic Methods
+
+Generic methods are methods that introduce their own type parameters.  The syntax for a generic method includes: A LIST OF TYPE PARAMETERS, inside angle brackets, which appears BEFORE THE METHOD'S 
+RETURN TYPE. For static generic methods, the type parameter section must appear before the method's return type.
+
+Example1:
+
+class Util {
+    public static <K, V, X, R, T> boolean compare(Pair<T, R> p1, Pair<K, X> p2) { //DOES COMPILE
+        return p1.getKey().equals(p2.getKey()) &&
+                p1.getValue().equals(p2.getValue());
+    }
+}
+
+Pair<Integer, String> p1 = new Pair<>(1, "apple");
+Pair<Integer, String> p2 = new Pair<>(2, "pear");
+boolean same = Util.<Integer, String>compare(p1, p2);
+
+The type has been explicitly provided, as shown in bold <Integer, String>. Generally, this can be left out and the compiler will infer the type that is needed:
+
+Pair<Integer, String> p1 = new Pair<>(1, "apple");
+Pair<Integer, String> p2 = new Pair<>(2, "pear");
+boolean same = Util.compare(p1, p2); //This is "type inference", allows you to invoke a generic method as an ordinary method, without specifying a type between angle brackets
+
+Example2:
+
+And for non-static methods in a non-generic class, the same rule applies.
+
+class Student{
+     public <T> boolean m(){ //DOES COMPILE
+         return false;
+    }
+	public T boolean m2(){ //DOES NOT COMPILE
+        return false;
+    }
+}
+
+Example3:
+
+class Student<R>{
+    public R boolean m2(){ //DOES NOT COMPILE
+        return false;
+    }
+}
+
+Example4:
+
+class Student<R>{ 
+    private R characteristics;
+    public R getCharacteristics(){
+        return characteristics; //DOES COMPILE
+    }
+}
+
+Example5:
+
+
+class Student<R>{
+    private R characteristics;
+    public <R> R  getCharacteristics(){ 
+        return characteristics; //DOES NOT COMPILE
+    }
+}
+
+Example6:
+
+class Student<R>{
+    private R characteristics;
+    public <R> R  getCharacteristics(){
+        return (R) characteristics; //DOES COMPILE
+    }
+}
+
+Example7:
+
+class Student<R>{
+    private R characteristics;
+    public <R> R  getCharacteristics(){
+        return null; //DOES COMPILE
+    }
+}
+
+--------------------------------------
+
+Bounded Types 
+
+General intro on Bounded Types starts here:
+Bounded wildcards -> restricts what types can be used in a wildcard
+
+A bounded parameter type is a generic type that specifies a bound for the generic.
+
+A wildcard generic type is an unknown generic type represented with a question mark (?)
+
+You can use generic wildcards in three ways, as shown in Table 9.13
+
+Type of bound 						Syntax 							Example
+Unbounded wildcard 					  ? 							List<?> a = new ArrayList<String>();
+Wildcard with upper bound			  ? extends type                List<? extends Exception> a = new ArrayList<RuntimeException>();
+Wildcard with lower bound			  ? super type                  List<? super Exception> a = new ArrayList<Object>();
+General intro on Bounded Types ends here.
+
+Bounded type parameters can be applied in three places:
+
+A. On a class as regular type parameter
+B. As a Formal Type Parameter on a method (before return type)
+C. In method's formal parameters //TODO
+
+A.
+
+public class NaturalNumber<T extends Integer> {
+    private T n;
+    public NaturalNumber(T n)  { this.n = n; }
+    public boolean isEven() {
+        return n.intValue() % 2 == 0;
+    }
+}
+
+B.
+
+For example, a method that operates on numbers might only want to accept instances of Number or its subclasses. This is what bounded type parameters are for.
+
+To declare a bounded type parameter, follow these three steps:
+
+1. Before return type, open angle bracket (<).
+2. List the type parameter's name(s), that is, letters that will go inside formal parameters.
+3. Followed by the 'extends' or 'super' keywords
+4. Type class for whihc to apply the bound for
+5. Put coma (,) and repeat steps 2. and 3.
+6. Close angle bracket (>)
+
+Example1:
+
+class Util {
+    public <U extends Number, K extends String> void m(U u, K k){}
+	public static void main(String[] args) {
+        new Util().m(1, "2"); //DOES COMPILE
+        new Util().m(1, 2); //DOES NOT COMPILE
+    }
+} 
+
+Example2:
+
+public static <T> int countGreaterThan(T[] anArray, T elem) {
+    int count = 0;
+    for (T e : anArray)
+        if (e > elem) //DOES NOT COMPILE
+            ++count;
+    return count;
+}
+
+To fix it, use a type parameter bounded by the Comparable<T> interface:
+
+public static <T extends Comparable<T>> int countGreaterThan(T[] anArray, T elem) {
+    int count = 0;
+    for (T e : anArray)
+        if (e.compareTo(elem) > 0)
+            ++count;
+    return count;
+}
+
+C. //TODO
+
+--------------------------------------
+
+Generics, Inheritance, and Subtypes
+
+Read this ---> https://docs.oracle.com/javase/tutorial/java/generics/inheritance.html
+
+--------------------------------------
+
+Type Inference
+
+Inference determines that the second argument being passed to the pick method is of type Serializable:
+
+static <T> T pick(T a1, T a2) { return a2; }
+Serializable s = pick("d", new ArrayList<String>());
+
+
+class Box2<T> {
+    // T stands for "Type"
+    private T t;
+    public void set(T t) { this.t = t; }
+    public T get() { return t; }
+}
+public class BoxDemo {
+
+    public static <U> void addBox(U u,
+                                  java.util.List<Box2<U>> boxes) {
+        Box2<U> box = new Box2<>();
+        box.set(u);
+        boxes.add(box);
+    }
+
+    public static <U> void outputBoxes(java.util.List<Box2<U>> boxes) {
+        int counter = 0;
+        for (Box2<U> box: boxes) {
+            U boxContents = box.get();
+            System.out.println("Box #" + counter + " contains [" +
+                    boxContents.toString() + "]");
+            counter++;
+        }
+    }
+
+    public static void main(String[] args) {
+        java.util.ArrayList<Box2<String>> listOfStringBoxes = new java.util.ArrayList<>();
+        java.util.ArrayList<Box2<Integer>> listOfIntegerBoxes = new java.util.ArrayList<>();
+
+        BoxDemo.addBox(1, listOfStringBoxes); //DOES NOT COMPILE
+        BoxDemo.addBox("1", listOfIntegerBoxes); //DOES NOT COMPILE
+        
+        BoxDemo.<Integer>addBox(10, listOfIntegerBoxes); //DOES  COMPILE
+        BoxDemo.addBox(Integer.valueOf(20), listOfIntegerBoxes);  //DOES  COMPILE
+        BoxDemo.addBox(Integer.valueOf(30), listOfIntegerBoxes);  //DOES  COMPILE
+        BoxDemo.outputBoxes(listOfIntegerBoxes);  //DOES  COMPILE
+    }
+}
+
+--------------------------------------
+
+Generic Constructors of Generic Classes
+
+Example1:
+
+class OrderedPair2<K, V>{
+
+    public <K, V> OrderedPair2(K value , V v) {} //DOES COMPILE;
+    //public <K, V> OrderedPair2(K value , V v) {} //DOES NOT COMPILE; overloaded constructor;
+    //public <K, V> OrderedPair2(K value , V v, X x) {} //DOES NOT COMPILE; generic type not mentioned in "formal type parameter"
+    public <K, V> OrderedPair2(K value , V v, StringBuilder x) {}  //DOES COMPILE;
+
+    public static void main(String[] args) {
+        OrderedPair2<Integer, String> pair = new OrderedPair2<>(1, "", new StringBuilder()); //DOES COMPILE
+        OrderedPair2<Integer, String> pair2 = new OrderedPair2<>("1", 1, new StringBuilder()); //DOES NOT COMPILE
+    }
+}
+
+Example2:
+
+class MyClass<X> {
+  <T> MyClass(T t) {
+    // ...
+  }
+}
+
+new MyClass<Integer>("")
+
+Example3:
+
+class MyClass<X> {
+    private T h; //DOES NOT COMPILE
+    <T> MyClass(T t) {
+        this.h = t;
+    }
+}
+
+
+--------------------------------------
+
+Wildcards

@@ -199,7 +199,7 @@ public class Gopher {
  }
 } 
 
-Rukes for constructors:
+Rules for constructors:
 
 ■ A class can contain many overloaded constructors, provided the signature for each is distinct.
 ■ The compiler inserts a default no-argument constructor if no constructors are declared.
@@ -755,6 +755,10 @@ class will not compile.
 method and method parameters. It does not include the return type,
 access modifiers, optional specifiers, or any declared exceptions.
 
+** Overloading -> Method overloading occurs when methods in the same class (only in the same class?) have the same name but different method signatures, which means they use different parameter lists. 
+****** Everything other than the method name can vary for overloading methods. ******
+This means there can be different access modifiers, optional specifiers (like static), return types, and exception lists.
+
 While these rules may seem confusing or arbitrary at first, they are needed for consistency.
 Without these rules in place, it is possible to create contradictions within the Java language.
 
@@ -1051,7 +1055,7 @@ class Beaver extends Rodent {
 }
 
 
-Working with overridden methods which return generics (also in Notes 9):
+Working with overridden methods which are return generics within inheritance structure (also see 'Generics' in Notes 9):
 
 Example1:
 

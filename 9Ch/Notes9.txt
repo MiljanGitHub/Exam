@@ -1152,30 +1152,267 @@ Example2:
 
 You can’t overload a generic method from a parent class
 
-public class LongTailAnimal {
+ class LongTailAnimal {
  protected void chew(List<Object> input) {}
 }
 public class Anteater extends LongTailAnimal {
- protected void chew(List<Double> input) {} // DOES NOT COMPILE
+ protected void chew(List<Double> input) {} // DOES NOT COMPILE;  generic methods cannot be overloaded by changing the generic parameter type only
 }
 
-Translation for classes above: NOT GOOD!!! This does compile
+Translation for classes above would be looking something like this: 
 
-class LongTailAnimal {
- protected void chew(List input) {}
-}
 public class Anteater extends LongTailAnimal {
- protected void chew(List input) {} // DOES NOT COMPILE
- //In the compiled form (this form), the generic type is dropped, and it appears as an invalid overloaded method, such as the ones in LongTailAnimal class.
+ protected void chew(List input) {}
+ protected void chew(List input) {} // DOES NOT COMPILE; ** It turns out that class Anteater have two overload methods with same parameters
 }
+
 
 Example3:
 
 class LongTailAnimal {
- protected void chew(List<Object> input) {} //DOES COMPILE
+ protected void chew(List<Object> input) {}
+}
+public class Anteater extends LongTailAnimal {
+ protected void chew(List<Object> tesparam) {} // DOES COMPILE; This compile since this is plain-old overriding
+ protected void chew(ArrayList<Double> input) {}  // DOES COMPILE;  This is an overloaded method because one of the method arguments is a List and the other is an ArrayList.
 }
 
-public class Anteater extends LongTailAnimal {
- protected void chew(List<Object> input) {} //DOES COMPILE
- protected void chew(ArrayList<Double> input) {} //DOES COMPILE
+
+Returning Generic Types
+ 
+********** When you’re working with overridden methods that return generics, the return values must
+be covariant (same or a subtype from parent class). In terms of generics, this means that the return type of the class or interface
+declared in the overriding method must be a subtype of the class defined in the parent class.
+The generic parameter type must match its parent’s type exactly. *********
+
+Example4:
+
+class Mammal {
+    public List<CharSequence> play() { return null; }
+    
 }
+ class Monkey extends Mammal {
+    public ArrayList<CharSequence> play() { return null; } //DOES COMPILE
+}
+
+
+Example5:
+
+class Mammal {
+    public List<CharSequence> play() { return null; }  
+}
+
+class Monkey extends Mammal {
+    public List<CharSequence> play() { return null; } //DOES COMPILE
+}
+
+
+Example6:
+
+class Mammal {
+    public List<CharSequence> play() { return null; }   
+}
+
+class Monkey extends Mammal {
+    public ArrayList<String> play() { return null; } //DOES NOT COMPILE
+}
+
+Example7:
+
+class Mammal {
+    public List<CharSequence> play() { return null; }  
+}
+
+class Monkey extends Mammal {
+    public List<String> play() { return null; } //DOES NOT COMPILE
+}
+
+Example8:
+
+class Mammal {
+    public List<CharSequence> play() { return null; }
+    public CharSequence sleep() { return null;  }
+}
+
+class Monkey extends Mammal {
+    public ArrayList<CharSequence> play() { return null;  }
+}
+
+class Goat extends Mammal {
+    public List<String> play() { return null;  } // DOES NOT COMPILE; It would have compiled if instead of 'List<String>' we placed 'ArrayList<CharSequence>'; or 'List<CharSequence>'
+                                                 // By placing 'LinkedList<CharSequence>' it would also COMPILE because inheritance starts from Mammal class
+                                                 // and in it, play() returns List, and in Goat class play() would have returned List's covariant, LinkedList
+												 
+    public String sleep() { return null;  } **** // Notice that the sleep() method in the Goat class does compile since String is a subtype of
+												//  CharSequence. This example shows that covariance applies to the return type, just not the generic parameter type.
+}
+
+My conclusion:
+
+So when working in with generics-parametarized types as a return types for overridden methods in inheritance structures, rules are as follows:
+
+- The class which is returned and is parametarized, must be a covariant in relation to return type from a method in a parent class and also up the way to the root class method. Essentially, same rule as in 'Overriding a Method' in Ch6!!!
+- Generic parameter type (the one inside diamond, angle brackets, <SomeObject>) MUST BE EXACTLY THE SAME TYPE AS DEFINED IN RETURN ANGLE BRACKETS, AS PART OF RETURN TYPE, OF ROOT PARENT CLASS !!!
+
+--------------------------------------
+
+Implementing Generic Interfaces
+
+There are three ways a class can approach implementing generic interface
+
+Interface:
+
+public interface Shippable<T> {
+ void ship(T t);
+}
+
+1. Implemente generic interface in a concrete class
+
+class ShippableRobotCrate implements Shippable<Robot> {
+ public void ship(Robot t) { }
+}
+
+2. Implemente generic interface in a generic class
+
+class ShippableAbstractCrate<U> implements Shippable<U> {
+ public void ship(U t) { } 
+} //DOES COMPILE
+
+class ShippableAbstractCrate<F> implements Shippable<R> {
+    public void ship(F t) { }
+}  //DOES NOT COMPILE
+
+class ShippableAbstractCrate<R> implements Shippable<R> {
+    public void ship(F t) { }
+} //DOES NOT COMPILE
+
+class ShippableAbstractCrate<K> implements Shippable<R> {
+    public void ship(R t) { }
+} /DOES NOT COMPILE
+
+3. Using Raw types
+
+class ShippableCrate implements Shippable {
+ public void ship(Object t) { }
+}
+
+--------------------------------------
+
+Writing Generic Methods
+
+Example1:
+
+public class Handler {
+
+		(*Always before return type)
+	    Generic Formal Type Parameter    Generic Method Parameter
+				 |						 		 |
+				 |						  		 |
+				\|/						 		\|/ 
+ public static  <T>   void       		 prepare(T t) {
+	System.out.println("Preparing " + t);
+ }
+
+		   Generic parameter in the return type
+				         |						  
+				         |						  
+				        \|/						
+ public static <T> Crate<T> ship(T t) {
+	System.out.println("Shipping " + t);
+ return new Crate<T>(); //REMEMER THIS
+ }
+ 
+}
+
+Few examples:
+
+class More {
+	//1.
+	public static <T> void sink(T t) { } //DOES COMPILE
+	public static T void sink2(T t) { } //DOES NOT COMPILE
+	
+	//2.	
+	public static <T> T identity(T t) { return t; }  //DOES COMPILE
+	public static  T identity2(T t) { return t; } //DOES NOT COMPILE
+	
+	//3.
+	public static T noGood(T t) { return t; } // DOES NOT COMPILE
+	public static T <T> alsoNoGood(T t) { return t; } // DOES NOT COMPILE
+	
+	//*** "Generic Formal Type Parameter - <T>" MUST ALWAYS BE BEFORE RETURN TYPE, even if it is a void return type !!! ***
+	//*** Return type itself may be generics !!! ***
+}
+
+Mixing generic type from class and generic type from method:
+
+The class:
+
+1: public class TrickyCrate<T> {
+2: 	public <T> T tricky(T t) {
+3: 	  return t;
+4: 	}
+5: }
+
+*tricky() could have been defined as:
+
+public <R> R tricky(R t) {
+   return t;
+}
+
+See if you can figure out the type of T on lines 1 and 2 when we call the code as follows:
+
+10: public static String crateName() {
+11:  TrickyCrate<Robot> crate = new TrickyCrate<>();
+12:  return crate.tricky("bot");
+13: }
+
+Line 1 -> T is Robot because that is what gets referenced when constructing a TrickyCrate.
+Line 2 -> T is String because that is what is passed to the method
+
+TrickyCrate<String> x = new TrickyCrate<>();
+x.tricky(x); //DOES COMPILE
+
+TrickyCrate<Integer> x = new TrickyCrate<>();
+x.tricky("x");
+
+
+--------------------------------------
+
+Creating a Generic Record
+
+public record CrateRecord<T>(T contents) {
+ @Override
+ public T contents() {
+ if (contents == null)
+	throw new IllegalStateException("missing contents");
+ return contents;
+ }
+}
+
+Robot robot = new Robot();
+CrateRecord<Robot> record = new CrateRecord<>(robot); // an immutable, generic record!
+
+--------------------------------------
+
+Bounding Generic Types
+
+Bounded wildcards -> restricts what types can be used in a wildcard
+
+A bounded parameter type is a generic type that specifies a bound for the generic.
+
+A wildcard generic type is an unknown generic type represented with a question mark (?)
+
+You can use generic wildcards in three ways, as shown in Table 9.13
+
+Type of bound 						Syntax 							Example
+Unbounded wildcard 					  ? 							List<?> a = new ArrayList<String>();
+Wildcard with upper bound			  ? extends type                List<? extends Exception> a = new ArrayList<RuntimeException>();
+Wildcard with lower bound			  ? super type                  List<? super Exception> a = new ArrayList<Object>();
+
+
+
+
+
+
+
+--------------------------------------

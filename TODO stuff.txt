@@ -18,6 +18,7 @@
 - Enum (simple/complex) structure
 - Interface edge cases
 - Pattern matching with instanceOf
+- Generics type erasure and inheritance when returning generic types
 
 
 
