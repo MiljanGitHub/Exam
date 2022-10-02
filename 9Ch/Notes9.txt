@@ -1,9 +1,9 @@
 Collections
-                 __________         _________
-                /          Collection        \
-               /               |              \
-              /                |               \
-             /                 |                \
+                 __________\          /_______
+                /          /Collection\       \
+               /               |               \
+              /                |                \
+             /                 |                 \
              |                 |                 |
              |                 |                 |
              |                 |                 |
@@ -1410,6 +1410,63 @@ Wildcard with upper bound			  ? extends type                List<? extends Excep
 Wildcard with lower bound			  ? super type                  List<? super Exception> a = new ArrayList<Object>();
 
 
+
+More example on bounded wildcards
+
+public class Demo3 {
+
+    static void addSound(List<?> list) {
+        List<?> someList = new ArrayList<Object>();
+        List<?> someList1 = new ArrayList<StringBuilder>();
+        List<?> someList2 = new ArrayList<String>();
+        someList2.add("");
+        list.add("quack");
+    }
+
+    static void addSound1(List<? extends Object> list) {
+        List<? extends Object> x = new ArrayList<>();
+        List<? extends Object> x1 = new ArrayList<String>();
+        list.add("quack");
+    }
+
+    static void addSound2(List<Object> list) {
+        list.add("quack");
+    }
+
+    static void addSound3(List<? super String> list) {
+        list.add("quack");
+    }
+
+    public static void main(String[] args) {
+        //addSound
+        List<String> strings = new ArrayList<>();
+        strings.add("tweet");
+        List<Object> objects = new ArrayList<Object>(strings);
+        addSound(strings);
+        addSound(objects);
+
+        //addSound1
+        List<String> strings1 = new ArrayList<>();
+        strings1.add("tweet");
+        List<Object> objects1 = new ArrayList<Object>(strings1);
+        addSound1(strings1);
+        addSound1(objects1);
+
+        //addSound2
+        List<String> strings2 = new ArrayList<>();
+        strings2.add("tweet");
+        List<Object> objects2 = new ArrayList<Object>(strings2);
+        addSound2(strings2);
+        addSound2(objects2);
+
+        //addSound3
+        List<String> strings3 = new ArrayList<>();
+        strings3.add("tweet");
+        List<Object> objects3 = new ArrayList<Object>(strings3);
+        addSound3(strings3);
+        addSound3(objects3);
+    }
+}
 
 
 
