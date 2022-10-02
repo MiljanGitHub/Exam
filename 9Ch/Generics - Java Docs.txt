@@ -454,6 +454,7 @@ ln.add(new NaturalNumber(35)); //DOES NOT COMPILE
 ***Because List<EvenNumber> is a subtype of List<? extends NaturalNumber>, you can assign 'le' to 'ln'. But you cannot use 'ln' to add a natural number to a list of even numbers (nor you can
 add even number to 'ln').
 
+
 Inheritance is like this:
 
      List<?>
@@ -477,6 +478,3 @@ List<? extends NaturalNumber> le2 = new ArrayList<EvenNumber>();
 
 le1.add(new NaturalNumber(12));  //DOES NOT COMPILE
 le2.add(new NaturalNumber(12)); //DOES NOT COMPILE ***Very important !!!!!!
-
-
---------------------------------------
