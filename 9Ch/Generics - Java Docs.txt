@@ -437,7 +437,7 @@ Wildcards and Subtyping
 
 Very important -> https://docs.oracle.com/javase/tutorial/java/generics/subtyping.html
 
-Example1:
+Example1 (extends):
 
 class NaturalNumber {
     private int i;
@@ -455,7 +455,7 @@ ln.add(new NaturalNumber(35)); //DOES NOT COMPILE
 add even number to 'ln').
 
 
-Inheritance is like this:
+Hierarchy of Parameterized collections with "extends":
 
      List<?>
 	   /|\
@@ -469,12 +469,87 @@ List<? extends EvenNumber>
 	   /|\
 		|
 		|
-List<EvenNumber>
+List<EvenNumber>    <--- starts from lowest member
 
-However 'le' may be pointing to different Lists, like so:
+However 'ln' may be pointing to different Lists, like so:
 
-List<? extends NaturalNumber> le1 = new ArrayList<NaturalNumber>();
-List<? extends NaturalNumber> le2 = new ArrayList<EvenNumber>();
+List<? extends NaturalNumber> ln1 = new ArrayList<NaturalNumber>();
+List<? extends NaturalNumber> ln2 = new ArrayList<EvenNumber>();
 
-le1.add(new NaturalNumber(12));  //DOES NOT COMPILE
-le2.add(new NaturalNumber(12)); //DOES NOT COMPILE ***Very important !!!!!!
+ln1.add(new NaturalNumber(12));  //DOES NOT COMPILE //Line X
+ln2.add(new NaturalNumber(12)); //DOES NOT COMPILE ***Very important !!!!!!  //Line X1
+
+//Since both 'ln1' and 'ln2' compiles, compiler cannot possible knows if we are adding supertype in a list of subtypes. Does not know where 'ln' might be pointing to.
+
+
+Example2 (super):
+
+
+List<NaturalNumber> naturalNumbers = new ArrayList<>();
+List<? super EvenNumber> superEven = naturalNumbers;
+superEven.add(new EvenNumber(1)); //DOES COMPILE  //Line Y
+superEven.add(new NaturalNumber(1)); //DOES NOT COMPILE  //Line Y1
+
+Why does one line compiles and the other does not???
+
+**We need to distinguish between 3 things:
+
+1. Inheritance hierarchy between Parameterized types (NaturalNumber and EvenNumber)
+
+2. Inheritance hierarchy between Parameterized collections 
+
+3. Addition/Getting appropriate types into/from Parameterized collections 
+
+Hierarchy of Parameterized collections with "super":
+
+
+     List<?>
+	   /|\
+		|
+		|
+List<? super EvenNumber>
+	   /|\
+		|
+		|
+List<? super NaturalNumber>
+	   /|\
+		|
+		|
+List<NaturalNumber>		<--- starts from highest member
+
+Let's see why adding 'new EvenNumber(1)' (Line Y) is compiling?
+
+First have a look on what are possible option where 'superEven' might be pointing at:
+
+a. List<? super EvenNumber> superEven2 = new ArrayList<>(); 
+b. List<? super EvenNumber> superEven4 = new ArrayList<Object>();
+c. List<? super EvenNumber> superEven3 = new ArrayList<EvenNumber>();
+d. List<? super EvenNumber> superEven5 = new ArrayList<NaturalNumber>();
+
+All of these are an option (which COMPILES), so when adding 'new EvenNumber(1)', we go one by one, to determine whether it can be compiled or not:
+
+Option a. and b. are same. So YES they do present one option.
+Option c. also COMPILES, so it can represent one option.
+Option d. also COMPILES, so it can represent one option.
+
+We see that all options are compiling and 'new EvenNumber(1)' can be added to each of these lists. 
+Option c. and d. are most interesting if we had a ArrayList<EvenNumber>(); or ArrayList<NaturalNumber>(); we could easily add 'new EvenNumber(1)' into any one of these lists. 
+Same goes for option a. and b. if we had a ArrayList<Object>() we could easily add 'new EvenNumber(1)' into it.
+
+
+Let's see why adding 'new NaturalNumber(1)' (Line Y1) is not compiling?
+
+Again, have a look on what are possible options where 'superEven' might be pointing at:
+
+a. List<? super EvenNumber> superEven2 = new ArrayList<>(); 
+b. List<? super EvenNumber> superEven4 = new ArrayList<Object>();
+c. List<? super EvenNumber> superEven5 = new ArrayList<NaturalNumber>();
+d. List<? super EvenNumber> superEven3 = new ArrayList<EvenNumber>();
+
+All of these are an option (which COMPILES), so when adding 'new NaturalNumber(1)', we go one by one, to determine whether it can be compiled or not:
+
+Option a. and b. are same. So YES they do present one option.
+Option c. also COMPILES, so it can represent one option.
+Option c. also COMPILES, so it can represent one option
+Option d. also COMPILES, BUT what would happend if added NaturalNumber object in a list of EvenNumber??? This would not be good, so compiler forbides it.
+
