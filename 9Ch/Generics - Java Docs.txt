@@ -181,9 +181,10 @@ Bounded type parameters can be applied in three places:
 
 A. On a class as regular type parameter
 B. As a Formal Type Parameter on a method (before return type)
-C. In method's formal parameters //TODO
+C. In method's formal parameters (inside parenthesis of formal parameters) //TODO
 
-A.
+A
+
 
 public class NaturalNumber<T extends Integer> {
     private T n;
@@ -202,14 +203,15 @@ To declare a bounded type parameter, follow these three steps:
 1. Before return type, open angle bracket (<).
 2. List the type parameter's name(s), that is, letters that will go inside formal parameters.
 3. Followed by the 'extends' or 'super' keywords
-4. Type class for whihc to apply the bound for
+4. Type class for which to apply the bound for
 5. Put coma (,) and repeat steps 2. and 3.
 6. Close angle bracket (>)
 
 Example1:
 
 class Util {
-    public <U extends Number, K extends String> void m(U u, K k){}
+	public <U extends Number, K extends String> void m(U u, K k, H h){} //DOES NOT COMPILE
+    public <U extends Number, K extends String> void m(U u, K k){} //DOES COMPILE
 	public static void main(String[] args) {
         new Util().m(1, "2"); //DOES COMPILE
         new Util().m(1, 2); //DOES NOT COMPILE
@@ -262,8 +264,7 @@ class Box2<T> {
 }
 public class BoxDemo {
 
-    public static <U> void addBox(U u,
-                                  java.util.List<Box2<U>> boxes) {
+    public static <U> void addBox(U u, java.util.List<Box2<U>> boxes) {
         Box2<U> box = new Box2<>();
         box.set(u);
         boxes.add(box);
@@ -335,3 +336,147 @@ class MyClass<X> {
 --------------------------------------
 
 Wildcards
+
+In generic code, the question mark (?), called the wildcard, represents an unknown type. The wildcard can be used in a variety of situations:
+
+A. As the type of a parameter
+B. As a field //TODO; Find examples
+C. As a local variable //TODO; Find examples
+D. (Sometimes) As a return type //TODO; Find examples
+
+
+A.
+
+Example1:
+
+class Wildcard<?>{ } //DOES NOT COMPILE
+class Wildcard<? extends Object>{ } //DOES NOT COMPILE
+
+static void m(List<?> numbers){} //DOES COMPILE
+static <?> void m(List<?> numbers){} //DOES NOT COMPILE
+static <T> void m(List<? extends T> numbers){} //DOES COMPILE
+
+-------------------------------------- 
+ 
+Upper Bounded Wildcards - Methods example
+
+Example1:
+    static void generic(List<? extends String> objects){
+        //do smtg...
+    }
+
+    public static void main(String[] args) {
+        var x = new ArrayList<>();
+        generic(x); //DOES NOT COMPILE
+
+        var y = new ArrayList<Object>();
+        generic(y);  //DOES NOT COMPILE
+
+        generic(new ArrayList<>());  //DOES COMPILE ??? I guess it assumes:  "ArrayList<String> someStrList = new ArrayList<>()" is being passed
+    }
+	
+Example2:
+    static <T extends Shape> void draw(T shape) { /* ... */ } //DOES COMPILE
+    static <? extends Number> void generic4(List<? extends Number> objects){} //DOES NOT COMPILE
+    static <K> void generic2(List<? extends Number> objects, K val){} //DOES COMPILE
+	
+--------------------------------------
+
+Unbounded Wildcards	
+
+Example1
+
+public static void printList(List<Object> list) { 
+    for (Object elem : list)
+        System.out.println(elem + " ");
+    System.out.println();
+}
+
+List<String> str = Arrays.asList("a", "b");
+printList(str); //DOES NOT COMPILE; In order to compile: "printList(List<?> list)"
+
+Example2:
+
+        List<?> listOfAnything = Arrays.asList("1", 1, new Object()); //DOES COMPILE
+        listOfAnything.add("A"); //DOES NOT COMPILE
+
+        List<?> listOfAnything2 = new ArrayList<>();
+        listOfAnything2.add(1); //DOES NOT COMPILE
+        listOfAnything2.add(new Object()); //DOES NOT COMPILE
+                     
+        List<?> listOfAnything3 = new ArrayList<String>();
+        listOfAnything3.add("a");//DOES NOT COMPILE
+        listOfAnything3.add(1); //DOES NOT COMPILE
+		
+        listOfAnything.add(null);  //DOES  COMPILE
+        listOfAnything2.add(null);  //DOES  COMPILE
+        listOfAnything3.add(null); //DOES  COMPILE
+
+--------------------------------------
+
+Lower Bounded Wildcards
+
+
+Say you want to write a method that puts Integer objects into a list. To maximize flexibility, you would like the method to work on List<Integer>, List<Number>, and List<Object> — 
+anything that can hold Integer values.
+
+To write the method that works on lists of Integer and the supertypes of Integer, such as Integer, Number, and Object, you would specify List<? super Integer>.
+ The term List<Integer> is more restrictive than List<? super Integer> because the former matches a list of type Integer only, 
+ whereas the latter matches a list of any type that is a supertype of Integer.
+
+
+public static void addNumbers(List<? super Integer> list) {
+    for (int i = 1; i <= 10; i++) {
+        list.add(i);
+    }
+}
+
+--------------------------------------
+
+Wildcards and Subtyping
+
+Very important -> https://docs.oracle.com/javase/tutorial/java/generics/subtyping.html
+
+Example1:
+
+class NaturalNumber {
+    private int i;
+    public NaturalNumber(int i) { this.i = i; }
+}
+class EvenNumber extends NaturalNumber {
+    public EvenNumber(int i) { super(i); }
+}
+
+List<EvenNumber> le = new ArrayList<>();
+List<? extends NaturalNumber> ln = le; //DOES COMPILE
+ln.add(new NaturalNumber(35)); //DOES NOT COMPILE
+
+***Because List<EvenNumber> is a subtype of List<? extends NaturalNumber>, you can assign 'le' to 'ln'. But you cannot use 'ln' to add a natural number to a list of even numbers (nor you can
+add even number to 'ln').
+
+Inheritance is like this:
+
+     List<?>
+	   /|\
+		|
+		|
+List<? extends NaturalNumber>
+	   /|\
+		|
+		|
+List<? extends EvenNumber>
+	   /|\
+		|
+		|
+List<EvenNumber>
+
+However 'le' may be pointing to different Lists, like so:
+
+List<? extends NaturalNumber> le1 = new ArrayList<NaturalNumber>();
+List<? extends NaturalNumber> le2 = new ArrayList<EvenNumber>();
+
+le1.add(new NaturalNumber(12));  //DOES NOT COMPILE
+le2.add(new NaturalNumber(12)); //DOES NOT COMPILE ***Very important !!!!!!
+
+
+--------------------------------------

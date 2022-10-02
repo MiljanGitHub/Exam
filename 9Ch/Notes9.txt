@@ -957,7 +957,7 @@ Difference 											Comparable 								Comparator
 Package name 										 java.lang 								 java.util
 Interface must be implemented by class comparing?	   Yes 										No
 Method name in interface 							 compareTo()							 compare()
-Number of parameters									 1 										2
+Number of parameters									1 										2
 Common to declare using a lambda 						No									   Yes
 
 The exam will try to trick you by mixing up the two (Comparable and Comparator) and seeing if you can catch it. Do you see why this doesn’t compile?
