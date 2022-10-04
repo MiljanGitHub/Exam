@@ -291,6 +291,29 @@ Example13:
 
 
         System.out.println("Both fickle dwarves jinx my pig quiz"== myString); //false
+		
+Example14:
+
+        String hello = "Hello", lo = "lo";
+        var one = 1;
+        var x = "abc";
+        String abc1 = one+x;
+        System.out.println("1abc"==abc1); //false
+
+        int oneagain = 1;
+        System.out.println("1abc"==oneagain+x); //false
+
+        final int oneconst = 1;
+        final String xconst = "abc";
+        System.out.println("1abc"==oneconst+xconst); //true
+
+        final Integer oneObj = 1;
+        final String somefinal = "abc";
+        System.out.println("1abc"==oneObj+somefinal); //false
+
+        int oneNonFinal = 1;
+        final String xconstAgain = "abc";
+        System.out.println("1abc"==oneNonFinal+xconstAgain); //false
 
 The Java Language Specification:
 

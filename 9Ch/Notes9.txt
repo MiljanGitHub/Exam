@@ -88,12 +88,12 @@ Factory methods to create a List: Arrays.asList(varargs); | List.of(varargs); | 
 
 "List view" -> - If SIZE is changed either to array (although this is not possible) or to the list (this is possible) then UnsupportedOperationException is thrown!!!
 			   - Gives immutable list in terms of size;
-			   - *** Since it is so called "List view", we can modify and replace elements in an array or in a list, those changes will automatically be reflected on the other collection. ***
+			   - *** Since it is so called "List view", we can modify and replace elements (E set(int index, E e) in an array or in a list, those changes will automatically be reflected on the other collection. ***
 
 Examples:
 	- calling: 'public boolean add(E element)' from Collection -> UnsupportedOperationException
 	- calling: 'public boolean remove(Object object)' from Collection -> UnsupportedOperationException
-    - calling: 'public E set(int index, E e) [Replaces element at index and returns original. May throw IndexOutOfBoundsException if index is invalid.]' from List -> UnsupportedOperationException
+    - calling: 'public E set(int index, E e) [Replaces element at index and returns original. May throw IndexOutOfBoundsException if index is invalid.]' from List
 
 Examples:
 		Replacing using set():
@@ -107,7 +107,7 @@ Examples:
 		
 		String[] arr1 = {"a", "b"};
         List<String> stringList = Arrays.asList(arr1);
-        arr1[0] = "c  //modifying here
+        arr1[0] = "c"  //modifying here
         System.out.println(stringList);// [c, b]
 
 
@@ -117,6 +117,7 @@ List.of(varargs/array); ---> returns FULL IMMUTABLE LIST
 						- no adding of elements -> UnsupportedOperationException
 						- no removing -> UnsupportedOperationException
 						- no replacing (i.e. using set(int, E e) from List); -> UnsupportedOperationException
+						- cannot add null -> throws exception
 
 Examples:
 	    Person p1 = new Person(1); Person p2 = new Person(2);
@@ -280,11 +281,11 @@ Queue Methods
     queue.offer("a");
     System.out.println(queue);  // [a, b, c, a]
 
-**add(E e) and offer(E e) are very simmilar in whihc that both are adding elements to the back of the list.	
+**add(E e) and offer(E e) are very simmilar in which that both are adding elements to the back of the list.	
 
  - public E remove() //Removing; It MAY throw Exception
  
-Note: there is a 'public boolean remove(Object object)' from Collections which returns 'boolean' and remove() from Queue returns which returns first inserted element from Queue removes it
+Note: there is a 'public boolean remove(Object object)' from Collections which returns 'boolean' and  E remove() from Queue which returns first inserted element from Queue and removes it
 	  With remove() from Queue, we got no parameters to pass to the method, which means that it returns removed element, and in accordance with FIFO, it will return "first out", that is, first inserted element
 	  
 	  Example1:
@@ -385,14 +386,14 @@ Front ->		* HEAD--element1---element2--- ... ---elementN---TAIL *			<- End/Back
         Integer zero = deque.removeFirst(); // 0; [1, 2, 3, 4]
         Integer four = deque.removeLast(); // 4; [1, 2, 3]
 
-        // poll(); pollFirst(); pollLast(); Operates same as respective remove() methods
+        // poll(); pollFirst(); pollLast(); Operates same as respective remove() methods only without throwing Exception
 
         //gets
         Integer one = deque.element(); //1; [1, 2, 3]
-        Integer three = deque.getLast(); // 3; [1, 2, 3] getLast() is supposed to be equivalent with "elementFirst()";
+        Integer three = deque.getLast(); // 3; [1, 2, 3] getLast() is supposed to be called "elementLast()";
         Integer oneAgain = deque.getFirst(); //1; [1, 2, 3]
 
-        //peek(); peekFirst(); peekLast(); ; Operates same as respective element()/get() methods
+        //peek(); peekFirst(); peekLast(); ; Operates same as respective element()/get() methods only without throwing Exception
 --------------------------------------
 
 Mixing FIFO and LIFO methods over a Deque's LinkedList
@@ -400,8 +401,8 @@ Mixing FIFO and LIFO methods over a Deque's LinkedList
         Deque<Integer> deque = new LinkedList<>();
 
         deque.add(1); //[1]
-        deque.add(2); //
-        deque.addFirst(3);
+        deque.add(2); //[1,2]
+        deque.addFirst(3); //[3, 1,2]
 
         deque.push(-1);
         deque.push(-2); // -2,-1,3,1,2
@@ -663,6 +664,16 @@ Example1:
 		favorites.merge("Jenny", "Skyride", mapper);
 		favorites.merge("Sam", "Skyride", mapper);
 		System.out.println(favorites); // {Tom=Bus Tour, Sam=Skyride}
+		
+		We have 4 cases:
+		
+		
+					4. Remapping function returns null with case 3. -> Existing key-value pair will be expelled from map
+				3. Provided key exists and is associated with non null value -> Remapping function will be called to assocaite existing key with new value
+			2. Provided key exists but is associated with null value -> Provided (existing) key will be associated with provided value
+		1. Provided key doesn't exists -> Provided key will be associated with provided value
+		
+		
 
 11. V put(K key)
 
@@ -694,7 +705,7 @@ Example1:
         System.out.println(map); // {null=null, 1=a, 2=b}
 
         var xd = map.putIfAbsent(1, "c");
-        System.out.println(xd); // "a" OLD VALUE RETURNED
+        System.out.println(xd); // "a" OLD/EXISTING VALUE RETURNED
         System.out.println(map); //{null=null, 1=a, 2=b}
 
         var k = map.putIfAbsent(4, null);
@@ -827,8 +838,8 @@ public class Duck implements Comparable<Duck> {
  }
  
  public int compareTo(Duck d) {
-	//IF -1: Current object is "lesser"
-	//IF 1: Current object is "greater"
+	//IF -1 (i.e. negative value): Current object is "lesser"
+	//IF 1 (i.e. positive value): Current object is "greater"
 	//IF 0: objects are equal in tersm of compareTo
 	return name.compareTo(d.name); // sorts ascendingly by name
  }
@@ -851,9 +862,9 @@ public int compareTo(Animal otherAnimal) {
 	return id - otherAnimal.id; // ******** sorts ascending by id
 }
  // x.apply(null, null); //BiFunction<Duck, Duck, Integer> x = (d1, d2) -> d1.compareTo(d2); //DOES COMPILE
-//Ako od "this" objekta uzimamo properti i njega koristimo sa desne strane znaka "-" odnosno poredjanja sa argumentom "otherAnimal" znaci da je ascending order /|\
-						
-
+//Ako od "this" objekta uzimamo properti i njega koristimo sa leve strane znaka "-" odnosno poredjanja sa argumentom "otherAnimal" znaci da je ascending order /|\
+																																								|
+																																								|
 Legacy
 
 public class LegacyDuck implements Comparable {
@@ -897,11 +908,11 @@ Comparable - Important stuff:
 3. Generic <T>
 4. int compareTo(T t)
 5. -1 this is lesser; 1 this is greater; 0 equal
-6. Used by TreeMap and TreeSet
+6. Used by TreeMap and TreeSet ************* !!!!!!!!!!
 
 
-Comparator -> the interface which is supposed to be instantiated like a class (that is, NOT to be implemented by a domain class/entity); it DOES NEED an import since it is in java.util.Comparator; package
-			  cannot use Comparator without an import statement
+Comparator -> - the interface which is supposed to be instantiated like a class (that is, NOT to be implemented by a domain class/entity); it DOES NEED an import since it is in java.util.Comparator; package
+			  - cannot use Comparator without an import statement
 
 
 
@@ -971,7 +982,7 @@ var byWeight = new Comparator<Duck>() { // DOES NOT COMPILE
 My mnemonic for memorizing SAM methods of Comparable and Comparator:
 
 Comparable -> int compareTo(T other); must remember that is inside DOMAIN class and it expects one parameter; So: 'compare TO, compare TO something (single) other'
-Comparator -> not meant to be implemented by domain class it is an outside object (by that I mean "MyComparator implements Comparator<T>" and it expects two object so: compare(Object o1, Object o2) 
+Comparator -> not meant to be implemented by domain class it is an outside object (by that I mean "MyComparator implements Comparator<T>" and it expects two object so: compare(T o1, T o2) 
 
 
 
@@ -1040,6 +1051,9 @@ Sorting
 
 *** The Collections.sort() method uses the compareTo() method to sort. It expects the objects to be sorted to be Comparable.
 
+- public static <T extends Comparable<? super T>> void sort(List<T> list)
+- 
+- public static void reverse(List<?> list) 
 Example1:
 public class RabbitDemo {
     static record RabbitRun(int id) { }
@@ -1363,7 +1377,7 @@ See if you can figure out the type of T on lines 1 and 2 when we call the code a
 
 10: public static String crateName() {
 11:  TrickyCrate<Robot> crate = new TrickyCrate<>();
-12:  return crate.tricky("bot");
+12:  return crate.tricky("bot"); //DOES NOT COMPILE
 13: }
 
 Line 1 -> T is Robot because that is what gets referenced when constructing a TrickyCrate.
@@ -1373,7 +1387,7 @@ TrickyCrate<String> x = new TrickyCrate<>();
 x.tricky(x); //DOES COMPILE
 
 TrickyCrate<Integer> x = new TrickyCrate<>();
-x.tricky("x");
+x.tricky("x"); //DOES NOT COMPILE
 
 
 --------------------------------------
@@ -1473,5 +1487,12 @@ https://coderanch.com/t/754814/certification/Upper-Bounded-Wildcards#3503158   I
 
 
 
+<X> void fifth(List<X super B> list) {} // DOES NOT COMPILE
+
+<T> <? extends T> second(List<? extends T> list) { // DOES NOT COMPILE
+ return list.get(0);
+}
+The next method, second(), does not compile because the return type isn’t actually a
+type. You don’t get to specify this as a wildcard.
 
 --------------------------------------
