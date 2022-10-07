@@ -12,7 +12,7 @@
 - Date and Time API
 - Instantiating inner and static classes
 - sealed classes assignements and rules (practice in .java files using Notepad)
-- records (just repeat from Notes)
+- records (just repeat from Notes) More practice without IDE
 - java and jar commands; with arguments
 - Memorize built-in functiona interfaces (their SAMs), convinence methods as well as functional interfaces for prmitives (...getAsMethods() )
 - Enum (simple/complex) structure
@@ -33,3 +33,5 @@
 	- Queue and Deque methods (with Stack methods)
 	- Map methods
 	- Factory methods for List, Set and Map
+	- Optional methods 
+	- Stream creation methods

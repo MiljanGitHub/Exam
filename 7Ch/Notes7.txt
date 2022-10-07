@@ -1205,6 +1205,12 @@ public record Crane(int numberEggs, String name) {
 }
 
 The compiler will not insert a constructor if you define one with the same list of parameters in the same order. 
+public record Crane(int numberEggs, String name) {
+ public Crane(int numberEggs, String name) {
+	this.numberEggs = numberEggs;
+	this.name = name;
+ }
+}//DOES COMPILE
 Since each field is final, the constructor must set every field. For example, this record does not compile:
 
 In other words, if we have a constructor whose signature is the same as the one that is in record's declaration, the we will get compiler error, provided that there is no compact constructor and no assignment of final fields inside that constructor

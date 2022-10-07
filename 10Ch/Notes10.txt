@@ -1,0 +1,125 @@
+Optional o = (value == null) ? Optional.empty() : Optional.of(value);
+
+or
+
+Optional o = Optional.ofNullable(value);
+
+
+--------------------------------------
+Optional
+ - tw0 static method -> Optional.ofNullable()
+ 
+        Optional<Integer> o = null;
+        Optional<Integer> o2 = Optional.ofNullable(null);
+        Optional<Integer> o3 = Optional.empty();
+        Integer value = null;
+        Optional o5 = (value == null) ? Optional.empty() : Optional.of(value); //DOES COMPILE without parametarizes optional; "must remember raw types"
+
+        System.out.println(o2.isPresent()); //false
+		System.out.println(o3.isPresent()); //false
+		System.out.println(o5.isPresent()); //false
+		
+		Optional.of((double) sum / scores.length); 
+		Optional.of(null); //throws exception;
+		
+		Student s = null;
+		Optional.of(s); //throws exception;
+ 
+ 
+Instance methods on Optional are:
+
+isPresent() //returns boolean true/false; pay attention it starts with "is", like getter for boolean instance variables; examples are above
+
+
+ifPresent(Consumer c) //
+
+	Integer value = null;
+	Optional<Integer> o5 = (value == null) ? Optional.empty() : Optional.of(value);
+	o5.ifPresent(getConsumer());
+	o5.ifPresent(getConsumer2()); //DOES NOT COMPILE
+	
+    Consumer<Integer> getConsumer(){
+        return (Integer x) -> System.out.println("aa");
+    }
+	
+    Consumer<Double> getConsumer2(){
+        return (Double x) -> System.out.println("aa");
+    }
+
+orElseThrow() //Give me value wrapped in Optional on which I am calling this method or Else throw predefined Exception
+orElseThrow((Supplier s) //Give me value wrapped in Optional on which I am calling this method or Else call 'get' method from parametarized Supplier and you must return "<X extends Throwable>"
+
+Optional<Integer> o2 = Optional.ofNullable(null);
+
+final Integer integer = o2.orElseThrow();
+final Integer integer2 = o2.orElseThrow(IllegalStateException::new); //If it is Runtime then no need for "throws" keyword on the method which contains this line
+final Integer integer3 = o2.orElseThrow(() -> new Object()); //DOES NOT COMPILE
+
+orElse(T other) 
+orElseGet(Supplier s) 
+
+        Optional<Integer> o2 = Optional.ofNullable(null); //returns Optional.empty()
+        final Integer integer = o2.orElseGet( () -> {return 1;});
+        System.out.println(integer); //1
+		
+		=Optional<Integer> o21 = Optional.ofNullable(null); //returns Optional.empty()
+        final Integer integer2 = o21.orElseGet( () -> {return new Double(2);}); //DOES NOT COMPILE
+        System.out.println(integer2);
+		
+        Optional<Student> o3 = Optional.ofNullable(null); //returns Optional.empty()
+        System.out.println(o3.orElse(new Student())); //Student@eed1f14
+
+        Optional<Student> o4 = Optional.ofNullable(null);
+        System.out.println(o3.orElse(new Integer(1))); //DOES NOT COMPILE
+
+
+get()
+isPresent()
+
+
+--------------------------------------
+
+Creating a source
+
+1. empty() Finite Stream -> Creates Stream with zero elements. Method signature: "static <T> Stream<T> empty()"
+
+ final Stream<Object> empty = Stream.empty();
+
+2. Stream.of(varargs) Finite Stream -> Creates Stream with specified number of varargs. Method signature: "static<T> Stream<T> of(T... values)"
+
+ final Stream<Integer> integerStream = Stream.of(1, 2, 3);
+
+3. someCollectionInstance.stream() Finite Stream -> Creates Stream from Collection instance
+	
+  Set<String> set = Set.of("a", "b", "c");
+  final Stream<String> stream = set.stream();
+	
+  //same with parallelStream()
+  
+  
+4. Stream.generate(supplier) Infinite Stream -> Creates Stream by calling Supplier for each element upon request. Method signature: "static <T> Stream<T> generate(Supplier<? extends T> s)"
+
+	Stream<Integer> x1 = Stream.generate(this::getDouble);
+	Stream<Student> x2 = Stream.generate(Student::new);
+	Stream<Double> x3 = Stream.generate(Student::new); //DOES NOT COMPILE
+	
+	 x2.forEach(System.out::println); 
+	 //Prints:
+	 A$Student@f138bd8
+	 A$Student@4fbbbfb3
+	 A$Student@3c28c7d9
+	 A$Student@207e556f
+
+5. Stream.iterate(seed, unaryOperator) -> Infinite Stream. Creates Stream by using seed for first element and then calling UnaryOperator for each subsequent element upon request.
+										  Method signature: "static<T> Stream<T> iterate(final T seed, final UnaryOperator<T> f)"
+
+    static class Student{
+        private int id;
+        public Student(int i){   id = i;   }
+        public Student(Student s){   id = s.id + (int)Math.random() + 323;  }
+        public String toString() { return "Student{" + "id=" + id + '}'; }
+    }
+	
+	 Stream<Student> x = Stream.iterate(new Student(12), Student::new); //Which constructor is called???
+	
+	

@@ -44,6 +44,8 @@ Methods available in Collection interface (9)
 - public boolean removeIf(Predicate<? super E> filter)
 - public void forEach(Consumer<? super T> action)
 - public boolean equals(Object object)
+- default Stream<E> stream() //we need an instance
+- default Stream<E> parallelStream() //we need an instance
 
 		(1)												   (2)													  (3)	
 	    add							|			          remove								| 			  convenience 
@@ -1388,6 +1390,16 @@ x.tricky(x); //DOES COMPILE
 
 TrickyCrate<Integer> x = new TrickyCrate<>();
 x.tricky("x"); //DOES NOT COMPILE
+
+Examples:
+
+12: List<?> q = List.of("mouse", "parrot");
+13: var v = List.of("mouse", "parrot");
+14:
+15: q.removeIf(String::isEmpty);
+16: q.removeIf(s -> s.length() == 4);
+17: v.removeIf(String::isEmpty);
+18: v.removeIf(s -> s.length() == 4); //which compile and which dont?
 
 
 --------------------------------------
