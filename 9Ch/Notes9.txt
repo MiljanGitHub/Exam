@@ -203,6 +203,9 @@ Beside methods in Collection, here are methods from List interface:
         System.out.println(list); // [a, b, d, c]
         list.add(3, e);
         System.out.println(list); //[a, b, d, e, c]
+		
+		Example4:
+		List<Double> doubles = new ArrayList<>(); doubles.add(5); //DOES NOT COMPILE, try to see why?
 	
  - public E get(int index) //Explained above
  - public E remove(int index) //Explained above

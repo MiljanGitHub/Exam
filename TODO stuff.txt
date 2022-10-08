@@ -33,5 +33,6 @@
 	- Queue and Deque methods (with Stack methods)
 	- Map methods
 	- Factory methods for List, Set and Map
-	- Optional methods 
+	- Optional instance methods 
 	- Stream creation methods
+	- Terminal operations on stream

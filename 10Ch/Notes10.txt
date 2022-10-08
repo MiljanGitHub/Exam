@@ -7,7 +7,7 @@ Optional o = Optional.ofNullable(value);
 
 --------------------------------------
 Optional
- - tw0 static method -> Optional.ofNullable()
+ - two static method -> Optional.ofNullable()
  
         Optional<Integer> o = null;
         Optional<Integer> o2 = Optional.ofNullable(null);
@@ -121,5 +121,313 @@ Creating a source
     }
 	
 	 Stream<Student> x = Stream.iterate(new Student(12), Student::new); //Which constructor is called???
+	 
+	 Stream<Double> x2 = Stream.iterate(23, previousd -> previousd - 1); //DOES NOT COMPILE
+	 
+	 Stream<Integer> x2 = Stream.iterate(23, previous -> previous - 1);
 	
+6. Stream.iterate(seed, predicate  unaryOperator)-> Infinite Stream. Creates Stream by using seed for first element and then calling UnaryOperator for each subsequent element upon request. 
+																	 Stops if Predicate returns false.
+																	 Method signature: "static<T> Stream<T> iterate(T seed, Predicate<? super T> hasNext, UnaryOperator<T> next)"
 	
+	Stream<Student> x = Stream.iterate(new Student(12), s -> !Objects.isNull(s), Student::new);
+	
+	Stream<Student> x = Stream.iterate(new Student(1), s -> s.id >= 1 && s.id <= 10, Student::new);
+    x.forEach(System.out::println);
+	
+	static class Human{}
+    static class Person extends Human{}
+    static class Student extends Person{} 
+        Stream<Person> xs = Stream.iterate(new Student(1), s -> true, x5 -> {
+            return new Student(1); //DOES COMPILE
+			  return new Person(1); //DOES COMPILE
+			  return new Human(); //DOES NOT COMPILE
+        });	
+	
+	**Sequence may be empty if the given predicate DOES NOT return true for the initial seed value, if it DOES return true, then UnaryOperator function is called with seed value. Then,
+	  the cyclus repeats itself, bu again applying predicate on that newly returned value. Seed is what we are entering the predicate with.
+
+--------------------------------------	 
+
+Terminal Operations	  
+
+You can perform a terminal operation without any intermediate operations but not the other way around.
+
+
+1. long count()
+
+Example1:
+		//Infinite stream
+		Stream<Integer> x2 = Stream.generate(() -> {
+            System.out.println("aaaa");
+            System.out.println("bbbb");
+            System.out.println("xxxx");
+            return (int)Math.random();
+        });
+        final long count = x2.count(); //infinite stream
+        System.out.println(count); //never gets printed
+
+Example2:
+		//Finite stream
+		Stream<String> s = Stream.of("monkey", "gorilla", "bonobo");
+		System.out.println(s.count()); // 3
+
+
+2. Optional<T> min()
+   Optional<T> max()
+
+Stream<String> s = Stream.of("monkey", "ape", "bonobo");
+Optional<String> min = s.min((s1, s2) -> s1.length()-s2.length());
+min.ifPresent(System.out::println); // ape
+
+Optional<?> minEmpty = Stream.empty().max((var x, var y) -> {
+            System.out.println("How many times this line is printed?" );
+            return -1;
+        });
+System.out.println(minEmpty.isPresent()); // false
+
+3. Optional<T> findAny()
+   Optional<T> findFirst()
+   
+
+Stream<String> finite = Stream.of("monkey", "gorilla", "bonobo");
+Stream<String> infinite = Stream.generate(() -> "chimp");   
+
+finite.findAny().ifPresent(System.out::println); //  monkey (usually)
+infinite.findAny().ifPresent(System.out::println); // chimp
+
+4. boolean anyMatch(Predicate <? super T> predicate)
+   boolean allMatch(Predicate <? super T> predicate)
+   boolean noneMatch(Predicate <? super T> predicate)
+   
+** Search a stream and return information about how the stream pertains to the predicate
+
+var list = List.of("monkey", "2", "chimp");
+Stream<String> infinite = Stream.generate(() -> "chimp");
+Predicate<String> pred = x -> Character.isLetter(x.charAt(0));
+System.out.println(list.stream().anyMatch(pred)); // true
+System.out.println(list.stream().allMatch(pred)); // false
+System.out.println(list.stream().noneMatch(pred)); // false
+System.out.println(infinite.anyMatch(pred)); // true
+
+System.out.println(infinite.anyMatch(pred));  // true
+System.out.println( infinite.allMatch(pred)); // never gets printed
+
+5. void forEach(Consumer<? super T> action)
+
+Stream<String> s = Stream.of("Monkey", "Gorilla", "Bonobo");
+s.forEach(System.out::print); // MonkeyGorillaBonobo
+
+Stream<Integer> s = Stream.of(1);
+for (Integer i : s) {} // DOES NOT COMPILE
+
+6. reduce()
+
+Questions as:
+
+“Calculate the sum of all calories in the menu,”
+“Whatisthehighest calorie dish in the menu?”
+
+These queries can be classified as reduction operations (a stream is reduced to a value).
+In functional programming-language jargon, this is referred to as a "fold". ->  You can view this operationas repeatedly folding a long piece of paper (your stream) 
+																				until it forms a small square, whichisthe result of the fold operation.
+
+
+ - a) T reduce(T identity, BinaryOperator<T> accumulator);
+ 
+  T result = identity; 
+  for (T element : this stream)      
+	result = accumulator.apply(result, element)  return result
+
+Example1:
+List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6);
+int result = numbers
+  .stream()
+  .reduce(0, (subtotal, element) -> subtotal + element);
+assertThat(result).isEqualTo(21); //true 
+
+Example2:
+Stream<String> stream = Stream.of("w", "o", "l", "f");
+String word = stream.reduce("", (s, c) -> s + c);
+System.out.println(word); // wolf
+
+Example3:
+Stream<String> stream = Stream.of("w", "o", "l", "f");
+String word = stream.reduce("", String::concat);
+System.out.println(word); // wolf 
+
+Example4:
+Stream<Integer> stream = Stream.of(3, 5, 6);
+System.out.println(stream.reduce(1, (a, b) -> a*b)); // 90
+ 
+- b) Optional<T> reduce(BinaryOperator<T> accumulator); 
+
+When you don’t specify an identity (like in previous a) example), an Optional is returned because there might not be any data  
+ 
+ boolean foundAny = false;  
+ T result = null;  
+ for (T element : this stream) {      
+	if (!foundAny) {          
+	    foundAny = true;          
+		result = element;      
+	} else          
+	      result = accumulator.apply(result, element);  
+  }  
+  return foundAny ? Optional.of(result) : Optional.empty();
+
+■ If the stream is empty, an empty Optional is returned.
+■ If the stream has one element, it is returned.
+■ If the stream has multiple elements, the accumulator is applied to combine them.
+The following illustrates each of these scenarios:
+
+        BinaryOperator<Integer> op = (a, b) -> a * b;
+        Stream<Integer> empty = Stream.empty();
+        Stream<Integer> oneElement = Stream.of(3);
+        Stream<Integer> threeElements = Stream.of(3, 5, 6);
+
+        Stream.of(7, 8, 9).reduce((Integer x, Integer y) -> {
+            System.out.println("this is printed total two times");
+            return -1;
+        });
+
+        oneElement.reduce((Integer x, Integer y) -> {
+            System.out.println("this is never printed");
+            return -1;
+        });
+        empty.reduce((Integer x, Integer y) -> {
+            System.out.println("this is never printed");
+            return -1;
+        }); //no
+
+        empty.reduce(op).ifPresent(System.out::println); // it would be no output; //tho, it will throw an Exception since we already consumed variable "empty"
+        oneElement.reduce(op).ifPresent(System.out::println); // 3 //tho, it will throw an Exception since we already consumed variable "oneElement"
+        threeElements.reduce(op).ifPresent(System.out::println); // 90
+
+
+- c) <U> U reduce(U identity,
+               BiFunction<U, ? super T, U> accumulator,
+               BinaryOperator<U> combiner); 
+
+U result = identity;  
+for (T element : this stream)     
+     result = accumulator.apply(result, element)  return result
+	 
+Example1:
+Stream<String> stream = Stream.of("w", "o", "l", "f!");
+Integer length = stream.reduce(0, //U identity 
+
+                          (Integer identityTypeValueOfParametarized_U, String currentStringElement) -> identityTypeValueOfParametarized_U + currentStringElement.length(), 
+						  // BiFunction<U, ? super T, U> accumulator 
+						  //This is VERY IMPORTANT. first parameter of accumulator is of type U of identity!
+						  // and second is of type of whatever the original Stream is parametarized with 
+
+						  (a, b) -> {
+								System.out.println("this is never called"); //Since we are not using "parallelStream" i.e. not invoking "parallel()" on stream
+								return a+b;
+						   } // BinaryOperator<U> combiner
+						 );
+System.out.println(length); // 5
+
+Example2:
+        // counts the number of characters in each String:
+        Stream<String> stream = Stream.of("w", "o", "l", "f!");
+        int length = stream.reduce(0, (i, s) -> {
+            System.out.print("i: " + i + " "); System.out.print("s: " + s + " ");
+            System.out.println();
+            return i+s.length();
+        }, (a, b) -> {
+            System.out.print("a:" + a + " "); System.out.print("b:" + b + " ");
+            System.out.println();
+            return a+b;
+        });
+        System.out.println(length); // 5
+
+Output:
+
+i: 0 s: w 
+i: 1 s: o 
+i: 2 s: l 
+i: 3 s: f! 
+5
+
+Explanation: Since we are not using parallel stream, the combiner (BinaryOperator) function never gets called. For tracking, of total count we use 'i'
+
+Example3:
+//compute the product of the square roots of each element in the list
+List<Double> doubles2 = new ArrayList<>(); doubles2.add(9d); doubles2.add(36d); doubles2.add(81d);
+        final Double reduce2 = doubles2.parallelStream().reduce(1d, (a, b) -> {
+            System.out.println("Pozvan accumulator sa vrednostima: a: " + a + " b: " + b);
+            return a * Math.sqrt(b);
+        }, (x, y) -> {
+            System.out.println("Pozvan combiner sa vrednostima: x: " + x + " y: " + y);
+            return x * y;
+        });
+
+        System.out.println("Reduced to: " + reduce2);
+
+Output:
+Pozvan accumulator sa vrednostima: a: 1.0 b: 36.0
+Pozvan accumulator sa vrednostima: a: 1.0 b: 9.0
+Pozvan accumulator sa vrednostima: a: 1.0 b: 81.0
+Pozvan combiner sa vrednostima: x: 6.0 y: 9.0
+Pozvan combiner sa vrednostima: x: 3.0 y: 54.0
+Reduced to: 162.0
+
+Overview of all three reduce methods:
+
+T            reduce(T identity, BinaryOperator<T> accumulator); //T is whatever the original stream is parametarized with
+Optional<T>  reduce(BinaryOperator<T> accumulator); //T is whatever the original stream is parametarized with
+U            reduce(U identity,
+                    BiFunction<U, ? super T, U> accumulator,
+                    BinaryOperator<U> combiner); 
+					
+General notes:
+ - BinaryOperator always goes at the end of all parameters
+ - Sequence of parameters: identity -> accumulator -> combiner
+
+Regarding last overloaded reduce():
+ - U is type which needs to be returned
+ - In accumulator, first parameter is of type Identity and second parameter is of type whatever the original stream is parametarized with, return value must be of type of Identity
+ - Combiner is parametarized also with type of Identity, that is of course the type which we are returning
+ 
+ 
+7. collect()
+
+<R> R collect(Supplier<R> supplier,
+			  BiConsumer<R, ? super T> accumulator,
+              BiConsumer<R, R> combiner)
+			  
+Stream<String> stream = Stream.of("w", "o", "l", "f");
+StringBuilder word = stream.collect(
+                StringBuilder::new,
+                StringBuilder::append,
+                StringBuilder::append);			  
+
+Stream<String> stream = Stream.of("w", "o", "l", "f");
+TreeSet<String> set = stream.collect(
+ TreeSet::new,
+ TreeSet::add,
+ TreeSet::addAll);
+
+<R,A> R collect(Collector<? super T, A,R> collector)
+
+Stream<String> stream = Stream.of("w", "o", "l", "f");
+TreeSet<String> set = stream.collect(Collectors.toCollection(TreeSet::new));
+System.out.println(set); // [f, l, o, w]
+
+Stream<String> stream = Stream.of("w", "o", "l", "f");
+Set<String> set = stream.collect(Collectors.toSet());
+System.out.println(set); // [f, w, l, o]
+
+Stream<String> stream3 = Stream.of("w", "o", "l", "f");
+List<String> set3 = stream3.collect(Collectors.toList());	 //	  stream3.toList()
+
+
+--------------------------------------
+
+
+
+
+
+
+--------------------------------------
