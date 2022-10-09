@@ -2,7 +2,7 @@
 
 - Different types of integers (hex, octal, binary)
 - Objects eligibility for GC
-- Strings assignments
+- Strings all (format() all methods
 - Be able to differentiate between String and StringBuilder methods; edge cases; return types; different use-case examples
 - String text block (methods on it indent, transalteEscaps etc, text normalization)
 - Difference between list.toArray(), list.toArray(arr) and Arrays.toList(arr); and List.copyOf(collection) //uporedi metode kako rade sa aspekta referenci koje sadrze
@@ -27,12 +27,18 @@
 
 ** Write daily API methods from:
 	
-	- Built-in and primitive Functional Interfaces
+	- Built-in Functional Interfaces
 	- Convenience methods for Built-in Functional Interfaces
+	- Functional Interfaces for Primitives
+	- Primitive-Specific Functional Interfaces
 	- Collections API
 	- Queue and Deque methods (with Stack methods)
 	- Map methods
-	- Factory methods for List, Set and Map
-	- Optional instance methods 
-	- Stream creation methods
-	- Terminal operations on stream
+	- Factory methods for List, Set and Map (Arrays.asList(arr), of(varargs), copyOf)
+	- Static methods of Optional (Optional.of(T value), Optional.ofNullable(T value); exception/ no Exception)
+	- Generics all
+	- Optional instance methods (get(), isPresent(), ifPresent(Consumer c), orElseThrow(), orElseThrow(Supplier<? super Throwable> s), orElse(T value), orElseGet(Supplier s)) 
+	- Stream creation (static/non-static) methods:  (empty(), of(varargs), collectionInstance.stream(), currentStream.generate(Supplier<T> s), currentStream.iterate(T seed, UnaryOperator<T> uo), currentStream.iterate(T seed, Predicate<? super T> initCondition, UnaryOperator<T> next)
+	- Terminal operations on stream 
+	- Intermediate operations on a Stream
+	- Functiional Interfaces and theier SAMs for conversion between Streams and PrimitiveStreams !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

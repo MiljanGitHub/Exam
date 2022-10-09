@@ -7,7 +7,7 @@ Optional o = Optional.ofNullable(value);
 
 --------------------------------------
 Optional
- - two static method -> Optional.ofNullable()
+ - two static method -> Optional.ofNullable() //no exception
  
         Optional<Integer> o = null;
         Optional<Integer> o2 = Optional.ofNullable(null);
@@ -47,7 +47,7 @@ ifPresent(Consumer c) //
     }
 
 orElseThrow() //Give me value wrapped in Optional on which I am calling this method or Else throw predefined Exception
-orElseThrow((Supplier s) //Give me value wrapped in Optional on which I am calling this method or Else call 'get' method from parametarized Supplier and you must return "<X extends Throwable>"
+orElseThrow(Supplier<?super Throwable> s) //Give me value wrapped in Optional on which I am calling this method or Else (if optional is empty) call 'get' method from parametarized Supplier and you MUST return "<X extends Throwable>"
 
 Optional<Integer> o2 = Optional.ofNullable(null);
 
@@ -59,10 +59,10 @@ orElse(T other)
 orElseGet(Supplier s) 
 
         Optional<Integer> o2 = Optional.ofNullable(null); //returns Optional.empty()
-        final Integer integer = o2.orElseGet( () -> {return 1;});
+        final Integer integer = o2.orElseGet( () -> {return 1;}); //IF IT WAS 1.0 it DOES NOT COMPILE
         System.out.println(integer); //1
 		
-		=Optional<Integer> o21 = Optional.ofNullable(null); //returns Optional.empty()
+		Optional<Integer> o21 = Optional.ofNullable(null); //returns Optional.empty()
         final Integer integer2 = o21.orElseGet( () -> {return new Double(2);}); //DOES NOT COMPILE
         System.out.println(integer2);
 		
@@ -122,7 +122,7 @@ Creating a source
 	
 	 Stream<Student> x = Stream.iterate(new Student(12), Student::new); //Which constructor is called???
 	 
-	 Stream<Double> x2 = Stream.iterate(23, previousd -> previousd - 1); //DOES NOT COMPILE
+	 Stream<Double> x2 = Stream.iterate(23, previousd -> previousd - 1); //DOES NOT COMPILE; Same reasone as: Long x = 15;
 	 
 	 Stream<Integer> x2 = Stream.iterate(23, previous -> previous - 1);
 	
@@ -173,8 +173,8 @@ Example2:
 		System.out.println(s.count()); // 3
 
 
-2. Optional<T> min()
-   Optional<T> max()
+2. Optional<T> min(Comparator<? super T> comparator)
+   Optional<T> max(Comparator<? super T> comparator)
 
 Stream<String> s = Stream.of("monkey", "ape", "bonobo");
 Optional<String> min = s.min((s1, s2) -> s1.length()-s2.length());
@@ -226,7 +226,7 @@ for (Integer i : s) {} // DOES NOT COMPILE
 Questions as:
 
 “Calculate the sum of all calories in the menu,”
-“Whatisthehighest calorie dish in the menu?”
+“What is the highest calorie dish in the menu?”
 
 These queries can be classified as reduction operations (a stream is reduced to a value).
 In functional programming-language jargon, this is referred to as a "fold". ->  You can view this operationas repeatedly folding a long piece of paper (your stream) 
@@ -316,10 +316,11 @@ Example1:
 Stream<String> stream = Stream.of("w", "o", "l", "f!");
 Integer length = stream.reduce(0, //U identity 
 
-                          (Integer identityTypeValueOfParametarized_U, String currentStringElement) -> identityTypeValueOfParametarized_U + currentStringElement.length(), 
+                          (Integer identityTypeValueOfParametarized_U, String currentStringElementOfStreamParamType) -> identityTypeValueOfParametarized_U + currentStringElement.length(), 
 						  // BiFunction<U, ? super T, U> accumulator 
 						  //This is VERY IMPORTANT. first parameter of accumulator is of type U of identity!
 						  // and second is of type of whatever the original Stream is parametarized with 
+						  // and return type must be of type U, that is of Identity and that is of final type when wwant to do reduction
 
 						  (a, b) -> {
 								System.out.println("this is never called"); //Since we are not using "parallelStream" i.e. not invoking "parallel()" on stream
@@ -389,6 +390,7 @@ Regarding last overloaded reduce():
  - U is type which needs to be returned
  - In accumulator, first parameter is of type Identity and second parameter is of type whatever the original stream is parametarized with, return value must be of type of Identity
  - Combiner is parametarized also with type of Identity, that is of course the type which we are returning
+ - U reduc(U, <U, T, U>, U) (identity -> accumulator -> combiner) (identity - BiFunction, BinaryOperator)
  
  
 7. collect()
@@ -420,14 +422,25 @@ Set<String> set = stream.collect(Collectors.toSet());
 System.out.println(set); // [f, w, l, o]
 
 Stream<String> stream3 = Stream.of("w", "o", "l", "f");
-List<String> set3 = stream3.collect(Collectors.toList());	 //	  stream3.toList()
+List<String> set3 = stream3.collect(Collectors.toList());	 //	  ()
+List<String> set3 = stream3.toList
 
+Complete overview of all terminal operations
+
+Return value 			Method name				Parameters
 
 --------------------------------------
 
+Intermediate Operations
 
-
-
-
+1. Stream<T> filter(Predicate<? super T> predicate)
+2. Stream<T> distinct()
+3. Stream<T> limit(long maxSize)
+4. Stream<T> skip(long n)
+5. <R> Stream<R> map(Function<? super T, ? extends R> mapper)
+6. <R> Stream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper)
+7. Stream<T> sorted()
+8. Stream<T> sorted(Comparator<? super T> comparator)
+9. Stream<T> peek(Consumer<? super T> action)
 
 --------------------------------------

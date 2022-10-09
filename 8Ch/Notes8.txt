@@ -1039,13 +1039,13 @@ public class ConvenienceMethods {
         Function<String, String> f1 = str1 -> str1.toUpperCase();
         Function<String, String> f2 = str2 -> str2.substring(1, 2);
         final Function<String, String> stringStringFunction = f1.andThen(f2);
-        System.out.println(stringStringFunction.apply("abc"));
+        System.out.println(stringStringFunction.apply("abc")); //A
 
         //compose; obrnuto od andThen
-        Function<String, String> f3 = str3 -> {
-            System.out.println("dobio sam od f3: abc. A vrati cu: sio mi ga djura");
-            return "sio mi ga djura";};
         Function<String, String> f4 = str4 -> str4.substring(1, 2);
+        Function<String, String> f3 = str3 -> {
+            System.out.println("dobio sam od f4: " + str3 +  ". A vrati cu: sio mi ga djura");
+            return "sio mi ga djura";};
         final Function<String, String> stringStringFunction2 = f3.compose(f4);
         System.out.println(stringStringFunction2.apply("abc"));
 
