@@ -480,3 +480,24 @@ private static Stream<Integer> boxing(IntStream stream) {
 --------------------------------------
 
 Optional types for primitives
+
+
+Getting as primitive: 		          getAsDouble() getAsInt() getAsLong()
+orElseGet() parameter type: 	      DoubleSupplier IntSupplier LongSupplier
+
+
+--------------------------------------
+Methods on TypeSummaryStatistics
+
+■ getCount(): Returns a long representing the number of values.
+■ getAverage(): Returns a double representing the average. If the stream is empty, returns 0.
+■ getSum(): Returns the sum as a double for DoubleSummaryStream and long forIntSummaryStream and LongSummaryStream.
+■ getMin(): Returns the smallest number (minimum) as a double, int, or long, depending on the type of the stream. If the stream is empty, returns the largest numeric value based on the type.
+■ getMax(): Returns the largest number (maximum) as a double, int, or long depending on the type of the stream. If the stream is empty, returns the smallest numeric value based on the type
+
+Example1:
+final IntStream range = IntStream.range(0, 0);
+System.out.println(range.summaryStatistics()); //IntSummaryStatistics{count=0, sum=0, min=2147483647, average=0.000000, max=-2147483648}
+
+--------------------------------------
+
