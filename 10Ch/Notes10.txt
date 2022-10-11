@@ -305,8 +305,8 @@ The following illustrates each of these scenarios:
 
 
 - c) <U> U reduce(U identity,
-               BiFunction<U, ? super T, U> accumulator,
-               BinaryOperator<U> combiner); 
+                  BiFunction<U, ? super T, U> accumulator,
+                  BinaryOperator<U> combiner); 
 
 U result = identity;  
 for (T element : this stream)     
@@ -388,9 +388,9 @@ General notes:
 
 Regarding last overloaded reduce():
  - U is type which needs to be returned
- - In accumulator, first parameter is of type Identity and second parameter is of type whatever the original stream is parametarized with, return value must be of type of Identity
- - Combiner is parametarized also with type of Identity, that is of course the type which we are returning
- - U reduc(U, <U, T, U>, U) (identity -> accumulator -> combiner) (identity - BiFunction, BinaryOperator)
+ - In accumulator (BiFunction), first parameter is of type Identity and second parameter is of type whatever the original stream is parametarized with, return value must be of type of Identity
+ - Combiner (BinaryOperator) is parametarized also with type of Identity, that is of course the type which we are returning
+ - U reduce(U, <U, T, U>, U) (identity -> accumulator -> combiner) (identity - BiFunction, BinaryOperator)
  
  
 7. collect()
@@ -444,3 +444,39 @@ Intermediate Operations
 9. Stream<T> peek(Consumer<? super T> action)
 
 --------------------------------------
+
+Functional interfaces for converting between streams and primitive streams
+
+From the notebook...
+
+--------------------------------------
+
+Methods on primitive streams
+
+Type - "Int", "Long", "Double"
+
+OptionalType min()
+OptionalType max()
+
+int/long/double sum()
+
+OptionalDouble average()
+
+IntStream IntStream.range(1, 5) //static method, stream of 1,2,3,4
+IntStream IntStream.rangeClosed(1, 5) //static method, stream of 1,2,3,4,5
+
+IntSummaryStatistics x = IntStream.range(1, 4).summaryStatistics();
+System.out.println(x); //IntSummaryStatistics{count=4, sum=10, min=1, average=2.500000, max=4}
+
+** Stream<T> boxed() //similar like mapToObj()
+
+Example1:
+private static Stream<Integer> mapping(IntStream stream) {
+ return stream.mapToObj(x -> x);
+}
+private static Stream<Integer> boxing(IntStream stream) {
+ return stream.boxed();
+} // 'mapToObj' and 'boxed' are doing same thing
+--------------------------------------
+
+Optional types for primitives

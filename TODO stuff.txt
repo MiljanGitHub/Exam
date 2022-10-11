@@ -41,4 +41,5 @@
 	- Stream creation (static/non-static) methods:  (empty(), of(varargs), collectionInstance.stream(), currentStream.generate(Supplier<T> s), currentStream.iterate(T seed, UnaryOperator<T> uo), currentStream.iterate(T seed, Predicate<? super T> initCondition, UnaryOperator<T> next)
 	- Terminal operations on stream 
 	- Intermediate operations on a Stream
+	- Methods on Primitive Streams
 	- Functiional Interfaces and theier SAMs for conversion between Streams and PrimitiveStreams !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
